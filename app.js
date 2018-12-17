@@ -55,9 +55,11 @@ app.use(grant(grantConfig));
 
 var register = require('./routes/register');
 var connect = require('./routes/connect');
+var data = require('./routes/data');
 
 router.use('/register', register)
 router.use('/', connect)
+router.use('/data', data)
 
 app.use('/garmin', router);
 
