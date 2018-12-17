@@ -8,6 +8,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var request = require('request');
 var auth = require('basic-auth');
+var grant = require('grant-express')
 
 // Environment variables
 require('dotenv').config()
@@ -18,14 +19,16 @@ var models = require('./models');
 // Libs
 const config = require('./lib/config');
 
-// Express app
+// Express app and master router
 var app = express();
+var router = express.Router();
 
 // Session
 var session = require('express-session');
 app.use(session({
     resave: true,
     saveUninitialized: true,
+    name: "name",
     secret: "secret"
 }));
 
@@ -43,36 +46,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 ///////////////////////////
 
-// Pre-route auth
-app.use(function (req, res, next) {
-    
-    var credentials = auth(req)
+var grantConfig = require('./grant-config.json');
+grantConfig["garmin"]["key"] = config.GARMIN_CONSUMER_KEY;
+grantConfig["garmin"]["secret"] = config.GARMIN_SECRET;
+app.use(grant(grantConfig));
 
-    if ( !credentials || credentials.name !== config.USERNAME || credentials.pass !== config.PASSWORD ) {
-        
-        res.status(401);
-        res.header('WWW-Authenticate', 'Basic realm="example"');
-        res.send('Access denied');
-        
-    } else {
-        
-        next();
-    
-    }
-    
-});
+///////////////////////////
 
-// Routes
 var register = require('./routes/register');
 var connect = require('./routes/connect');
-var dashboard = require('./routes/dashboard');
-var notify = require('./routes/notify');
 
-app.use('/register', register)
-app.use('/connect', connect)
-app.use('/dashboard', dashboard)
-app.use('/notify', notify)
-	
+router.use('/register', register)
+router.use('/', connect)
+
+app.use('/garmin', router);
+
 ///////////////////////////
 
 // catch 404 and forward to error handler

@@ -1,0 +1,16 @@
+{
+  "server": {
+    "protocol": "http",
+    "host": "localhost:3000"
+  },
+  "garmin": {
+   "request_url": "https://connectapi.garmin.com/oauth-service/oauth/request_token",
+   "authorize_url": "https://connect.garmin.com/oauthConfirm",
+   "access_url": "https://connectapi.garmin.com/oauth-service/oauth/access_token",
+   "oauth": 1,
+   "key": "",
+   "secret": "",
+   "scope": ["read", "write"],
+   "callback": "/garmin/callback"
+ }
+}

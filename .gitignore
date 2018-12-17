@@ -55,10 +55,10 @@ local.properties
 .worksheet
 
 ### Eclipse Patch ###
-# Eclipse Core		
+# Eclipse Core
 .project
 
-# JDT-specific (Eclipse Java Development Tools)		
+# JDT-specific (Eclipse Java Development Tools)
 .classpath
 
 ### macOS ###
@@ -147,9 +147,6 @@ typings/
 
 # dotenv environment variables file
 .env
-
-# grant
-grant-config.json
 
 ### sequelize ###
 *production.sqlite
