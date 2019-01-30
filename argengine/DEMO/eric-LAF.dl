@@ -1,0 +1,16 @@
+% args
+a(b).
+a(a).
+a(c).
+
+% attacks
+r(a(b),a(c)).
+r(a(c),a(b)).
+
+% attack scheme
+arg(defeat(a,b)) :- preferred(a,c).
+arg(defeat(a,c)) :- preferred(a,b).
+
+% inputs
+preferred(a,c).
+preferred(a,b).

@@ -1,3 +1,15 @@
+% general facts about the patient
+patient(bob).
+age(bob,60).
+ethnic_origin(bob,black_african).
+not_tolerates(bob,c).
+
+% t1
+suffers_from(bob,backpain).
+
+% t2
+side_effect(hbp).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% static information
 
 % ASPT argument scheme -- goal is reduce pain, facts do not change the outcome.
@@ -24,6 +36,7 @@ alternative(X,Y) :- alter(X,Y).
 alternative(X,Y) :- alter(Y,X). 
 
 % attacks between alternative arguments
+%r(a(A1),a(A2)) :- alternative(A1,A2), a(A1), a(A2).
 r(a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))),
 a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2)))) :- alternative(A1,A2), a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))).
 
@@ -38,12 +51,6 @@ att(Q,justified(X)) :- ask(Q,X).
 ask(q1([side_effect(S), action(A), may_cause(A,S)]), aspt([goal(G), action(A), promotes(A,G)],action(A))) :- side_effect(S), arg(justified(aspt([goal(G), action(A), promotes(A,G)],action(A)))), may_cause(A,S).
 
 % look for alternatives if q1 is asked.
-a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))) :- ask(q1([side_effect(S), action(A1), may_cause(A,S)]), aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), alternative(A1,A2).
+%a(A2) :- action(A1), ask(q1(Q),A1), alternative(A1,A2). 
+a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))) :- ask(q1([side_effect(S), action(A1), may_cause(A,S)]), aspt([goal(G), action(A1), promotes(A,G)],action(A))), alternative(A1,A2).
 
-% preference input effect on the metalevel
-att(preferred(A2,A1), defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), aspt([goal(G), action(A2), promotes(A2,G)],action(A2)))) 
-:- arg(preferred(A2,A1)), 
-   arg(defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), 
-              aspt([goal(G), action(A2), promotes(A2,G)],action(A2))
-             )
-      ).

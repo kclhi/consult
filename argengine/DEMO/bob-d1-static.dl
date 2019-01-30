@@ -5,14 +5,60 @@ ethnic_origin(bob,black_african).
 not_tolerates(bob,c).
 
 % t1
-suffers_from(bob,backpain,t1).
+suffers_from(bob,backpain).
+
+% t2
+side_effect(hbp).
+
+% t3
+arg(preferred(paracetamol,codeine)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% static information
 
 % ASPT argument scheme -- goal is reduce pain, facts do not change the outcome.
-a(aspt([goal(G), action(A,T), promotes(A,G)],action(A,T))) :- goal(G), action(A,T), promotes(A,G).
+a(aspt([goal(G), action(A), promotes(A,G)],action(A))) :- goal(G), action(A), promotes(A,G).
 
 % nhs painkillers guideline
-action(ibuprofen,T) :- suffers_from(Patient,backpain,T).
-goal(rp) :- action(ibuprofen,T).
-promotes(ibuprofen,rp):- action(ibuprofen,T).
+goal(rp) :- suffers_from(Patient,backpain).
+
+% default recommended action
+action(ibuprofen) :- goal(rp).
+
+% goal definition
+promotes(ibuprofen,rp).
+promotes(paracetamol,rp).
+promotes(codeine,rp).
+
+% comes from NHS guideline
+alter(paracetamol,ibuprofen).
+alter(codeine,ibuprofen).
+alter(paracetamol,codeine).
+
+% general rule
+alternative(X,Y) :- alter(X,Y). 
+alternative(X,Y) :- alter(Y,X). 
+
+% attacks between alternative arguments
+r(a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))),
+a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2)))) :- alternative(A1,A2), a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))).
+
+%%% side-effect information
+may_cause(ibuprofen,hbp).
+
+% question semantics
+arg(Q) :- ask(Q,X).
+att(Q,justified(X)) :- ask(Q,X).
+
+% when there is a side-effect, and an action A may cause this side-effect, ask q1
+ask(q1([side_effect(S), action(A), may_cause(A,S)]), aspt([goal(G), action(A), promotes(A,G)],action(A))) :- side_effect(S), arg(justified(aspt([goal(G), action(A), promotes(A,G)],action(A)))), may_cause(A,S).
+
+% look for alternatives if q1 is asked.
+a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))) :- ask(q1([side_effect(S), action(A1), may_cause(A,S)]), aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), alternative(A1,A2).
+
+% preference input effect on the metalevel
+att(preferred(A2,A1), defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), aspt([goal(G), action(A2), promotes(A2,G)],action(A2)))) 
+:- arg(preferred(A2,A1)), 
+   arg(defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), 
+              aspt([goal(G), action(A2), promotes(A2,G)],action(A2))
+             )
+      ).

@@ -11,6 +11,7 @@ api = Api(app)
 '''
     invoke argumentation engine by example name for the demo
     name is one of the followings:
+    bob-d1
     bittorrent-vaf
     eric-eaf
     firewall-paf
@@ -39,7 +40,7 @@ class InvokeEngine(Resource):
 
             patient = json.dumps({'patient.id':'jane','raised_bp':'1','last.sys':142,'last.dia':86,'pid':'jane','age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'})
 
-            resp = requests.post('http://localhost:5000/argengine/datascience', data={'data': patient})
+            resp = requests.post('http://0.0.0.0:5000/argengine/datascience', data={'data': patient})
             
             resp.json = json.loads(resp.text)
             
@@ -52,7 +53,7 @@ class InvokeEngine(Resource):
 
             patient = json.dumps({'patient.id':'bob','raised_bp':'1','last.sys':142,'last.dia':86,'pid':'bob','age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'})
 
-            resp = requests.post('http://localhost:5000/argengine/datascience', data={'data': patient})
+            resp = requests.post('http://0.0.0.0:5000/argengine/datascience', data={'data': patient})
             
             resp.json = json.loads(resp.text)
             
@@ -98,8 +99,14 @@ class HelloWorld(Resource):
         return {'hello': 'world'}
      
      
-        
-# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=5678&keyname=symptom&value=backpain&iterno=1" -X POST -v
+# scenario 1: backpain information provided, ibuprofen recommended        
+# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=1&keyname=symptom&value=backpain" -X POST -v
+
+# scenario 2: high blood pressure is detected (part of facts file). backpain information provided. preference information provided. 
+# all these steps should have the same session id
+# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=2&keyname=symptom&value=backpain" -X POST -v
+# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=2&keyname=preference&value=paracetamol,codeine" -X POST -v
+
 class ChatBot(Resource):
     def get(self):
         return {'hello':'world'}
@@ -109,7 +116,7 @@ class ChatBot(Resource):
         sid = request.form['sid']
         keyname = request.form['keyname']
         value = request.form['value']
-        iterno = request.form['iterno']
+        #iterno = request.form['iterno']
         
         params = list()
             
@@ -122,7 +129,10 @@ class ChatBot(Resource):
         query=''
         if str(keyname) == 'symptom':
             if str(value) == 'backpain':
-                query = 'suffers_from('+pid+',backpain,t'+iterno+').\n'
+                query = 'suffers_from('+pid+',backpain).\n'
+        if str(keyname) == 'preference':
+            v1,v2 = str(value).split(',')
+            query = 'arg(preferred('+v1+','+v2+')).\n'
                     
         import os
         if not os.path.exists('data/'+pid): # new patient
@@ -150,7 +160,7 @@ class ChatBot(Resource):
         params.append('../data/'+pid+'/'+sid+'/'+'queries.dl')
             
         ####### get the facts about the patient
-        params.append("DEMO/1234.dl") # TODO patient facts file should be the last parameter
+        params.append("DEMO/1234-"+sid+".dl") # TODO patient facts file should be the last parameter
             
         ####### run the reasoning engine
         hostip = request.host

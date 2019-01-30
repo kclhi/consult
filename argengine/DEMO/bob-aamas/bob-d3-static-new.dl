@@ -1,3 +1,18 @@
+% general facts about the patient
+patient(bob).
+age(bob,60).
+ethnic_origin(bob,black_african).
+not_tolerates(bob,c).
+
+% t1
+suffers_from(bob,backpain).
+
+% t2
+side_effect(hbp).
+
+% t3
+arg(preferred(paracetamol,codeine)).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% static information
 
 % ASPT argument scheme -- goal is reduce pain, facts do not change the outcome.
@@ -47,3 +62,4 @@ att(preferred(A2,A1), defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A
               aspt([goal(G), action(A2), promotes(A2,G)],action(A2))
              )
       ).
+

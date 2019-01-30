@@ -1,0 +1,9 @@
+# pid can change, keep the session unchanged for demo purposes... 
+
+# scenario 1: backpain information provided, ibuprofen recommended        
+# example curl query: curl http://18.203.8.255:5000/argengine/chatbot -d "pid=1234&sid=1&keyname=symptom&value=backpain" -X POST -v
+
+# scenario 2: high blood pressure is detected (part of facts file). backpain information provided. preference information provided. 
+# all these steps should have the same session id
+# example curl query: curl http://18.203.8.255:5000/argengine/chatbot -d "pid=1234&sid=2&keyname=symptom&value=backpain" -X POST -v
+# example curl query: curl http://18.203.8.255:5000/argengine/chatbot -d "pid=1234&sid=2&keyname=preference&value=paracetamol,codeine" -X POST -v
