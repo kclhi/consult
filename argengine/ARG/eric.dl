@@ -1,0 +1,27 @@
+% args
+a(t1h).
+a(tls).
+a(t1l).
+
+% attacks
+r(a(tls),a(t1h)).
+r(a(tls),a(t1l)).
+r(a(t1h),a(t1l)).
+r(a(t1l),a(t1h)).
+
+% pref args
+p(a(t1h),a(tls)). %gh
+p(a(tls),a(t1h)). %eh
+p(a(t1h),a(t1l)). %gd
+p(a(tls),a(t1l)). %el
+p(a(t1l),a(tls)). %gl
+
+% eric prefs take precedence -- defining attacks in meta-level
+%att(pref(tls,t1l),pref(t1l,tls)).
+%att(pref(tls,t1h),pref(t1h,tls)).
+
+% gp prefs take precedence -- defining attacks in meta-level
+att(pref(t1h,tls),pref(tls,t1h)).
+att(pref(t1l,tls),pref(tls,t1l)).
+
+% query: ./dlv ground.dl metalevel.dl ARG/eric.dl -filter=in

@@ -1,0 +1,50 @@
+% time t0
+a(i) :- time(t0).
+
+% time t1
+a(t) :- time(t1).
+
+% time t2
+r(a(t),a(i)) :- cq1([action(t),goal(rbp),notaction(i)]).
+r(a(i),a(t)) :- cq1([action(t),goal(rbp),notaction(i)]).
+
+% time t3
+a(c) :- cq2([alter(c,i),goal(rp),action(c)]).
+a(p) :- cq2([alter(p,i),goal(rp),action(p)]).
+
+% general rule
+alternative(X,Y) :- alter(X,Y). 
+alternative(X,Y) :- alter(Y,X). 
+
+% attacks between alternative arguments
+r(a(X),a(Y)) :- alternative(X,Y).
+
+% time t4
+% pref1 is an argument that has a status
+a(pref1) :- time(t4).
+d(a(pref1),a(c),a(p)) :- time(t4).
+
+%%% meta-level information
+
+% time t2 -- q1
+cq1([action(t),goal(rbp),notaction(i)]) :- time(t2).
+
+% time t3 -- q2
+cq2([alter(p,i),goal(rp),action(p)]) :- time(t3).
+cq2([alter(c,i),goal(rp),action(c)]) :- time(t3).
+
+alter(p,i) :- time(t3).
+alter(c,i) :- time(t3).
+alter(p,c) :- time(t3).
+
+% time t4
+
+% time setting
+time(t0).
+time(t1).
+time(t2).
+time(t3).
+time(t4).
+
+% query: ./dlv ground.dl metalevel.dl wp4-eaf/abstract.dl -filter=in
+

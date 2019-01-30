@@ -1,0 +1,67 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% S1.b description 
+arg(offer(c,s1)) :- age(X,A), A>=55, not arg(nottolerated(c)), stime(s1).
+arg(offer(c,s1)) :- black_afr(X), not arg(nottolerated(c)), stime(s1).
+arg(offer(c,s1)) :- black_car(X), not arg(nottolerated(c)), stime(s1).
+
+arg(offer(d,s1)) :- arg(nottolerated(c)), stime(S).
+
+% S2 description
+arg(offer(a1,s2)) :- black_afr(X), stime(s2).
+arg(offer(a2,s2)) :- black_afr(X), stime(s2).
+
+% side effects
+%-tolerated(c) :- obs(swollen_ankles).
+
+%attacks
+att(offer(c,s1),offer(d,s1)) :- arg(offer(c,s1)), arg(offer(d,s1)).
+att(offer(d,s1),offer(c,s1)) :- arg(offer(c,s1)), arg(offer(d,s1)).
+att(offer(c,s2),offer(d,s2)) :- arg(offer(c,s2)), arg(offer(d,s2)).
+att(offer(d,s2),offer(c,s2)) :- arg(offer(c,s2)), arg(offer(d,s2)).
+
+att(offer(a1,S),offer(a2,S)) :- arg(offer(a1,S)), arg(offer(a2,S)), stime(S).
+att(offer(a2,S),offer(a1,S)) :- arg(offer(a1,S)), arg(offer(a2,S)), stime(S).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% facts
+age(baula,32).
+black_afr(baula).
+%drugInUse(c,s1). -- not true anymore
+arg(offer(c,s1)).
+
+%stime(s1).
+%obs(swollen_ankles).
+arg(offer(d,s1)).
+
+%stime(s1).
+stime(s2).
+
+% cq3 encoding
+arg(costeffective(a2)).
+att(costeffective(a2),offer(a1,s2)).
+
+% cq2 encoding
+arg(nottolerated(c)).
+att(nottolerated(c),offer(c,s1)).
+
+% cq1 encoding -- d is a drug in use from s1, it should be in the graph
+arg(noteffective(d)).
+att(noteffective(d),offer(d,s1)).
+
+% qrisk encoding
+arg(qriskhigh).
+att(qriskhigh,noteffective(d)).
+
+% hack cq2
+%arg(myvalue).
+%att(myvalue,nottolerated(c)).
+
+% cqnew
+arg(effective(c)).
+att(effective(c),nottolerated(c)).
+
+% query: ./dlv vaf_paf.dl prefex.dl IJCAI/baula-v3.dl -filter=in
+% output
+% {in(offer(a1,s2))}
+

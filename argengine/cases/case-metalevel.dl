@@ -1,0 +1,33 @@
+% args
+a(t).
+a(i).
+a(c).
+a(p). 
+a(pref).
+
+r(a(p),a(c)) :- alt(a(p),a(c)).
+r(a(c),a(p)) :- alt(a(p),a(c)).
+
+% attacks on attacks
+d(a(pref),a(c),a(p)).
+
+% facts
+alt(a(p),a(c)).
+
+
+%%%%%%%%%%%%%%%% metalevel
+
+% meta-args
+arg(defeat(q1,t)).
+arg(defeat(q2,i)).
+
+arg(defeat(i,t)).
+arg(defeat(t,i)).
+
+arg(defeat(i,p)).
+arg(defeat(p,i)).
+arg(defeat(i,c)).
+arg(defeat(c,i)).
+
+% query: ./dlv ground.dl metalevel.dl cases/case-metalevel.dl -filter=in
+

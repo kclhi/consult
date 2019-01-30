@@ -1,0 +1,23 @@
+% args
+a(a).
+a(b).
+a(c).
+
+% contextual prefs
+requires(context(c1), p(a(a),a(b))). 
+requires(context(c2), p(a(b),a(c))). 
+requires(context(c3), p(a(c),a(a))).
+
+% requires semantics
+p(a(A1),a(A2)) :- requires(context(C), p(a(A1),a(A2))).
+
+% attacks
+r(a(a),a(b)).
+r(a(b),a(a)).
+
+% context ordering
+p(context(c1), context(c2)).
+p(context(c2), context(c3)).
+
+
+% query: ./dlv ground.dl metalevel-all.dl ARG/Simon-CPAF.dl -filter=in

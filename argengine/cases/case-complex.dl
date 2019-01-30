@@ -1,0 +1,38 @@
+% args
+% t0
+a(nhs([goal(rp),action(i)])).
+
+% t1
+% high blood pressure observed.
+% new goal RBP
+a(gui([goal(rbp),action(t)])).
+
+% t2
+% cq1: any contradiction to taking t to achieve the goal rbp?
+a(cq1([action(t),goal(rbp),notaction(i)])).
+
+% cq2: any alternative to i to satisfy the goal rp?
+a(cq2([alter(p,i),goal(rp),action(p)])). % paracetamol
+a(cq2([alter(c,i),goal(rp),action(c)])). % codeine
+
+% t3 
+% patient preference
+p(a(cq2([alter(p,i),goal(rp),action(p)])), a(cq2([alter(c,i),goal(rp),action(c)]))). 
+
+% attacks
+r(a(cq1([action(t),goal(rbp),notaction(i)])), a(nhs([goal(rp),action(i)]))).
+
+% attacks between p and c
+r(a(cq2([alter(p,i),goal(rp),action(p)])), a(cq2([alter(c,i),goal(rp),action(c)]))).
+r(a(cq2([alter(c,i),goal(rp),action(c)])), a(cq2([alter(p,i),goal(rp),action(p)]))).
+
+% attacks between i and c
+r(a(nhs([goal(rp),action(i)])), a(cq2([alter(c,i),goal(rp),action(c)]))).
+r(a(cq2([alter(c,i),goal(rp),action(c)])), a(nhs([goal(rp),action(i)]))).
+
+% attacks between p and i
+r(a(nhs([goal(rp),action(i)])), a(cq2([alter(p,i),goal(rp),action(p)]))).
+r(a(cq2([alter(p,i),goal(rp),action(p)])), a(nhs([goal(rp),action(i)]))).
+
+% query: ./dlv ground.dl metalevel.dl cases/case-complex.dl -filter=in
+

@@ -1,0 +1,91 @@
+% general rule 
+%% -- when there is an action, it becomes an argument in the AF.
+a(A) :- action(A).
+
+% nhs painkillers guideline
+%action(ibuprofen) :- suffers_from(patient,oa,T).
+goal(rp) :- suffers_from(patient,oa,T).
+
+% default recommended action
+action(ibuprofen) :- goal(rp).
+
+% general information
+promotes(ibuprofen,rp).
+promotes(paracetamol,rp).
+promotes(codeine,rp).
+
+% guideline step 1.b
+goal(rbp) :- suffers_from(patient,hypertension,T).
+
+offer(d) :- patient(X), not_tolerates(X,c), step_in_treatment(s1).  
+action(thiazide) :- offer(d), goal(rbp).
+
+% general information
+promotes(thiazide,rbp).
+
+% general facts about the patient
+patient(jane).
+age(jane,60).
+ethnic_origin(jane,black_african).
+not_tolerates(jane,c).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t0
+step_in_treatment(s1) :- time(t0).
+suffers_from(patient,hypertension,t0) :- time(t0).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t1
+suffers_from(patient,oa,t1) :- time(t1). 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t2
+% observation
+side_effect(hbp) :- time(t2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t3
+
+% comes from NHS guideline
+alter(paracetamol,ibuprofen).
+alter(codeine,ibuprofen).
+alter(paracetamol,codeine).
+
+% general rule
+alternative(X,Y) :- alter(X,Y). 
+alternative(X,Y) :- alter(Y,X). 
+
+% attacks between alternative arguments
+r(a(A1),a(A2)) :- alternative(A1,A2), a(A1), a(A2).
+
+%%% side-effect information
+may_cause(ibuprofen,hbp).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t4
+satisfies(paracetamol,option([pain_relief(moderate),addiction(none)])).
+satisfies(codeine,option([pain_relief(high),addiction(opiate)])).
+
+input(pref(
+option([pain_relief(moderate),addiction(none)]),
+option([pain_relief(high),addiction(opiate)])
+)) :- time(t4).
+
+arg(preferred(X,Y)) :- satisfies(X,A), satisfies(Y,B), input(pref(A,B)). % meta-level input
+
+%%% meta-level information
+
+% question semantics
+arg(Q) :- ask(Q,X).
+att(Q,justified(X)) :- ask(Q,X).
+
+% when there is a side-effect, and an action A may cause this side-effect, ask q1
+ask(q1([side_effect(S), action(A), may_cause(A,S)]),A) :- side_effect(S), action(A), may_cause(A,S).
+
+% look for alternatives if q1 is asked.
+a(A2) :- action(A1), ask(q1(Q),A1), alternative(A1,A2), time(t3). 
+
+% time setting
+time(t0).
+time(t1).
+time(t2).
+time(t3).
+time(t4).
+
+% query: ./dlv ground.dl metalevel.dl wp4-eaf/jane-ti.dl -filter=in
+

@@ -1,0 +1,24 @@
+% meta-level argumentation semantics
+% args
+%arg(def(A1,A2)) :- r(a(A1),a(A2)).
+%arg(pref(A1,A2)) :- p(a(A1),a(A2)).
+%arg(just(A)) :- a(A).
+%arg(reject(A)) :- a(A).
+
+% attacks
+%att(pref(A1,A2),def(A2,A1)) :- arg(pref(A1,A2)),arg(def(A2,A1)).
+%att(def(A1,A2),just(A2)) :- arg(def(A1,A2)),arg(just(A2)).
+%att(reject(A1),def(A1,A2)) :- arg(reject(A1)),arg(def(A1,A2)).
+%att(just(A),reject(A)) :- arg(just(A)),arg(reject(A)).
+
+% object-level network.
+a(w).
+a(n).
+a(t).
+r(a(w),a(n)).
+r(a(n),a(w)).
+p(a(w),a(n)).
+
+% query to run
+% ./dlv ground.dl metalevel.dl ARG/firewall-auto.dl
+

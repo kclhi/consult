@@ -1,0 +1,58 @@
+% treatments
+arg(offer(a1,s1)).
+arg(offer(a2,s1)).
+arg(offer(c,s1)).
+arg(offer(d,s1)).
+
+arg(nottolerated(c)).
+arg(noteffective(d)).
+arg(qriskh).
+
+arg(offer(a1,s2)).
+arg(offer(a2,s2)).
+
+% attacks
+att(offer(a1,s1),offer(a2,s1)).
+att(offer(a2,s1),offer(a1,s1)).
+
+att(offer(a1,s1),offer(c,s1)).
+att(offer(c,s1),offer(a1,s1)).
+
+att(offer(a2,s1),offer(c,s1)).
+att(offer(c,s1),offer(a2,s1)).
+
+att(offer(d,s1),offer(c,s1)).
+att(offer(c,s1),offer(d,s1)).
+
+att(offer(a1,s1),offer(d,s1)).
+att(offer(d,s1),offer(a1,s1)).
+
+att(offer(a2,s1),offer(d,s1)).
+att(offer(d,s1),offer(a2,s1)).
+
+att(nottolerated(c),offer(c,s1)).
+
+att(qriskh,noteffective(d)).
+att(noteffective(d),offer(d,s1)).
+
+att(offer(a1,s2),offer(a2,s2)).
+att(offer(a2,s2),offer(a1,s2)).
+
+% query: ./dlv ground.dl IJCAI/baula-v3-sketch.dl -filter=in
+% output: {in(qriskh), in(nottolerated(c))}
+
+% query: ./dlv prefex.dl IJCAI/baula-v3-sketch.dl -filter=in
+% output: 
+%{in(qriskh), in(offer(a2,s1)), in(nottolerated(c)), in(offer(a2,s2))}
+
+%{in(qriskh), in(offer(a2,s1)), in(nottolerated(c)), in(offer(a1,s2))}
+
+%{in(qriskh), in(offer(a1,s1)), in(nottolerated(c)), in(offer(a2,s2))}
+
+%{in(qriskh), in(offer(a1,s1)), in(nottolerated(c)), in(offer(a1,s2))}
+
+%{in(qriskh), in(offer(d,s1)), in(nottolerated(c)), in(offer(a2,s2))}
+
+%{in(qriskh), in(offer(d,s1)), in(nottolerated(c)), in(offer(a1,s2))}
+
+

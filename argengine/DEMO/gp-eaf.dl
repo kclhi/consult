@@ -1,0 +1,35 @@
+% args
+a(t1h).
+a(tls).
+a(t1l).
+
+a(gh).
+a(eh).
+a(gd).
+a(el).
+a(gl).
+
+% attacks
+r(a(tls),a(t1h)).
+r(a(tls),a(t1l)).
+r(a(t1h),a(t1l)).
+r(a(t1l),a(t1h)).
+
+r(a(gh),a(eh)).
+r(a(eh),a(gh)).
+r(a(gl),a(el)).
+r(a(el),a(gl)).
+
+% attacks on attacks
+d(a(gd),a(t1l),a(t1h)).
+d(a(gh),a(tls),a(t1h)).
+d(a(gl),a(tls),a(t1l)).
+
+% gp view arguments, attacks, and attacks on attacks
+a(gheh).
+a(glel).
+d(a(gheh),a(eh),a(gh)).
+d(a(glel),a(el),a(gl)).
+
+% query: ./dlv ground.dl metalevel.dl DEMO/gp-eaf.dl -filter=in
+

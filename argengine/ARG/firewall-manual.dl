@@ -1,0 +1,24 @@
+arg(def(n,w)).
+arg(just(w)).
+arg(reject(w)).
+arg(reject(n)).
+arg(just(n)).
+arg(def(w,n)).
+arg(just(t)).
+arg(reject(t)).
+
+att(def(n,w),just(w)).
+att(just(w),reject(w)).
+att(reject(w),def(w,n)).
+att(def(w,n),just(n)).
+att(just(n),reject(n)).
+att(reject(n),def(n,w)).
+att(just(t),reject(t)).
+
+% with preference arguments
+arg(pref(w,n)).
+att(pref(w,n),def(n,w)).
+
+% query to run
+% ./dlv ground.dl ARG/firewall-manual.dl -filter=in
+

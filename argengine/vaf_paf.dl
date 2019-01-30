@@ -1,0 +1,21 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% preferences for PAF and VAF
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+vaf.
+
+
+%% valpref preference relation; transitiv
+valpref(X,Y) :- valpref(X,Z), valpref(Z,Y).
+
+%% pref computes preference of arguments depending on the preference relation valpref
+pref(X,Y) :- valpref(U,V),
+	     val(X,U),
+	     val(Y,V).
+
+%% transitivity of pref
+pref(X,Y) :- pref(X,Z), pref(Z,Y).
+
+%% argument x defeats argument y, iff x attacks y, and y is not preferred to x
+defeat(X,Y) :- att(X,Y),
+	       not pref(Y,X),
+	       vaf.

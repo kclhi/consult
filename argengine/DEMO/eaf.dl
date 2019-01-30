@@ -1,0 +1,14 @@
+% args
+a(a).
+a(b).
+a(c).
+
+% attacks
+r(a(a),a(b)).
+r(a(b),a(a)).
+
+% attacks on attacks
+d(a(c),a(a),a(b)).
+
+% query: ./dlv ground.dl metalevel.dl DEMO/eaf.dl -filter=in
+

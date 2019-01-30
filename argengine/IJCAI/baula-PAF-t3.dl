@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% S1.b description 
+arg(offer(c,s1)) :- patient(X), age(X,A), A>=55, not -tolerated(c), stime(s1).
+arg(offer(c,s1)) :- patient(X), black_afr(X), not -tolerated(c), stime(s1).
+arg(offer(c,s1)) :- patient(X), black_car(X), not -tolerated(c), stime(s1).
+
+arg(offer(d,s1)) :- -tolerated(c), stime(s1).
+
+% S2 description
+arg(offer(a1,s2)) :- patient(X), black_afr(X), stime(s2).
+arg(offer(a2,s2)) :- patient(X), black_afr(X), stime(s2).
+
+% side effects
+-tolerated(c) :- obs(swollen_ankles).
+
+%attacks
+att(offer(c,s1),offer(d,s1)) :- arg(offer(c,s1)), arg(offer(d,s1)).
+att(offer(d,s1),offer(c,s1)) :- arg(offer(c,s1)), arg(offer(d,s1)).
+
+att(offer(a1,s2),offer(a2,s2)) :- arg(offer(a1,s2)), arg(offer(a2,s2)).
+att(offer(a2,s2),offer(a1,s2)) :- arg(offer(a1,s2)), arg(offer(a2,s2)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% facts
+patient(baula).
+age(baula,32).
+black_afr(baula).
+%drugInUse(c,s1). -- not true anymore
+
+%stime(s1).
+obs(swollen_ankles).
+drugInUse(d,s1).
+
+stime(s2).
+%pref
+pref(offer(a1,s2),offer(a2,s2)).
+
+% query: ./dlv vaf_paf.dl ground.dl IJCAI/baula-PAF-t3.dl -filter=in
+% output
+% {in(offer(a1,s2))}
+

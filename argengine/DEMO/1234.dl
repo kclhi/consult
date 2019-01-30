@@ -1,0 +1,3 @@
+patient(1234).
+age(1234,60).
+ethnic_origin(1234,black_african).

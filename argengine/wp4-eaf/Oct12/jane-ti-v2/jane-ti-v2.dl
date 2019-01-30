@@ -1,0 +1,100 @@
+%%% side-effect is just an observation, any action can be changed. but there is a preference among goals
+%%% which leads to change ibuprofen again. 
+
+% general rule 
+%% -- when there is an action, it becomes an argument in the AF.
+a(A) :- action(A).
+
+% nhs painkillers guideline
+action(ibuprofen) :- suffers_from(patient,oa,T).
+
+goal(rp) :- action(ibuprofen).
+fulfils(ibuprofen,rp):- action(ibuprofen).
+
+% guideline step 1.b
+offer(d) :- patient(X), not_tolerates(X,c), step_in_treatment(s1).  
+action(thiazide) :- offer(d).
+
+goal(rbp) :- action(thiazide).
+fulfils(thiazide,rbp):- action(thiazide).
+
+% general facts about the patient
+patient(jane).
+age(jane,60).
+ethnic_origin(jane,black_african).
+not_tolerates(jane,c).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t0
+step_in_treatment(s1) :- time(t0).
+suffers_from(patient,hypertension,t1) :- time(t0).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t1
+suffers_from(patient,oa,t0) :- time(t1).
+
+% comes from the drug interaction box
+%contradiction(rp,rbp) :- time(t1). 
+%contradiction(rbp,rp) :- time(t1). 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t2
+% observation
+%side_effect(ibuprofen,hbp) :- time(t2).
+side_effect(hbp) :- time(t2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t3
+% comes from NHS guideline
+fulfils(paracetamol,rp).
+fulfils(codeine,rp).
+
+alter(paracetamol,ibuprofen) :- time(t3).
+alter(codeine,ibuprofen) :- time(t3).
+alter(paracetamol,codeine) :- time(t3).
+
+% general rule
+alternative(X,Y) :- alter(X,Y). 
+alternative(X,Y) :- alter(Y,X). 
+
+% attacks between alternative arguments
+r(a(X),a(Y)) :- alternative(X,Y).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% time t4
+satisfies(paracetamol,option([pain_relief(moderate),addiction(none)])).
+satisfies(codeine,option([pain_relief(high),addiction(opiate)])).
+
+a(pref(
+option([pain_relief(moderate),addiction(none)]),
+option([pain_relief(high),addiction(opiate)])
+)) :- time(t4).
+
+d(a(pref(A,B)),
+a(Y),
+a(X)) :- satisfies(X,A), satisfies(Y,B), a(pref(A,B)), r(a(Y),a(X)).
+
+%%% meta-level information
+
+% question semantics
+arg(Q) :- ask(Q,a(X)).
+att(Q,justified(X)) :- ask(Q,a(X)).
+
+%t2 
+arg(pref(goal(rbp),goal(rp))) :- time(t2). % meta-preference elicitation
+
+% when there is a side-effect, question the action with a lower goal priority.
+ask(q1([action(A2), side_effect(S), pref(goal(G1),goal(G2))]),a(A2)) :- side_effect(S), goal(G1), goal(G2), action(A1), action(A2), fulfils(A1,G1), fulfils(A2,G2), arg(pref(goal(G1),goal(G2))).
+% when there is no goal priority question all the actions
+ask(q1([action(A), side_effect(S)]),a(A)):- side_effect(S), action(A), goal(G1), goal(G2), -ask(q1([action(A2), side_effect(S), pref(G1,G2)]),a(A2)).
+
+% general attack scheme.
+r(a(A1),a(A2)) :- goal(G1), goal(G2), contradiction(G1,G2), action(A1), action(A2), fulfils(A1,G1), fulfils(A2,G2).
+
+% look for alternatives if q1 is asked.
+a(A2) :- action(A1), alternative(A1,A2), fulfils(A1,G), fulfils(A2,G), ask(Q,a(A)).
+
+% time setting
+time(t0).
+time(t1).
+time(t2).
+time(t3).
+time(t4).
+
+% query: ./dlv ground.dl metalevel.dl wp4-eaf/jane-ti.dl -filter=in
+

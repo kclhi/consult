@@ -1,0 +1,19 @@
+%paf.
+
+%adm.	     % for admissible
+%comp.	     % for complete
+%ground.     % for ground
+%prefex.     % for preferred
+%stable.     % for stable
+
+arg(a).
+arg(b).
+arg(c).
+arg(d).
+arg(e).
+
+att(c,d).
+att(d,c).
+att(a,e).
+
+pref(c,d).

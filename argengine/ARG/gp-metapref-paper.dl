@@ -1,0 +1,28 @@
+% args
+a(t1h).
+a(tls).
+a(t1l).
+
+% attacks
+r(a(tls),a(t1h)).
+r(a(tls),a(t1l)).
+r(a(t1h),a(t1l)).
+r(a(t1l),a(t1h)).
+
+% pref args
+p(a(t1h),a(tls)). %gh
+p(a(tls),a(t1h)). %eh
+p(a(t1h),a(t1l)). %gd
+p(a(tls),a(t1l)). %el
+p(a(t1l),a(tls)). %gl
+
+% preferences over preferences -- eric prefs take precedence
+%p(p(a(tls),a(t1l)), p(a(t1l),a(tls))). % el > gl
+%p(p(a(tls),a(t1h)), p(a(t1h),a(tls))). % eh > gh
+
+% preferences over preferences -- gp prefs take precedence
+p(p(a(t1h),a(tls)), p(a(tls),a(t1h))). % gh > eh
+p(p(a(t1l),a(tls)), p(a(tls),a(t1l))). % gl > el
+
+% query: ./dlv ground.dl vaf_paf.dl metalevel.dl ARG/gp-metapref-paper.dl -filter=in
+

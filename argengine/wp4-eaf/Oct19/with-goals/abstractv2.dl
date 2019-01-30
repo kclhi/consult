@@ -1,0 +1,100 @@
+% general rule 
+%% -- when there is an action, it becomes an argument in the AF.
+a(A) :- action(A).
+
+% nhs painkillers guideline
+action(ibuprofen) :- suffers_from(patient,oa,T).
+
+goal(rp) :- action(ibuprofen).
+fulfils(ibuprofen,rp):- action(ibuprofen).
+
+% guideline step 1.b
+offer(d) :- patient(X), not_tolerates(X,c), step_in_treatment(s1).  
+action(thiazide) :- offer(d).
+
+goal(rbp) :- action(thiazide).
+fulfils(thiazide,rbp):- action(thiazide).
+
+% general facts about the patient
+patient(jane).
+age(jane,60).
+ethnic_origin(jane,black_african).
+not_tolerates(jane,c).
+
+% time t0
+%a(i) :- time(t0).
+suffers_from(patient,oa,t0) :- time(t0).
+
+% time t1
+step_in_treatment(s1) :- time(t1).
+%a(t) :- time(t1).
+suffers_from(patient,hypertension,t1) :- time(t1).
+
+% time t2
+%r(a(thiazide),a(ibuprofen)) :- cq1([action(thiazide),goal(rbp),not_action(ibuprofen)]).
+%r(a(ibuprofen),a(thiazide)) :- cq1([action(thiazide),goal(rbp),not_action(ibuprofen)]).
+
+% comes from the drug interaction box
+contradiction(rp,rbp) :- time(t2). 
+contradiction(rbp,rp) :- time(t2). 
+
+% time t3
+%a(c) :- cq2([alter(c,i),goal(rp),action(p)]).
+%a(p) :- cq2([alter(p,i),goal(rp),action(p)]).
+
+% comes from NHS guideline
+fulfils(paracetamol,rp).
+fulfils(codeine,rp).
+
+alter(paracetamol,ibuprofen) :- time(t3).
+alter(codeine,ibuprofen) :- time(t3).
+alter(paracetamol,codeine) :- time(t3).
+
+% general rule
+alternative(X,Y) :- alter(X,Y). 
+alternative(X,Y) :- alter(Y,X). 
+
+% attacks between alternative arguments
+r(a(X),a(Y)) :- alternative(X,Y).
+
+% time t4
+% pref1 is an argument that has a status
+%a(pref1) :- time(t4).
+%d(a(pref1),a(c),a(p)) :- time(t4).
+
+%%% meta-level information
+
+% time t2 -- q1
+r(a(A1),a(A2)) :- goal(G1), goal(G2), contradiction(G1,G2), action(A1), action(A2), fulfils(A1,G1), fulfils(A2,G2), time(t2).
+
+%% uncomment this for a cq1 predicate
+%cq1([action(A1),goal(G1),not_action(A2)]) :- goal(G1), goal(G2), contradiction(G1,G2), action(A1), action(A2), fulfils(A1,G1), fulfils(A2,G2).
+
+% time t3 -- q2
+a(A2) :- action(A1), alternative(A1,A2), fulfils(A1,G), fulfils(A2,G), time(t3).
+
+%% uncomment this for a cq2 predicate
+%cq2([alter(A2,A1),goal(G),action(A2)]) :- action(A1), alter(A1,A2), fulfils(A1,G), fulfils(A2,G). 
+
+% time t4
+satisfies(paracetamol,option([pain_relief(moderate),addiction(none)])).
+satisfies(codeine,option([pain_relief(high),addiction(opiate)])).
+
+a(pref(
+option([pain_relief(moderate),addiction(none)]),
+option([pain_relief(high),addiction(opiate)])
+)) :- time(t4). % input to metalevel framework
+
+d(a(pref(A,B)),
+a(Y),
+a(X)) :- satisfies(X,A), satisfies(Y,B), a(pref(A,B)), r(a(Y),a(X)), time(t4).
+
+% time setting
+time(t0).
+%time(t1).
+%time(t2).
+%time(t3).
+%time(t4).
+
+% query: ./dlv ground.dl metalevel.dl wp4-eaf/abstractv2.dl -filter=in
+

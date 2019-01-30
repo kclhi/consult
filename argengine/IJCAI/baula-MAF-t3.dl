@@ -1,0 +1,44 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% S1.b description 
+a(offer(c,s1)) :- patient(X), age(X,A), A>=55, not -tolerated(c), stime(s1).
+a(offer(c,s1)) :- patient(X), black_afr(X), not -tolerated(c), stime(s1).
+a(offer(c,s1)) :- patient(X), black_car(X), not -tolerated(c), stime(s1).
+
+a(offer(d,s1)) :- -tolerated(c), stime(s1).
+
+% S2 description
+
+a(offer(a1,s2)) :- patient(X), black_afr(X), stime(s2).
+a(offer(a2,s2)) :- patient(X), black_afr(X), stime(s2).
+
+% side effects
+-tolerated(c) :- obs(swollen_ankles).
+
+%attacks
+r(a(offer(c,s1)),a(offer(d,s1))) :- a(offer(c,s1)), a(offer(d,s1)).
+r(a(offer(d,s1)),a(offer(c,s1))) :- a(offer(c,s1)), a(offer(d,s1)).
+
+r(a(offer(a1,s2)),a(offer(a2,s2))) :- a(offer(a1,s2)), a(offer(a2,s2)).
+r(a(offer(a2,s2)),a(offer(a1,s2))) :- a(offer(a1,s2)), a(offer(a2,s2)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% facts
+%stime(s1).
+patient(baula).
+age(baula,32).
+black_afr(baula).
+%drugInUse(c,s1). 
+
+%stime(s1).
+%obs(swollen_ankles).
+drugInUse(d,s1).
+
+stime(s2).
+%pref
+p(a(offer(a1,s2)),a(offer(a2,s2))).
+
+% query: ./dlv ground.dl metalevel-all.dl IJCAI/baula-MAF-t3.dl -filter=in
+% output: {in(def(offer(a1,s2),offer(a2,s2))), in(just(offer(a1,s2))), in(reject(offer(a2,s2))), in(mpref(offer(a1,s2),offer(a2,s2)))}
+
+

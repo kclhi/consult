@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% S1.b description 
+arg(offer(c,s1)) :- age(X,A), A>=55, not arg(nottolerated(c)), stime(s1).
+arg(offer(c,s1)) :- black_afr(X), not arg(nottolerated(c)), stime(s1).
+arg(offer(c,s1)) :- black_car(X), not arg(nottolerated(c)), stime(s1).
+
+arg(offer(d,s1)) :- arg(nottolerated(c)), stime(S).
+
+% S2 description
+arg(offer(a1,s2)) :- black_afr(X), stime(s2).
+arg(offer(a2,s2)) :- black_afr(X), stime(s2).
+
+% side effects
+%-tolerated(c) :- obs(swollen_ankles).
+
+%attacks
+att(offer(c,s1),offer(d,s1)) :- arg(offer(c,s1)), arg(offer(d,s1)).
+att(offer(d,s1),offer(c,s1)) :- arg(offer(c,s1)), arg(offer(d,s1)).
+att(offer(c,s2),offer(d,s2)) :- arg(offer(c,s2)), arg(offer(d,s2)).
+att(offer(d,s2),offer(c,s2)) :- arg(offer(c,s2)), arg(offer(d,s2)).
+
+
+att(offer(a1,S),offer(a2,S)) :- arg(offer(a1,S)), arg(offer(a2,S)), stime(S).
+att(offer(a2,S),offer(a1,S)) :- arg(offer(a1,S)), arg(offer(a2,S)), stime(S).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% facts
+stime(s1).
+age(baula,32).
+black_afr(baula).
+
+% cq3 encoding -- should not be in the picture
+arg(costeffective(a2)).
+att(costeffective(a2),offer(a1,s1)).
+
+
+% query: ./dlv vaf_paf.dl ground.dl IJCAI/running/baula-v1.dl -filter=in
+% output
+% {in(offer(c,s1))}
+

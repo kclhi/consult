@@ -1,0 +1,19 @@
+% args
+a(a).
+a(b).
+
+% attacks
+r(a(a),a(b)).
+
+% values
+val(a(a),value(v1)).
+val(a(b),value(v2)).
+
+% audience preferences
+
+paud(agent(a1),p(value(v1),value(v2))).
+paud(agent(a2),p(value(v2),value(v1))).
+
+% preferred semantics
+% query: ./dlv prefex.dl metalevel.dl DEMO/metalevel-avaf.dl -filter=in
+
