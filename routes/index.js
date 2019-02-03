@@ -5,10 +5,20 @@ var router = express.Router();
 const dncURL = "http://localhost:3001";
 
 router.post('/', function(req, res, next) {
-    
-	console.log(req.body);
 
-    request.post(req.body.response_url.replace("https://consult.hscr.kcl.ac.uk", "http://localhost:8065"), {
+    // New chat session
+    if ( req.body.response_url ) {
+
+        var chatContext = {}
+        chatContext.responseUrl = req.body.response_url;
+
+    } else {
+
+        var chatContext = req.body.context.chatContext;
+
+    }
+
+    request.post(chatContext.responseUrl.replace("https://consult.hscr.kcl.ac.uk", "http://localhost:8065"), {
         json: {
     	      "response_type": "in_channel",
             "attachments": [
@@ -21,7 +31,8 @@ router.post('/', function(req, res, next) {
                     "integration": {
                         "url": dncURL,
                         "context": {
-                            "action": "do_something_ephemeral"
+                            "action": "do_something_ephemeral",
+                            "chatContext": chatContext
                         }
                     }
                 },
@@ -30,7 +41,8 @@ router.post('/', function(req, res, next) {
                     "integration": {
                         "url": dncURL,
                         "context": {
-                            "action": "do_something_update"
+                            "action": "do_something_update",
+                            "chatContext": chatContext
                         }
                     }
                 }
