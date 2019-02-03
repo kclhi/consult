@@ -5,6 +5,8 @@ var router = express.Router();
 const dncURL = "http://localhost:3001";
 
 router.post('/', function(req, res, next) {
+    
+	console.log(req.body);
 
     request.post(req.body.response_url.replace("https://consult.hscr.kcl.ac.uk", "http://localhost:8065"), {
         json: {

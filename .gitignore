@@ -124,7 +124,6 @@ typings/
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 .Python
-[Bb]in
 [Ii]nclude
 [Ll]ib
 [Ll]ib64
@@ -134,5 +133,7 @@ pyvenv.cfg
 .venv
 .nenv
 pip-selfcheck.json
+
+*.swp
 
 # End of https://www.gitignore.io/api/git,node,linux,dropbox,virtualenv
