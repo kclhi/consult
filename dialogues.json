@@ -1,0 +1,746 @@
+[
+	{
+		"Dialogue": "1",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "Triggered by user asking for some advice re painkillers - Advice button",
+		"Print": "What can I help you with?",
+		"CondJmp": [
+			{
+				"msg": "Medication",
+				"n": "110"
+			},
+			{
+				"msg": "Reminder",
+				"n": "120"
+			},
+			{
+				"msg": "Symptom",
+				"n": "130"
+			},
+			{
+				"msg": "Overview",
+				"n": "140"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "110",
+		"BranchLevel": "1.1",
+		"Comment": "",
+		"Print": "Do you want to know more about medication? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "120",
+		"BranchLevel": "1.2",
+		"Comment": "",
+		"Print": "You want a reminder? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "130",
+		"BranchLevel": "1.3",
+		"Comment": "",
+		"Print": "Ok, what symptom?",
+		"CondJmp": [
+			{
+				"msg": "Headache",
+				"n": "131"
+			},
+			{
+				"msg": "Backpain",
+				"n": "132"
+			},
+			{
+				"msg": "Gastrointestinal",
+				"n": "135"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "131",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Do you want to know more about the symptom of headache? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "132",
+		"BranchLevel": "1.1.3",
+		"Comment": "if 'backpain', then",
+		"Print": "It is recommended that you take: 'ibuprofen\", would you like more details?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "133"
+			},
+			{
+				"msg": "No",
+				"n": "134"
+			}
+		],
+		"Media": "",
+		"Actions": "instantiates ASPT and this goes into the text in 1.1.3.1 User can ask arg engine \"Why x\" or \"Why not y\".",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "133",
+		"BranchLevel": "1.1.3.1",
+		"Comment": "if 'yes', then",
+		"Print": "Given your medical history and that 'Ibuprofen' helps with back pain then 'ibuprofen\" is recommended.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "Arg Engine provides list of questions (options) user can ask. Arg Engine answers questions / explains reasoning.",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "134",
+		"BranchLevel": "1.1.3.2",
+		"Comment": "if 'no', then",
+		"Print": "Ok, you know where you can find me.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "135",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Do you want to know more about the symptom of gastronintestinal pain? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "140",
+		"BranchLevel": "1.4",
+		"Comment": "",
+		"Print": "Do you want an overview? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "Triggered by app",
+		"Print": "Hi, it looks like your blood pressure is 128 which is slightly elevated compared to your baseline. You can see this on the Dashboard by going to the Blood Pressure Tab and selecting to focus on monthly summaries of your Systolic Blood Pressure. Last week you enquired about 'back pain' are you still experiencing it?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "110"
+			},
+			{
+				"msg": "No",
+				"n": "120"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": "BP value"
+	},
+	{
+		"Dialogue": "2",
+		"Step": "110",
+		"BranchLevel": "1.1",
+		"Comment": "if 'yes', then",
+		"Print": "Last week it was recommended that you take 'ibuprofen',  are you taking the full dose allowed?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "111"
+			},
+			{
+				"msg": "No",
+				"n": "115"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "111",
+		"BranchLevel": "1.1.1",
+		"Comment": "if 'yes', then",
+		"Print": "Consider changing your painkiller; there are two options: Given your medical history and that 'paracetamol' helps with back pain then 'paracetamol\" is recommended. It is recommended that you consider 'paracetamol'. Given your medical history and that 'codeine' helps with back pain then 'codeine\" is recommended.",
+		"CondJmp": [
+			{
+				"msg": "Continue",
+				"n": "112"
+			}
+		],
+		"Media": "",
+		"Actions": "instantiates ASPT ArgEngine provides options.",
+		"Var": ""
+	},
+	{
+		"Dialogue": "",
+		"Step": "112",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Do you have a preference?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "114"
+			},
+			{
+				"msg": "No",
+				"n": "113"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "113",
+		"BranchLevel": "1.1.1.2",
+		"Comment": "if 'no', then",
+		"Print": "'paracetamol' may not be as effective at lowering the pain, however it is more gentle on the digestive system. 'codeine' is more effective at loweing pain, however it can cause addiction.",
+		"CondJmp": [
+			{
+				"msg": "Continue",
+				"n": "114"
+			}
+		],
+		"Media": "",
+		"Actions": "this can be where the GP preferences are imposed ArgEngine explains.",
+		"Var": ""
+	},
+	{
+		"Dialogue": "",
+		"Step": "114",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "What do you prefer?",
+		"CondJmp": [
+			{
+				"msg": "Codeine",
+				"n": "9999"
+			},
+			{
+				"msg": "Paracetamol",
+				"n": "9999"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "115",
+		"BranchLevel": "1.1.2",
+		"Comment": "if 'no', then",
+		"Print": "Consider taking the maximal dose",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "120",
+		"BranchLevel": "1.2",
+		"Comment": "if 'no', then",
+		"Print": "Are you feeling anxious or stressed?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "121"
+			},
+			{
+				"msg": "No",
+				"n": "122"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "121",
+		"BranchLevel": "1.2.1",
+		"Comment": "if 'yes', then",
+		"Print": "Consider talking to your GP about managing stress",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "122",
+		"BranchLevel": "1.2.2",
+		"Comment": "if 'no', then",
+		"Print": "Consider talking to your GP about possibly adjusting your BP medication",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "9999",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Goodbye.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "3",
+		"Step": "1",
+		"BranchLevel": "",
+		"Comment": "Triggered by the user asking about a chart",
+		"Print": "What value do you want to discuss?",
+		"CondJmp": [
+			{
+				"msg": "SBP",
+				"n": "110"
+			},
+			{
+				"msg": "DBP",
+				"n": "120"
+			},
+			{
+				"msg": "HR",
+				"n": "130"
+			},
+			{
+				"msg": "ECG",
+				"n": "140"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "3",
+		"Step": "110",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/common-health-questions/lifestyle/what-is-blood-pressure/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "3",
+		"Step": "120",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/common-health-questions/lifestyle/what-is-blood-pressure/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "3",
+		"Step": "130",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-check-my-pulse/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "3",
+		"Step": "140",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/conditions/electrocardiogram/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "Triggered by user considering intervention",
+		"Print": "What intervention do you want to consider?",
+		"CondJmp": [
+			{
+				"msg": "Stop smoking",
+				"n": "110"
+			},
+			{
+				"msg": "Lower cholesterol",
+				"n": "120"
+			},
+			{
+				"msg": "Lower bp",
+				"n": "130"
+			},
+			{
+				"msg": "Antiplatelet",
+				"n": "140"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "110",
+		"BranchLevel": "1.1",
+		"Comment": "Display Cates plots for 'stop smoking' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Stop Smoking\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "Show diagrams in chat?",
+		"Actions": "can ask if they want to check another intervention?",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "120",
+		"BranchLevel": "1.2",
+		"Comment": "Display Cates plots for 'lower cholesterol' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Lower Cholesterol\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "130",
+		"BranchLevel": "1.3",
+		"Comment": "Display Cates plots for 'lower bp' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Lower Blood Pressure\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "140",
+		"BranchLevel": "1.4",
+		"Comment": "Display Cates plots for 'antiplatelet' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Antiplatelet\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "1",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Are you still experiencing back pain?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "101"
+			},
+			{
+				"msg": "No",
+				"n": "201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "101",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Are you taking the maximum dose of Ibuprofen?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "102"
+			},
+			{
+				"msg": "No",
+				"n": "104"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "102",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Consider changing your painkiller. You have two options: Paracetaol or codamol. Would like to have advice on those painkillers?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "201"
+			},
+			{
+				"msg": "No",
+				"n": "999"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "103",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/live-well/healthy-body/which-painkiller-to-use/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "104",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Consider taking the maximum dose of the painkiller.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "201",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Are you feeling anxious",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "202"
+			},
+			{
+				"msg": "No",
+				"n": "204"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "202",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Would you like me to provide some advice on how to handle your anxiety?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "203"
+			},
+			{
+				"msg": "No",
+				"n": "999"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "203",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.mind.org.uk/information-support/types-of-mental-health-problems/anxiety-and-panic-attacks/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "204",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Please book an appointment with your GP to check your blood pressure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "999",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Ok, you know where you can find me.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]
