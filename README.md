@@ -2,7 +2,9 @@
 
 [![Build Status]()]()
 
-Middleware designed to -
+Middleware designed to interface with the Garmin API, detailed at https://developerportal.garmin.com/.
+
+
 
 ## Getting Started
 
@@ -71,6 +73,18 @@ NODE_ENV=production npm start
 ```
 
 Deployed systems should switch to a production database format (e.g. Postgres).
+
+## Interaction
+
+Visit
+
+```
+/garmin/register/[username]/
+```
+
+to register a given username.
+
+
 
 ## Built With
 

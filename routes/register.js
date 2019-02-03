@@ -4,7 +4,7 @@ var router = express.Router();
 router.get('/:id', (req, res) => {
 
     req.session.userid = req.params.id
-    res.redirect('/connect/garmin');
+    res.redirect('/garmin/connect/garmin');
 
 });
 

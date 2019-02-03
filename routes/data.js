@@ -17,7 +17,7 @@ router.get('/daily/:id/:start/:end', (req, res) => {
 
     }).then(function(user) {
 
-    	var url = 'https://healthapi.garmin.com/wellness-api/rest/dailies',
+    	var url = 'https://healthapi.garmin.com/wellness-api/rest/userMetrics',
     	authorisation = {
     		oauth_consumer_key : config.GARMIN_CONSUMER_KEY,
     		oauth_token : user.token,
@@ -45,6 +45,7 @@ router.get('/daily/:id/:start/:end', (req, res) => {
           },
           function (error, response, body) {
 
+            console.log(response);
             res.end(body);
 
           }

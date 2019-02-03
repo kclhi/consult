@@ -33,7 +33,7 @@ router.get('/callback', (req, res) => {
     });
 
     res.end();
-    
+
 });
 
 module.exports = router;

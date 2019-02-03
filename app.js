@@ -56,12 +56,15 @@ app.use(grant(grantConfig));
 var register = require('./routes/register');
 var connect = require('./routes/connect');
 var data = require('./routes/data');
+var ping = require('./routes/ping');
 
 router.use('/register', register)
 router.use('/', connect)
 router.use('/data', data)
+router.use('/', ping)
 
-app.use('/garmin', router);
+// Enables URL prefix.
+app.use('/', router);
 
 ///////////////////////////
 
