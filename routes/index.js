@@ -2,7 +2,7 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var fs = require('fs');
-var Handlebars= require('handlebars');
+var Handlebars = require('handlebars');
 
 const dncURL = "http://localhost:3001";
 
@@ -69,7 +69,7 @@ router.post('/', function(req, res, next) {
     }
 
     // Load scripted dialoges as array of JSON objects
-    var dialArr = JSON.parse(fs.readFileSync('dialogues.json', 'utf8'));
+    var dialArr = JSON.parse(fs.readFileSync('dialogues/dialogue.json', 'utf8'));
 
     if (receivedMsg.trim() == '/start')  { // hard-code specfic dialogue for demo
         // receivedMsg = '/1';
@@ -86,18 +86,20 @@ router.post('/', function(req, res, next) {
             response.Print = "Hi, how can I help you? Please select from the buttons further below which dialogue you want to start.";
 
             for (const answer of dialIds) {
-                answerButtonsArr.push(
-                    {
-                        "name": "/" + answer,
-                        "integration": {
-                            "url": dncURL,
-                            "context": {
-                                "command": "/" + answer,
-                                "chatContext": chatContext
+                if ( answer ) {
+                    answerButtonsArr.push(
+                        {
+                            "name": "/" + answer,
+                            "integration": {
+                                "url": dncURL,
+                                "context": {
+                                    "command": "/" + answer,
+                                    "chatContext": chatContext
+                                }
                             }
-                        }
-                    },
-                );
+                        },
+                    );
+                }
             }
             processUserMessage = false;
             break;
@@ -159,7 +161,6 @@ router.post('/', function(req, res, next) {
             var condjmpArr   = msgRow.CondJmp // If undefined ...
             response.Answers = condjmpArr.map(a => tmplRpl(a.msg) ); // Array of available answers
             // response.Print   = Handlebars.compile(msgRow.Print)(); // Compile tags in msg
-            console.log(response);
             response.Print   = tmplRpl(msgRow.Print); // Compile tags in msg
             response.Media   = msgRow.Media;
             response.Action  = msgRow.Action;
