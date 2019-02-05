@@ -4,7 +4,7 @@ var router = express.Router();
 var fs = require('fs');
 var Handlebars = require('handlebars');
 
-const config = require('../config/config');
+const config = require('../lib/config');
 
 Handlebars.registerHelper('p1u1stepsHome', function() { return '23095'; });
 Handlebars.registerHelper('p1u1stepsPercTotal', function() { return '65'; });
@@ -244,11 +244,16 @@ router.post('/response', function(req, res, next) {
 
 router.post('/initiate', function(req, res, next) {
 
+  console.log(config.MATTERMOST_WEBHOOK);
+  res.end();
+  return;
+
   findResponse("/" + req.body.dialogueID, {}, function(response, answerButtonsArr) {
 
-    request.post(config.MATTERMOST_WEBHOOK, {
+    request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_INTERNAL_URL, config.CHAT_EXTERNAL_URL), {
         json: {
             "response_type": "in_channel",
+            "username": "stroke-companion",
             "channel": req.body.username,
             "attachments": [
                 {

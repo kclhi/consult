@@ -5,12 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session')
 
+// Environment variables
+require('dotenv').config()
+
 var dialogueRouter = require('./routes/index');
 
 var app = express();
-
-// Environment variables
-require('dotenv').config()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
