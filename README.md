@@ -2,9 +2,7 @@
 
 [![Build Status]()]()
 
-Middleware designed to interface with the Garmin API, detailed at https://developerportal.garmin.com/.
-
-
+Middleware designed to interface with the Garmin API, detailed at https://developerportal.garmin.com and https://healthapi.garmin.com/.
 
 ## Getting Started
 
