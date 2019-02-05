@@ -8,11 +8,16 @@
 
 library(ggplot2)
 
-bp.check<-function(nn){
-  bp<-read.csv("data/bp-cs-p123.csv")
-  past<-head(bp, n=nn)
+#* Check blood pressure
+#* @param csv Data
+#* @param nn History
+#* @post /check/bp
+bp.check<-function(csv, nn){
+  values.str = gsub("\\n","\n",csv,fixed=T)
+  bp<-read.csv(text=values.str)
+  past<-head(bp, n=as.numeric(nn))
   p1<-mean(past$sys)
-  recent<-tail(bp, n=nn)
+  recent<-tail(bp, n=as.numeric(nn))
   p2<-mean(recent$sys)
   diffr<-(p1/p2)
   if (diffr<1) {res<-"Raised Systolic BP"}
