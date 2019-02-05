@@ -4,9 +4,19 @@ var fs = require('fs');
 var request = require('request');
 var config = require('../lib/config.js');
 
-router.get('/', function(req, res, next) {
+router.post('/', function(req, res, next) {
 
     // TODO: Create patient resource if does not exist (assume default Practitioner and Organization already in system).
+
+    var bpTemplate = fs.readFileSync('fhir-json-templates/bp.json', 'utf8');
+
+    bpTemplate = bpTemplate.replace("[effectiveDateTime]", new Date().toISOString());
+
+    Object.keys(req.body).forEach(function(key) {
+
+        bpTemplate = bpTemplate.replace("[" + key + "]", req.body[key]);
+
+    });
 
     request.post(
         {
@@ -15,7 +25,7 @@ router.get('/', function(req, res, next) {
            headers: {
              "Content-Type": "application/fhir+json; charset=UTF-8"
            },
-           body: fs.readFileSync('fhir-json-templates/bp.json', 'utf8')
+           body: bpTemplate
         },
         function (error, response, body) {
 
