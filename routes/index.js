@@ -244,13 +244,9 @@ router.post('/response', function(req, res, next) {
 
 router.post('/initiate', function(req, res, next) {
 
-  console.log(config.MATTERMOST_WEBHOOK);
-  res.end();
-  return;
-
   findResponse("/" + req.body.dialogueID, {}, function(response, answerButtonsArr) {
 
-    request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_INTERNAL_URL, config.CHAT_EXTERNAL_URL), {
+    request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
         json: {
             "response_type": "in_channel",
             "username": "stroke-companion",
