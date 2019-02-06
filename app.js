@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var auth = require('basic-auth');
 var grant = require('grant-express')
+var auth = require('basic-auth');
 
 // Environment variables
 require('dotenv').config()
@@ -21,7 +22,6 @@ const config = require('./lib/config');
 
 // Express app and master router
 var app = express();
-var router = express.Router();
 
 // Session
 var session = require('express-session');
@@ -58,13 +58,29 @@ var connect = require('./routes/connect');
 var data = require('./routes/data');
 var ping = require('./routes/ping');
 
-router.use('/register', register)
-router.use('/', connect)
-router.use('/data', data)
-router.use('/', ping)
+app.use('/', ping)
+app.use('/', connect)
 
-// Enables URL prefix.
-app.use('/', router);
+app.use('/', function(req, res, next) {
+
+  var credentials = auth(req)
+
+  if ( !credentials || credentials.name !== config.USERNAME || credentials.pass !== config.PASSWORD ) {
+
+      res.status(401);
+      res.header('WWW-Authenticate', 'Basic realm="forbidden"');
+      res.send('Access denied');
+
+  } else {
+
+      next();
+
+  }
+
+});
+
+app.use('/register', register)
+app.use('/data', data)
 
 ///////////////////////////
 
