@@ -1,6 +1,7 @@
 # Project specific
 output/
 *.pdf
+*.sqlite
 
 # Created by https://www.gitignore.io/api/macos,linux,dropbox
 

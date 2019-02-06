@@ -7,22 +7,31 @@
 #setwd("/Users/isabelsassoon/Documents/CONSULT/case study june 18")
 
 library(ggplot2)
+library(DBI)
 
 #* Check blood pressure
 #* @param csv Data
-#* @param nn History
+#* @param nn History length -- ~MDC should this be a constant?
 #* @post /check/bp
-bp.check<-function(csv, nn){
+bp.check<-function(csv, nn) {
+  # Get CSV formatted input.
   values.str = gsub("\\n","\n",csv,fixed=T)
   bp<-read.csv(text=values.str)
+  # Add latest values to DB.
+  bpdb<-dbConnect(RSQLite::SQLite(), "bp.sqlite")
+  # TODO: Delete from table if outside 'nn' length.
+  dbWriteTable(bpdb, "bp", bp, append=TRUE)
+  # Get all data.
+  bp<-dbGetQuery(bpdb, 'SELECT * FROM bp')
   past<-head(bp, n=as.numeric(nn))
-  p1<-mean(past$sys)
+  p1<-mean(past$c271649006)
   recent<-tail(bp, n=as.numeric(nn))
-  p2<-mean(recent$sys)
+  p2<-mean(recent$c271649006)
   diffr<-(p1/p2)
   if (diffr<1) {res<-"Raised Systolic BP"}
   else if (diffr==1) {res<-"Systolic BP Stable"}
   else {res<-"Lower Systolic BP"}
+  dbDisconnect(bpdb)
   return(res)
   #return(paste("BP trend", res, sep=":"))
 }
