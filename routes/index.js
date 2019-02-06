@@ -13,7 +13,7 @@ router.put('/Observation/:id', function(req, res, next) {
         req.body.component.forEach(function(measure) {
 
             // TODO: get username
-            
+
             // 'c' added (code) as in R colum name references cannot be numerical.
             headers.push("c" + measure["code"].coding[0].code);
             row.push(measure["valueQuantity"].value);
@@ -38,14 +38,14 @@ router.put('/Observation/:id', function(req, res, next) {
         if (!error && response.statusCode == 200) {
 
              // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-             if ( response.body.contains("Raised") ) {
+             if ( response.body && response.body[0].indexOf("Raised") > -1) {
 
-                 request.post(config.DIALOGUE_MANAGER_URL + "/initiate", {
+                 request.post(config.DIALOGUE_MANAGER_URL + "/dialogue/initiate", {
                      json: {
                        // TODO: Something from the data miner response that indicates which dialogue to initiate.
-                       "dialogue": "/2",
+                       "dialogueID": "2",
                        // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
-                       "username": "@user",
+                       "username": "@admin",
                      },
                  },
                  function (error, response, body) {
