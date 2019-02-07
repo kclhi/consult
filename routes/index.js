@@ -185,14 +185,20 @@ function findResponse(receivedMsg, chatContext, callback) {
 
 router.post('/response', function(req, res, next) {
 
-    // New chat session
-    if ( req.body.response_url ) {
+    // New chat session.
+    if ( !req.body.context || !req.body.context.chatContext ) {
 
-        var chatContext = {}
-        chatContext.responseUrl = req.body.response_url;
+        var chatContext = {};
+        chatContext.user = req.body.user_name;
         chatContext.chatId = req.body.user_id;
 
-    } else {
+    // For initiated chats, assign them an ID. Could also be done during the initiation.
+    } else if ( !req.body.context.chatContext.chatId ) {
+
+        var chatContext = req.body.context.chatContext;
+        chatContext.chatId = req.body.user_id;
+
+    } else  {
 
         var chatContext = req.body.context.chatContext;
 
@@ -200,7 +206,7 @@ router.post('/response', function(req, res, next) {
 
     if ( req.body.command ) {
 
-        var receivedMsg = req.body.command;  // Input from Telegram
+        var receivedMsg = req.body.command;  // Input from chat server
 
     } else if ( req.body.context.command ) {
 
@@ -210,9 +216,11 @@ router.post('/response', function(req, res, next) {
 
     findResponse(receivedMsg, chatContext, function(response, answerButtonsArr) {
 
-      request.post(chatContext.responseUrl.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
+      request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
           json: {
-      	      "response_type": "in_channel",
+              "response_type": "in_channel",
+              "username": "stroke-companion",
+              "channel": "@" + chatContext.user,
               "attachments": [
                   {
                       "pretext": "",
@@ -244,13 +252,16 @@ router.post('/response', function(req, res, next) {
 
 router.post('/initiate', function(req, res, next) {
 
-  findResponse("/" + req.body.dialogueID, {}, function(response, answerButtonsArr) {
+  var chatContext = {};
+  chatContext.user = req.body.username;
+
+  findResponse("/" + req.body.dialogueID, chatContext, function(response, answerButtonsArr) {
 
     request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
         json: {
             "response_type": "in_channel",
             "username": "stroke-companion",
-            "channel": req.body.username,
+            "channel": "@" + req.body.username,
             "attachments": [
                 {
                     "image_url": "https://images-na.ssl-images-amazon.com/images/I/51gG7k4ZdJL._SX425_.jpg",
@@ -263,13 +274,13 @@ router.post('/initiate', function(req, res, next) {
     },
     function (error, response, body) {
 
-        if (!error && response.statusCode == 200) {
+        if (!error) {
 
-             console.log(response.body)
+            console.log(response.statusCode);
 
         } else {
 
-             console.log(error)
+             console.log(error);
 
         }
 
