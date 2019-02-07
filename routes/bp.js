@@ -18,19 +18,30 @@ router.post('/', function(req, res, next) {
 
     });
 
-    request.post(
+    request(
         {
-           method: "POST",
-           url : config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation?_format=json",
-           headers: {
+            method: "POST",
+            url : config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation?_format=json",
+            headers: {
+             "Authorization": "Basic " + new Buffer(config.FHIR_USERNAME + ":" + config.FHIR_PASSWORD).toString("base64"),
              "Content-Type": "application/fhir+json; charset=UTF-8"
-           },
-           body: bpTemplate
+            },
+            rejectUnauthorized: false,
+            requestCert: true,
+            body: bpTemplate
         },
         function (error, response, body) {
 
-         console.log(response);
-         res.sendStatus(200);
+          if (!error && response.statusCode == 201) {
+
+               console.log(response.statusCode);
+               res.sendStatus(200);
+
+          } else {
+
+               console.log(error + " " + response.statusCode);
+
+          }
 
         }
     );

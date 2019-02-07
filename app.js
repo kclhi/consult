@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// Environment variables
+require('dotenv').config()
+
 var bp = require('./routes/bp');
 
 var app = express();
