@@ -1,3 +1,3 @@
 library(plumber)
 r<-plumb('r-code-for-bp-alert.R')
-r$run(port=3006)
+r$run(port=3003)
