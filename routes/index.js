@@ -12,7 +12,7 @@ router.put('/Observation/:id', function(req, res, next) {
 
         req.body.component.forEach(function(measure) {
 
-            // TODO: get username
+            // TODO: get Patient ID.
 
             // 'c' added (code) as in R colum name references cannot be numerical.
             headers.push("c" + measure["code"].coding[0].code);
@@ -35,42 +35,56 @@ router.put('/Observation/:id', function(req, res, next) {
     },
     function (error, response, body) {
 
+        console.log("Data miner: " + response.statusCode);
+
         if (!error && response.statusCode == 200) {
 
              // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
              if ( response.body && response.body[0].indexOf("Raised") > -1) {
 
-                 request.post(config.DIALOGUE_MANAGER_URL + "/dialogue/initiate", {
-                     json: {
+                 request({
+                    method: "POST",
+                    url: config.DIALOGUE_MANAGER_URL + "/dialogue/initiate",
+                    headers: {
+                     "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
+                    },
+                    json: {
                        // TODO: Something from the data miner response that indicates which dialogue to initiate.
                        "dialogueID": "2",
                        // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
-                       "username": "@admin",
-                     },
+                       "username": "user",
+                    }
                  },
                  function (error, response, body) {
 
+                     console.log("Dialogue manager: " + response.statusCode);
+
                      if (!error && response.statusCode == 200) {
 
-                          console.log(response.body);
+                          console.log(response.statusCode);
+                          res.sendStatus(200);
 
                      } else {
 
                           console.log(error);
+                          res.sendStatus(400);
 
                      }
 
                  });
 
+             } else {
+
+               res.sendStatus(200);
+
              }
 
         } else {
 
-             console.log(error)
+             console.log(error);
+             res.sendStatus(400);
 
         }
-
-        res.sendStatus(200);
 
     });
 
