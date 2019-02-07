@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const config = require('../lib/config');
 var request = require('request');
+var lastAlert;
 
 router.put('/Observation/:id', function(req, res, next) {
 
@@ -39,10 +40,18 @@ router.put('/Observation/:id', function(req, res, next) {
 
         if (!error && response.statusCode == 200) {
 
-             // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-             if ( response.body && response.body[0].indexOf("Raised") > -1) {
+            var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
 
-                 request({
+            if ( lastAlert ) {
+
+                minutesSinceLastAlert = Math.floor(((new Date().getTime() - lastAlert.getTime()) / 1000) / 60);
+
+            }
+
+            // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
+            if ( response.body && response.body[0].indexOf("Raised") > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD) {
+
+                request({
                     method: "POST",
                     url: config.DIALOGUE_MANAGER_URL + "/dialogue/initiate",
                     headers: {
@@ -62,6 +71,7 @@ router.put('/Observation/:id', function(req, res, next) {
                      if (!error && response.statusCode == 200) {
 
                           console.log(response.statusCode);
+                          lastAlert = new Date();
                           res.sendStatus(200);
 
                      } else {
@@ -75,14 +85,14 @@ router.put('/Observation/:id', function(req, res, next) {
 
              } else {
 
-               res.sendStatus(200);
+                 res.sendStatus(200);
 
              }
 
         } else {
 
-             console.log(error);
-             res.sendStatus(400);
+            console.log(error);
+            res.sendStatus(400);
 
         }
 
