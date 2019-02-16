@@ -4,7 +4,7 @@ var models = require('../models');
 
 router.get('/callback', (req, res) => {
 
-    if (!req.session.userid) {
+    if (!req.session.userId) {
       res.end();
       return;
     }
@@ -13,12 +13,12 @@ router.get('/callback', (req, res) => {
 
         where: {
 
-            id: req.session.userid
+            id: req.session.userId
 
         },
         defaults: {
 
-            id: req.session.userid,
+            id: req.query.userId,
             token: req.query.access_token,
             secret: req.query.access_secret
 
@@ -28,9 +28,7 @@ router.get('/callback', (req, res) => {
 
         console.log(err);
 
-    }).then(function() {
-
-    });
+    }).then(function() {});
 
     res.end();
 

@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 var grantConfig = require('./grant-config.json');
 grantConfig["garmin"]["key"] = config.GARMIN_CONSUMER_KEY;
 grantConfig["garmin"]["secret"] = config.GARMIN_SECRET;
-app.use(grant(grantConfig));
+app.use('/garmin', grant(grantConfig));
 
 ///////////////////////////
 

@@ -1,7 +1,7 @@
 {
   "server": {
-    "protocol": "http",
-    "host": "localhost:3000"
+    "protocol": "https",
+    "host": "consult.hscr.kcl.ac.uk/garmin"
   },
   "garmin": {
    "request_url": "https://connectapi.garmin.com/oauth-service/oauth/request_token",

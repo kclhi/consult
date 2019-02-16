@@ -7,7 +7,10 @@ module.exports = function(sequelize, DataTypes) {
        primaryKey: true,
        type: DataTypes.INTEGER
       },
-      token: DataTypes.STRING,
+      token: {
+       primaryKey: true,
+       type: DataTypes.STRING
+      },
       secret: DataTypes.STRING,
       refresh: DataTypes.STRING
 
