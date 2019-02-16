@@ -5,10 +5,6 @@ var models = require('../models');
 const config = require('../lib/config');
 var oauthSignature = require('oauth-signature');
 
-router.get('/daily/:id/:start/:end', (req, res) => {
-
-    
-
-});
+router.get('/daily/:id/:start/:end', (req, res) => {});
 
 module.exports = router;
