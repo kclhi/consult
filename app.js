@@ -22,6 +22,7 @@ const config = require('./lib/config');
 
 // Express app and master router
 var app = express();
+var router = express.Router();
 
 // Session
 var session = require('express-session');
@@ -58,10 +59,10 @@ var connect = require('./routes/connect');
 var data = require('./routes/data');
 var ping = require('./routes/ping');
 
-app.use('/', ping)
-app.use('/', connect)
+router.use('/', ping);
+router.use('/', connect);
 
-app.use('/', function(req, res, next) {
+router.use('/', function(req, res, next) {
 
   var credentials = auth(req)
 
@@ -79,8 +80,10 @@ app.use('/', function(req, res, next) {
 
 });
 
-app.use('/register', register)
-app.use('/data', data)
+router.use('/register', register);
+router.use('/data', data);
+
+app.use('/garmin', router);
 
 ///////////////////////////
 
