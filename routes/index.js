@@ -104,8 +104,11 @@ router.put('/Observation/:id', function(req, res, next) {
 
                           }
 
+                          // TODO: Miner response is oddly nested.
+                          minerResponse = JSON.parse(response.body[0]);
+
                           // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-                          if ( response.body && response.body[0].indexOf("Raised") > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD) {
+                          if ( response.body && minerResponse[0]["bp.trend"].indexOf("Raised") > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD) {
 
                               request({
                                   method: "POST",
