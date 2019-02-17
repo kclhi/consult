@@ -55,20 +55,20 @@
     {
       "coding": [
         {
-          "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
-          "code": "L",
-          "display": "low"
+          "system": "",
+          "code": "",
+          "display": ""
         }
       ],
-      "text": "Below low normal"
+      "text": ""
     }
   ],
   "bodySite": {
     "coding": [
       {
-        "system": "http://snomed.info/sct",
-        "code": "368209003",
-        "display": "Right arm"
+        "system": "",
+        "code": "",
+        "display": ""
       }
     ]
   },
@@ -93,12 +93,12 @@
         {
           "coding": [
             {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
-              "code": "N",
-              "display": "normal"
+              "system": "",
+              "code": "",
+              "display": ""
             }
           ],
-          "text": "Normal"
+          "text": ""
         }
       ]
     },
@@ -122,12 +122,12 @@
         {
           "coding": [
             {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
-              "code": "L",
-              "display": "low"
+              "system": "",
+              "code": "",
+              "display": ""
             }
           ],
-          "text": "Below low normal"
+          "text": ""
         }
       ]
     }
