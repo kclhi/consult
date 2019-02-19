@@ -76,47 +76,47 @@ class DataScience(Resource):
         import json
         pdict = json.loads(patient_data)
         
-        id = pdict['patient.id']
+        id = str(pdict['patient.id'])
         age = pdict['age']
         eth = pdict['ethnicity']
         bp = pdict['raised_bp']
         
         facts=''.join(['patient(', id ,').\n', 'age(', id, ',', str(age),').\n', 'ethnic_origin(', id, ',', eth,').\n'])
+        if bp:
+            facts = facts + 'side_effect(hbp).\n'
         
-        filename = "argengine/DEMO/"+id+"-facts.dl"
-        import os
-        if os.path.exists(filename):
-            os.remove(filename)
+        #filename = "argengine/DEMO/"+id+"-facts.dl"
+        #import os
+        #if os.path.exists(filename):
+        #    os.remove(filename)
         
-        f= open(filename,"w+")
-        f.write(facts)
-        f.close()
+        #f= open(filename,"w+")
+        #f.write(facts)
+        #f.close()
         
-        return {'patient.id': id}
+        return {'patient.facts': facts}
     
 class HelloWorld(Resource):
     def get(self):
         return {'hello': 'world'}
      
      
-# scenario 1: backpain information provided, ibuprofen recommended        
-# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=1&keyname=symptom&value=backpain" -X POST -v
-
-# scenario 2: high blood pressure is detected (part of facts file). backpain information provided. preference information provided. 
-# all these steps should have the same session id
-# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=2&keyname=symptom&value=backpain" -X POST -v
-# example curl query: curl http://localhost:5000/argengine/chatbot -d "pid=1234&sid=2&keyname=preference&value=paracetamol,codeine" -X POST -v
-
 class ChatBot(Resource):
     def get(self):
         return {'hello':'world'}
         
     def post(self):
-        pid = request.form['pid']
-        sid = request.form['sid']
-        keyname = request.form['keyname']
-        value = request.form['value']
-        #iterno = request.form['iterno']
+        query_data = request.form['data']
+        import json
+        pdict = json.loads(query_data)
+                
+        pid = str(pdict['pid'])
+        sid = str(pdict['sid'])
+        keyname = pdict['keyname']
+        value = pdict['value']
+        pdata = pdict['pdata']
+        
+        print pdata
         
         params = list()
             
@@ -160,13 +160,53 @@ class ChatBot(Resource):
         params.append('../data/'+pid+'/'+sid+'/'+'queries.dl')
             
         ####### get the facts about the patient
-        params.append("DEMO/1234-"+sid+".dl") # TODO patient facts file should be the last parameter
+        # get the patient facts
+        import requests
+        resp = requests.post('http://0.0.0.0:5000/argengine/datascience', data={'data': json.dumps(pdata)})
+        resp.json = json.loads(resp.text)
+        pfacts = resp.json['patient.facts']
+        
+        ####### create a new query file
+        f= open('data/'+pid+'/'+sid+'/'+pid+'.dl',"w+")
+        # write the patient facts to it
+        f.write(pfacts)
+        # close the file
+        f.close()
+        
+        # add the patient facts to the params
+        params.append('../data/'+pid+'/'+sid+'/'+pid+'.dl')
+        
+        #print params
             
         ####### run the reasoning engine
         hostip = request.host
         result_json=parse_aspartix.run_aspartix_web(hostip,params)
             
         return result_json
+
+# chatbot testing class
+class TestChatbot(Resource):
+    def get(self,name):
+        import requests
+        import json
+            
+        if name == 's1':
+            query = {'pid': 1234, 'sid':1, 'keyname': 'symptom', 'value':'backpain', 'pdata': {'patient.id':1234,'raised_bp':0,'last.sys':142,'last.dia':86,'pid':1234,'age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'}}
+            
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})
+        
+        
+        if name == 's2-1':
+            query = {'pid': 1234, 'sid':2, 'keyname': 'symptom', 'value':'backpain', 'pdata': {'patient.id':1234,'raised_bp':1,'last.sys':142,'last.dia':86,'pid':1234,'age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'}}
+            
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)}) 
+            
+        if name == 's2-2':
+            query = {'pid': 1234, 'sid':2, 'keyname': 'preference', 'value':'paracetamol,codeine', 'pdata': {'patient.id':1234,'raised_bp':1,'last.sys':142,'last.dia':86,'pid':1234,'age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'}}
+            
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})                  
+        
+        return json.loads(resp.text) 
 
 
 # routing
@@ -175,7 +215,7 @@ api.add_resource(ChatBot, '/argengine/chatbot')
 api.add_resource(InvokeEngine, '/argengine/<string:name>') # by example name
 api.add_resource(DataScience, '/argengine/datascience')
 
-
+api.add_resource(TestChatbot, '/argengine/chatbot/<string:name>') # chatbot testing
 
 if __name__ == '__main__':
     app.run(debug=True)

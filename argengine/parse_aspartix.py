@@ -124,11 +124,12 @@ def export_graph_to_url(params,hostip,args,inargs,att,id=0,export_json=0):
     #A.write("file.dot") 
     A.layout(prog='dot')
     # Write the PNG file to the directory to the static/images folder
-    A.draw('./static/images/'+params[-1].split('.')[0].split('/')[1]+'_'+str(id)+'.png')
+    A.draw('./static/images/'+params[-1].split('/')[-1].split('.')[0]+'_'+str(id)+'.png')
     
     # prepare the result object
     # image generation will be removed later
-    result["AF_url"] = host+hostip+'/static/images/'+params[-1].split('.')[0].split('/')[1]+'_'+str(id)+'.png'
+    #result["AF_url"] = host+hostip+'/static/images/'+params[-1].split('.')[0].split('/')[1]+'_'+str(id)+'.png'
+    result["AF_url"] = host+hostip+'/static/images/'+params[-1].split('/')[-1].split('.')[0]+'_'+str(id)+'.png'
     result["AF_json"] = G_json
     
     return result

@@ -1,4 +1,4 @@
- cp -R /home/nadin/uploads/jan19-2/reasoner/* .
+ cp -R /home/nadin/uploads/feb19/reasoner/* .
  git add .
  git commit -m "Update"
  pkill -f ssh-agent
