@@ -1,0 +1,50 @@
+{
+    "var:collectReading": [
+        {
+            "$": ":COLLECT_READING",
+            "type": "prov:QUALIFIED_NAME"
+        }
+    ],
+    "var:patient": [
+        {
+            "$": ":PATIENT",
+            "type": "prov:QUALIFIED_NAME"
+        }
+    ],
+    "var:sensorCompany": [
+        {
+            "$": ":COMPANY",
+            "type": "prov:QUALIFIED_NAME"
+        }
+    ],
+    "var:sensorReading": [
+        {
+            "$": ":SENSOR_READING",
+            "type": "prov:QUALIFIED_NAME"
+        }
+    ],
+    "vvar:readingType": [
+        {
+            "$": "[code]",
+            "type": "xsd:string"
+        }
+    ],
+    "vvar:patientID": [
+        {
+            "$": "[pid]",
+            "type": "xsd:string"
+        }
+    ],
+    "vvar:companyName": [
+        {
+            "$": "[company]",
+            "type": "xsd:string"
+        }
+    ],
+    "vvar:sensorReading": [
+        {
+            "$": "[value]",
+            "type": "xsd:string"
+        }
+    ]
+}

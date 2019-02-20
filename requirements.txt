@@ -6,3 +6,5 @@ request
 debug
 pug
 dotenv
+async
+json
