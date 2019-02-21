@@ -7,7 +7,7 @@ var logger = require('morgan');
 // Environment variables
 require('dotenv').config()
 
-var bp = require('./routes/bp');
+var indexRouter = require('./routes/index');
 
 var app = express();
 var router = express.Router();
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-router.use('/bp', bp);
+router.use('/', indexRouter);
 
 app.use('/convert', router);
 
