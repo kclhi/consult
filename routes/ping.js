@@ -39,23 +39,31 @@ router.post('/ping', (req, res) => {
     };
 
     const callbackURL = doc.checkKey('callbackURL');
+    
+    if ( callbackURL ) {
 
-    authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.GARMIN_SECRET, user.secret, { encodeSignature: false });
+      authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.GARMIN_SECRET, user.secret, { encodeSignature: false });
 
-    authorisation = 'OAuth ' + require('querystring').stringify(authorisation, '", ', '="') + '"';
+      authorisation = 'OAuth ' + require('querystring').stringify(authorisation, '", ', '="') + '"';
 
-    request({
-      url: callbackURL,
-      headers: {
-        "Authorization": authorisation
+      request({
+        url: callbackURL,
+        headers: {
+          "Authorization": authorisation
+        },
       },
-    },
-    function (error, response, body) {
+      function (error, response, body) {
       
-      console.log(body);
+        console.log(body);
+        res.sendStatus(200);
+      
+      });
+
+    } else {
+
       res.sendStatus(200);
-      
-    });
+
+    }
 
   });
 
