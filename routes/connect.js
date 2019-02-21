@@ -9,6 +9,7 @@ router.get('/callback', (req, res) => {
       return;
     }
 
+    // TODO: Update details if user happens to register again OR disable re-registration.
     models.users.findOrCreate({
 
         where: {

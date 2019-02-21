@@ -11,19 +11,19 @@ router.post('/ping', (req, res) => {
   console.log(req.body);
 
   const doc = jsonFind(req.body);
-  
+
   const token = doc.checkKey('userAccessToken')
-  
+
   models.users.findOne({
 
     where: {
-      
+
       token: token
-    
+
     },
 
   }).then(function(user) {
-    
+
     authorisation = {
       oauth_consumer_key : config.GARMIN_CONSUMER_KEY,
       oauth_token : token,
@@ -39,7 +39,7 @@ router.post('/ping', (req, res) => {
     };
 
     const callbackURL = doc.checkKey('callbackURL');
-    
+
     if ( callbackURL ) {
 
       authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.GARMIN_SECRET, user.secret, { encodeSignature: false });
@@ -53,21 +53,60 @@ router.post('/ping', (req, res) => {
         },
       },
       function (error, response, body) {
-     
-	try {
-	    var parsedBody = JSON.parse(body);
-	    Object.keys(parsedBody[0]).forEach(function(key) {
-		if (key.indexOf("HeartRate") >= 0) {
-		    value = parsedBody[0][key];
-		    if ( typeof value === 'object' ) value = JSON.stringify(value);
-		    console.log(key + ": " + value);
-		}
-            });
-	} catch(error) {
-	    console.log(error);
-	}      
-        res.sendStatus(200);
-      
+
+        var heartRateExtract = {};
+
+      	try {
+
+          var parsedBody = JSON.parse(body);
+
+          Object.keys(parsedBody[0]).forEach(function(key) {
+
+            if (key.indexOf("HeartRate") >= 0) {
+
+              value = parsedBody[0][key];
+      		    if ( typeof value === 'object' ) value = JSON.stringify(value);
+      		    heartRateExtract[key] = value;
+
+            }
+
+          });
+
+        } catch(error) {
+
+      	  console.log(error);
+
+        }
+
+        if ( Object.keys(heartRateExtract).length > 0 ) {
+
+          request.post(config.SENSOR_TO_FHIR_URL + "convert/hr", {
+
+						json: heartRateExtract
+
+  				},
+  				function (error, response, body) {
+
+						if (!error && response.statusCode == 200) {
+
+							console.log(response.body)
+
+						} else {
+
+							console.log(error)
+
+						}
+
+            res.sendStatus(200);
+
+  				});
+
+        } else {
+
+          res.sendStatus(200);
+
+        }
+
       });
 
     } else {
