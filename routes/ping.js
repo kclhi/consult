@@ -53,8 +53,19 @@ router.post('/ping', (req, res) => {
         },
       },
       function (error, response, body) {
-      
-        console.log(body);
+     
+	try {
+	    var parsedBody = JSON.parse(body);
+	    Object.keys(parsedBody[0]).forEach(function(key) {
+		if (key.indexOf("HeartRate") >= 0) {
+		    value = parsedBody[0][key];
+		    if ( typeof value === 'object' ) value = JSON.stringify(value);
+		    console.log(key + ": " + value);
+		}
+            });
+	} catch(error) {
+	    console.log(error);
+	}      
         res.sendStatus(200);
       
       });
