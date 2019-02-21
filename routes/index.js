@@ -1,9 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const config = require('../lib/config');
-var request = require('request');
+const request = require('request');
+const async = require('async');
+const provenance = require('../lib/provenance');
+const fs = require('fs');
 var lastAlert;
-var async = require('async');
 
 function callFHIRServer(query, params, callback) {
 
@@ -20,6 +22,19 @@ function callFHIRServer(query, params, callback) {
       callback(body);
 
   });
+
+}
+
+function populateProvenanceTemplateBP(pid, code, value, callback) {
+
+  var fragment = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
+  fragment = fragment.replace("[pid]", pid);
+  fragment = fragment.replace("[company]", "Nokia");
+  fragment = fragment.replace("[code]", code);
+  fragment = fragment.replace("[value]", value);
+
+  const ID = pid + "Nokia" + code + value + Date.now();
+  provenance.add(ID, fragment, "temp-0", "provenance-templates/template-bp.json", function(response) { callback(response); });
 
 }
 
@@ -46,6 +61,7 @@ router.put('/Observation/:id', function(req, res, next) {
 
       callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
 
+          // TODO: Remove async.
           async.each(JSON.parse(medicationDispenseData).entry, function(medicationDispense, callback) {
 
               var medication = 1;
@@ -77,8 +93,11 @@ router.put('/Observation/:id', function(req, res, next) {
                   req.body.component.forEach(function(measure) {
 
                       // 'c' added (code) as in R colum name references cannot be numerical.
-                      bpHeaders.push("c" + measure["code"].coding[0].code);
-                      bpRow.push(measure["valueQuantity"].value);
+                      const code = "c" + measure["code"].coding[0].code;
+                      const value = measure["valueQuantity"].value;
+                      bpHeaders.push(code);
+                      bpRow.push(value);
+                      populateProvenanceTemplateBP(patientID, code, value, function(response) {});
 
                   });
 

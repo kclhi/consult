@@ -1,25 +1,25 @@
 {
     "var:collectReading": [
         {
-            "$": ":COLLECT_READING",
+            "$": ":COLLECT_READING_[id]",
             "type": "prov:QUALIFIED_NAME"
         }
     ],
     "var:patient": [
         {
-            "$": ":PATIENT",
+            "$": ":PATIENT_[id]",
             "type": "prov:QUALIFIED_NAME"
         }
     ],
     "var:sensorCompany": [
         {
-            "$": ":COMPANY",
+            "$": ":COMPANY_[id]",
             "type": "prov:QUALIFIED_NAME"
         }
     ],
     "var:sensorReading": [
         {
-            "$": ":SENSOR_READING",
+            "$": ":SENSOR_READING_[id]",
             "type": "prov:QUALIFIED_NAME"
         }
     ],
