@@ -80,6 +80,8 @@ router.post('/ping', (req, res) => {
 
         if ( Object.keys(heartRateExtract).length > 0 ) {
 
+          heartRateExtract["subjectReference"] = user.id;
+          
           request.post(config.SENSOR_TO_FHIR_URL + "convert/hr", {
 
 						json: heartRateExtract
