@@ -4,24 +4,17 @@ var fs = require('fs');
 var request = require('request');
 var config = require('../lib/config.js');
 
-router.post('/hr', function(req, res, next) {
-
-  console.log(req.body);
-  res.sendStatus(200);
-
-});
-
-router.post('/bp', function(req, res, next) {
+function createFHIRResource(reading, data, callback) {
 
   // TODO: Create patient resource if does not exist (assume default Practitioner and Organization already in system).
 
-  var bpTemplate = fs.readFileSync('fhir-json-templates/bp.json', 'utf8');
+  var template = fs.readFileSync("fhir-json-templates/" + reading + ".json", 'utf8');
 
-  bpTemplate = bpTemplate.replace("[effectiveDateTime]", new Date().toISOString());
+  template = template.replace("[effectiveDateTime]", new Date().toISOString());
 
-  Object.keys(req.body).forEach(function(key) {
+  Object.keys(data).forEach(function(key) {
 
-    bpTemplate = bpTemplate.replace("[" + key + "]", req.body[key]);
+    template = template.replace("[" + key + "]", data[key]);
 
   });
 
@@ -35,24 +28,36 @@ router.post('/bp', function(req, res, next) {
       },
       rejectUnauthorized: false,
       requestCert: true,
-      body: bpTemplate
+      body: template
     },
     function (error, response, body) {
 
       if (!error && response.statusCode == 201) {
 
         console.log(response.statusCode);
-        res.sendStatus(200);
+        callback(200);
 
       } else {
 
         console.log(error + " " + response.statusCode);
+        callback(200);
 
       }
 
     }
 
   );
+
+}
+router.post('/hr', function(req, res, next) {
+
+  createFHIRResource("hr", req.body, function(status) { res.sendStatus(status); });
+
+});
+
+router.post('/bp', function(req, res, next) {
+
+  createFHIRResource("bp", req.body, function(status) { res.sendStatus(status); });
 
 });
 
