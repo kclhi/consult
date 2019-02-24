@@ -10,6 +10,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 Before starting, [download and install python](https://www.python.org/downloads/), [pip](https://packaging.python.org/tutorials/installing-packages/#use-pip-for-installing), [virtualenv](https://virtualenv.pypa.io/en/latest/installation/) and [Node.js](https://nodejs.org/en/download/).
 
+### Other service communication
+
+Receives messages from: fhir-server ([install](https://github.kcl.ac.uk/consult/fhir-server/blob/master/README.md)) ...
+
+Sends messages to: data-miner ([install](https://github.kcl.ac.uk/consult/data-miner/blob/master/README.md)), fhir-server ([install](https://github.kcl.ac.uk/consult/fhir-server/blob/master/README.md)), dialogue-manager ([install](https://github.kcl.ac.uk/consult/dialogue-manager/blob/native-js/README.md)) ...
+
 ## Download
 
 (Recommended) [Create an SSH key](https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and clone this repository.

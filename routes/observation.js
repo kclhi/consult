@@ -38,7 +38,7 @@ function populateProvenanceTemplateBP(pid, code, value, callback) {
 
 }
 
-router.put('/Observation/:id', function(req, res, next) {
+router.put('/:id', function(req, res, next) {
 
   // Use code to determine type of observation.
   if ( req.body.code.coding[0].code == "8867-4" ) {
