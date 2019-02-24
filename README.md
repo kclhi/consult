@@ -10,6 +10,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 Before starting, [download and install python](https://www.python.org/downloads/), [pip](https://packaging.python.org/tutorials/installing-packages/#use-pip-for-installing), [virtualenv](https://virtualenv.pypa.io/en/latest/installation/) and [Node.js](https://nodejs.org/en/download/).
 
+### Other service communication
+
+Receives messages from: message-passer ([install](https://github.kcl.ac.uk/consult/message-passer/blob/native-js/README.md)) ...
+
+Sends messages to: mattermost-server ([install](https://hub.docker.com/r/mattermost/mattermost-preview/)) and argumentation-engine ([install](https://github.kcl.ac.uk/consult/argumentation-engine/blob/upload/README.md)) ...
+
 ## Download
 
 (Recommended) [Create an SSH key](https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and clone this repository.
