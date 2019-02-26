@@ -1,8 +1,9 @@
-var express = require('express');
-var router = express.Router();
-var fs = require('fs');
-var request = require('request');
-var config = require('../lib/config.js');
+const express = require('express');
+const router = express.Router();
+const fs = require('fs');
+const request = require('request');
+const config = require('../lib/config.js');
+const utils = require('../lib/utils.js');
 
 function createFHIRResource(reading, data, callback) {
 
@@ -18,39 +19,16 @@ function createFHIRResource(reading, data, callback) {
 
   });
 
-  request(
-    {
-      method: "POST",
-      url : config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation?_format=json",
-      headers: {
-       "Authorization": "Basic " + new Buffer(config.FHIR_USERNAME + ":" + config.FHIR_PASSWORD).toString("base64"),
-       "Content-Type": "application/fhir+json; charset=UTF-8"
-      },
-      rejectUnauthorized: false,
-      requestCert: true,
-      body: template
-    },
-    function (error, response, body) {
+  utils.callFHIRServer(config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation?_format=json", template, function(statusCode) {
 
-      if (!error && response.statusCode == 201) {
+    callback(statusCode)
 
-        console.log(response.statusCode);
-        callback(200);
-
-      } else {
-
-        console.log(error + " " + response.statusCode);
-        callback(200);
-
-      }
-
-    }
-
-  );
+  });
 
 }
 router.post('/hr', function(req, res, next) {
 
+  // TODO: If using time offsets, pre-process here as set of individual readings, and ensure repeat readings are not sent (i.e. choose timestamp).
   createFHIRResource("hr", req.body, function(status) { res.sendStatus(status); });
 
 });

@@ -1,8 +1,13 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const async = require('async');
+const fs = require('fs')
+
+const utils = require('./lib/utils.js')
+const config = require('./lib/config.js')
 
 // Environment variables
 require('dotenv').config()
@@ -25,6 +30,38 @@ app.use(express.static(path.join(__dirname, 'public')));
 router.use('/', indexRouter);
 
 app.use('/convert', router);
+
+app.post('/populate', function(req, res, next) {
+
+  fhirResources = [["Organization", "organization"],
+                   ["Practitioner",	"practitioner"],
+                   ["Patient", "patient"],
+                   ["Condition", "condition-oa"],
+                   ["Condition", "condition-hypertension"],
+                   ["Medication", "medication-nsaid"],
+                   ["Medication", "medication-thiazide"],
+                   ["MedicationDispense", "medication-dispense-nsaid"],
+                   ["MedicationDispense", "medication-dispense-thiazide"],
+                   ["Subscription", "subscription"]];
+
+  async.eachSeries(fhirResources, function (resource, next){
+
+    const url = config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + resource[0] + "?_format=json";
+
+    utils.callFHIRServer(url, fs.readFileSync("fhir-json-templates/" + resource[1] + ".json", 'utf8'), function(statusCode) {
+
+      console.log(resource[1] + ": " + statusCode);
+      next();
+
+    });
+
+  }, function(err) {
+
+    res.sendStatus(200);
+
+  });
+
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
