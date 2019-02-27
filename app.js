@@ -8,7 +8,6 @@ var logger = require('morgan');
 require('dotenv').config()
 
 var observationRouter = require('./routes/observation');
-var provenanceRouter = require('./routes/provenance');
 
 var app = express();
 
@@ -24,7 +23,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/Observation', observationRouter);
-app.use('/provenance', provenanceRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

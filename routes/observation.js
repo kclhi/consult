@@ -1,29 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const config = require('../lib/config');
 const request = require('request');
 const async = require('async');
-const provenance = require('../lib/provenance');
 const fs = require('fs');
+
+const provenance = require('../lib/provenance');
+const config = require('../lib/config');
+const utils = require('../lib/utils');
+
 var lastAlert;
-
-function callFHIRServer(query, params, callback) {
-
-  var url = config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + query + "/_history/1?_format=json" + params;
-
-  request.get(url, {
-
-    headers: {
-     "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64"),
-    },
-
-  }, function(error, response, body) {
-
-      callback(body);
-
-  });
-
-}
 
 function populateProvenanceTemplateBP(pid, code, value, callback) {
 
@@ -59,7 +44,7 @@ router.put('/:id', function(req, res, next) {
   bpHeaders.push("pid");
   bpRow.push(patientID);
 
-  callFHIRServer("Patient/" + patientID, "", function(patientData) {
+  utils.callFHIRServer("Patient/" + patientID, "", function(patientData) {
 
       patientHeaders.push("birthDate");
       patientRow.push(JSON.parse(patientData).birthDate);
@@ -67,14 +52,14 @@ router.put('/:id', function(req, res, next) {
       patientHeaders.push("ethnicity");
       patientRow.push(JSON.parse(patientData).extension[0].extension[0].valueCoding.display);
 
-      callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
+      utils.callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
 
           // TODO: Remove async.
           async.each(JSON.parse(medicationDispenseData).entry, function(medicationDispense, callback) {
 
               var medication = 1;
 
-              callFHIRServer(medicationDispense.resource.medicationReference.reference, "", function(medicationData) {
+              utils.callFHIRServer(medicationDispense.resource.medicationReference.reference, "", function(medicationData) {
 
                   patientHeaders.push("medication" + medication)
                   patientRow.push(JSON.parse(medicationData)['code']['coding'][0].display);
@@ -85,7 +70,7 @@ router.put('/:id', function(req, res, next) {
 
           }, function(medicationDispenseDataError) {
 
-              callFHIRServer("Condition", "subject=" + patientID, function(conditionData, callback) {
+              utils.callFHIRServer("Condition", "subject=" + patientID, function(conditionData, callback) {
 
                   var problem = 1;
 
@@ -191,6 +176,72 @@ router.put('/:id', function(req, res, next) {
       });
 
    });
+
+});
+
+function dayOfWeekAsString(dayIndex) {
+
+  return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
+
+}
+
+function replaceAll(str, find, replace) {
+
+  return str.replace(new RegExp(find, 'g'), replace);
+
+}
+
+router.get('/:patientID/:code/:start/:end', function(req, res, next) {
+
+  utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end, function(data) {
+
+    header = [];
+    rows = "";
+
+    JSON.parse(data).entry.forEach(function(resource) {
+
+      components = [];
+
+      if ( resource.resource.component ) {
+
+        components = resource.resource.component;
+
+      } else if ( resource.resource.valueQuantity ) {
+
+        components.push(resource.resource);
+
+      }
+
+      resourceTime = new Date(resource.resource.effectiveDateTime);
+
+      row = [];
+
+      components.forEach(function(component) {
+
+        var code = component.code.coding[0].code;
+        var formattedCode = "\"c" + code + "\"";
+        var value = component.valueQuantity.value;
+
+        if ( !header.includes(formattedCode) ) header.push(formattedCode);
+
+        row.push(value);
+
+      });
+
+      row.push(resourceTime.toISOString().split('T')[0]);
+      row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
+      row.push("\"" + dayOfWeekAsString(resourceTime.getDay()) + "\"");
+      rows += row + "\n";
+
+    });
+
+    header.push("\"datem\"");
+    header.push("\"date.month\"");
+    header.push("\"weekday\"\n");
+
+    res.send(replaceAll(header.toString(), ",", " ") + replaceAll(rows.toString(), ",", " "));
+
+  });
 
 });
 
