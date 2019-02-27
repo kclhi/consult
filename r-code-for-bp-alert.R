@@ -5,7 +5,7 @@
 library(ggplot2)
 library(DBI)
 
-#* Check blood pressure
+#* Check blood pressure for exacerbations
 #* @param bp blood pressure data
 #* @param nn history length -- ~MDC should this be a constant?
 #* @param ehr patient facts
