@@ -26,6 +26,16 @@ function createFHIRResource(reading, data, callback) {
   });
 
 }
+
+/**
+ * @api {get} /convert/hr Populate a FHIR heart rate template with the supplied values
+ * @apiName ConvertHR
+ * @apiGroup Convert
+ *
+ * @apiParam {String} averageHeartRateInBeatsPerMinute  Heart rate value.
+ * @apiParam {String} subjectReference ID of the patient to which this reading pertains.
+ *
+ */
 router.post('/hr', function(req, res, next) {
 
   // TODO: If using time offsets, pre-process here as set of individual readings, and ensure repeat readings are not sent (i.e. choose timestamp).
@@ -33,6 +43,17 @@ router.post('/hr', function(req, res, next) {
 
 });
 
+/**
+ * @api {get} /convert/bp Populate a FHIR blood pressure template with the supplied values
+ * @apiName ConvertBP
+ * @apiGroup Convert
+ *
+ * @apiParam {String} 271649006  Systolic blood pressure value.
+ * @apiParam {String} 271650006  Diastolic blood pressure value.
+ * @apiParam {String} 8867-4  Heart rate value.
+ * @apiParam {String} subjectReference ID of the patient to which this reading pertains.
+ *
+ */
 router.post('/bp', function(req, res, next) {
 
   createFHIRResource("bp", req.body, function(status) { res.sendStatus(status); });
