@@ -191,9 +191,22 @@ function replaceAll(str, find, replace) {
 
 }
 
+
+/**
+ * @api {get} /:patientID/:code/:start/:end Request User information
+ * @apiName GetObservations
+ * @apiGroup Observations
+ *
+ * @apiParam {Number} patientID Users unique ID.
+ * @apiParam {Number} code The code of the observation being requested (e.g. Blood pressure: 85354-9).
+ * @apiParam {Number} start The start time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).
+ * @apiParam {Number} end The end time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).
+ *
+ * @apiSuccess {String} response A list of observation data as an R-formatted table.
+ */
 router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
-  utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end, function(data) {
+  utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
 
     header = [];
     rows = "";
@@ -219,7 +232,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
       components.forEach(function(component) {
 
         var code = component.code.coding[0].code;
-        var formattedCode = "\"c" + code + "\"";
+        var formattedCode = "\"c" + code.replace("-", "_") + "\"";
         var value = component.valueQuantity.value;
 
         if ( !header.includes(formattedCode) ) header.push(formattedCode);

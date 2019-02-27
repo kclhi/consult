@@ -14,7 +14,7 @@ Before starting, [download and install python](https://www.python.org/downloads/
 
 Receives messages from: fhir-server ([install](https://github.kcl.ac.uk/consult/fhir-server/blob/master/README.md)) ...
 
-Sends messages to: data-miner ([install](https://github.kcl.ac.uk/consult/data-miner/blob/master/README.md)), fhir-server ([install](https://github.kcl.ac.uk/consult/fhir-server/blob/master/README.md)), dialogue-manager ([install](https://github.kcl.ac.uk/consult/dialogue-manager/blob/native-js/README.md)) ...
+Sends messages to: data-miner ([install](https://github.kcl.ac.uk/consult/data-miner/blob/master/README.md)), fhir-server ([install](https://github.kcl.ac.uk/consult/fhir-server/blob/master/README.md)), dialogue-manager ([install](https://github.kcl.ac.uk/consult/dialogue-manager/blob/native-js/README.md)), UI ([install](https://github.kcl.ac.uk/consult/UI/blob/shiny-simplified/README.md)) ...
 
 ## Download
 
@@ -29,6 +29,10 @@ git clone git@github.kcl.ac.uk:consult/message-passer.git
 ```
 git clone https://github.kcl.ac.uk/consult/message-passer.git
 ```
+
+## Documentation
+
+[View](https://github.kcl.ac.uk/pages/consult/message-passer/).
 
 ## Editing
 
@@ -81,7 +85,7 @@ Run server:
 npm start
 ```
 
-The server runs by default on port 3002. Visit localhost:3004/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
+The server runs by default on port 3002. Visit localhost:3002/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
 
 ## Running the tests
 
