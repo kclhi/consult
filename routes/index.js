@@ -250,6 +250,16 @@ router.post('/response', function(req, res, next) {
 
 });
 
+/**
+ * @api {post} /initiate Initiate a dialogue with a Mattermost user.
+ * @apiName InitiateDialogue
+ * @apiGroup Dialogue
+ *
+ * @apiParam {String} username Users chat ID.
+ * @apiParam {Number} dialogueID The ID of the dialogue to start.
+ * @apiParam {Number} username Users chat ID.
+ *
+ */
 router.post('/initiate', function(req, res, next) {
 
   var chatContext = {};

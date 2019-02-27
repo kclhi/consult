@@ -30,6 +30,10 @@ git clone git@github.kcl.ac.uk:consult/dialogue-manager.git
 git clone https://github.kcl.ac.uk/consult/dialogue-manager.git
 ```
 
+## Documentation
+
+[View](https://github.kcl.ac.uk/pages/consult/dialogue-manager/).
+
 ## Editing
 
 This is an [express](https://expressjs.com/) project. The majority of the logic is contained within [app.js](app.js), and in the routes and lib folders.
