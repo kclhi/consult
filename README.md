@@ -1,4 +1,4 @@
-# Garmin
+# Garmin (device-integration_garmin)
 
 [![Build Status]()]()
 
@@ -10,23 +10,41 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Before installing, [download and install Node.js](https://nodejs.org/en/download/).
+Before starting, [download and install python](https://www.python.org/downloads/), [pip](https://packaging.python.org/tutorials/installing-packages/#use-pip-for-installing), [virtualenv](https://virtualenv.pypa.io/en/latest/installation/) and [Node.js](https://nodejs.org/en/download/).
 
-### Installing
+### Other service communication
 
-Clone this repository:
+Sends messages to: sensor-fhir-mapper ([install](https://github.kcl.ac.uk/consult/sensor-fhir-mapper/blob/master/README.md)).
 
-```
-git clone -
-```
+## Download
 
-Change into the directory:
+(Recommended) [Create an SSH key](https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and clone this repository.
 
 ```
-cd -
+git clone git@github.kcl.ac.uk:consult/device-integration.git
 ```
 
-(Optional) From within the project folder, create a node virtual environment (within a python virtual environment), and activate it:
+(Alternative) Clone this repository using HTTPs, suppling username and password:
+
+```
+git clone https://github.kcl.ac.uk/consult/device-integration.git
+```
+
+## Editing
+
+This is an [express](https://expressjs.com/) (lightweight server) project. The majority of the logic is contained within [app.js](app.js), and in the routes and lib folders.
+
+Once a file is edited, stage, commit and push changes from the root folder as follows:
+
+```
+git add .
+git commit -m "[details of changes]"
+git push
+```
+
+## Running
+
+Ensure you are in the root folder. Create a node virtual environment (within a python virtual environment), and activate it:
 
 ```
 virtualenv env
@@ -39,20 +57,39 @@ nodeenv nenv
 Install dependencies:
 
 ```
-npm install
+cat requirements.txt | xargs npm install -g
 ```
 
-Modify `lib/config.js` to include your ``, `` and `CALLBACK_BASE`, a publicly accessible end-point to receive callbacks from Nokia's API.
+Modify `lib/config.js` to include the address of the [sensor-fhir-mapper service](https://github.kcl.ac.uk/consult/sensor-fhir-mapper):
 
-## Usage
+```
+SENSOR_TO_FHIR_URL: '[sensor-fhir-mapper service]'
+```
 
-From within the project folder, run with:
+Create an environment file:
+
+```
+touch .env
+```
+
+Add the following information to this environment file using a text editor:
+
+```
+USERNAME="[username]"
+PASSWORD="[password]"
+GARMIN_CONSUMER_KEY="[key]"
+GARMIN_SECRET="[secret]"
+```
+
+Where [username] and [password] are credentials to secure this service, and [key] and [secret] are your Garmin details.
+
+Run server:
 
 ```
 npm start
 ```
 
-The app runs by default on port -.
+The server runs by default on port 3000. Visit localhost:3000/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
 
 ## Running the tests
 
@@ -64,6 +101,8 @@ npm test
 
 ## Deployment
 
+Running the software on a server is the same as running it locally: clone and run the project on a remote machine. One can make local changes, push them and then pull them on the remote server.
+
 Run in production using NODE_ENV environment variable, e.g.:
 
 ```
@@ -71,18 +110,6 @@ NODE_ENV=production npm start
 ```
 
 Deployed systems should switch to a production database format (e.g. Postgres).
-
-## Interaction
-
-Visit
-
-```
-/garmin/register/[username]/
-```
-
-to register a given username.
-
-
 
 ## Built With
 
