@@ -57,21 +57,22 @@ router.post('/ping', (req, res) => {
       function (error, response, body) {
 
         var heartRateExtract = {};
+        var summaryId;
+        var startTimeInSeconds;
+        var moderateIntensityDurationInSeconds;
+        var vigorousIntensityDurationInSeconds;
 
       	try {
 
-          var parsedBody = JSON.parse(body);
-          var summaryID;
+          const parsedBody = JSON.parse(body);
+          summaryId = utils.replaceAll(parsedBody[0]["summaryId"], "-", "");
+          startTimeInSeconds = parsedBody[0]["startTimeInSeconds"]
+          moderateIntensityDurationInSeconds = parsedBody[0]["moderateIntensityDurationInSeconds"];
+          vigorousIntensityDurationInSeconds = parsedBody[0]["vigorousIntensityDurationInSeconds"];
 
           Object.keys(parsedBody[0]).forEach(function(key) {
 
-            if ( key == "summaryId" ) {
-
-              summaryID = utils.replaceAll(parsedBody[0][key], "-", "");
-
-            }
-
-            if (key.indexOf("HeartRate") >= 0) {
+            if (key.indexOf("HeartRate") >= 0 || key.indexOf("Intensity") >= 0 ) {
 
               value = parsedBody[0][key];
       		    if ( typeof value === 'object' ) value = JSON.stringify(value);
@@ -89,8 +90,14 @@ router.post('/ping', (req, res) => {
 
         if ( Object.keys(heartRateExtract).length > 0 ) {
 
-          heartRateExtract["id"] = summaryID;
+          heartRateExtract["id"] = summaryId;
           heartRateExtract["subjectReference"] = user.id;
+
+          // startTimeInSeconds from API is missing trailing zeros.
+          const secondsInMeasurementRange = (Date.now() - parseInt(startTimeInSeconds + "000")) / 1000;
+          const totalActivitySeconds = parseInt(moderateIntensityDurationInSeconds) + parseInt(vigorousIntensityDurationInSeconds);
+
+          heartRateExtract["intensityDurationPercentage"] = (totalActivitySeconds / secondsInMeasurementRange) * 100;
 
           request.post(config.SENSOR_TO_FHIR_URL + "convert/hr", {
 
