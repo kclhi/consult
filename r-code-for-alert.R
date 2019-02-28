@@ -20,13 +20,13 @@ bp.check<-function(bp, nn, ehr) {
   bp<-read.csv(text=values.str)
 
   # Add latest values to DB.
-  bpdb<-dbConnect(RSQLite::SQLite(), "bp.sqlite")
+  datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
 
   # TODO: Delete from table if outside 'nn' length.
-  dbWriteTable(bpdb, "bp", bp, append=TRUE)
+  dbWriteTable(datadb, "bp", bp, append=TRUE)
 
   # Get all data.
-  bp<-dbGetQuery(bpdb, 'SELECT * FROM bp')
+  bp<-dbGetQuery(datadb, 'SELECT * FROM bp')
   past<-head(bp, n=as.numeric(nn))
   p1<-mean(past$c271649006)
   recent<-tail(bp, n=as.numeric(nn))
@@ -50,13 +50,41 @@ bp.check<-function(bp, nn, ehr) {
   library(jsonlite)
   patientFacts<-toJSON(patient.ehr.facts)
 
-  dbDisconnect(bpdb)
+  dbDisconnect(datadb)
 
   return(patientFacts)
 
   #future improvements:
   #Use dates, and check file is sorted by date before computing the means
   #additional indicators
+
+}
+
+#* Check heart rate for exacerbations
+#* @param hr heart rate data
+#* @param nn history length -- ~MDC should this be a constant?
+#* @param ehr patient facts
+#* @post /check/hr
+hr.check<-function(hr, nn, ehr) {
+
+  # Get CSV formatted input.
+  values.str = gsub("\\n","\n",hr,fixed=T)
+  hr<-read.csv(text=values.str)
+
+  # Add latest values to DB.
+  datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
+
+  # TODO: Delete from table if outside 'nn' length.
+  dbWriteTable(datadb, "hr", hr, append=TRUE)
+
+  # Get all data.
+  bp<-dbGetQuery(datadb, 'SELECT * FROM hr')
+
+  # Mining logic
+
+  dbDisconnect(datadb)
+
+  return("HR received.")
 
 }
 

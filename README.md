@@ -1,5 +1,7 @@
 # Data Miner (data-miner)
 
+Analyse patient sensor data.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -33,6 +35,10 @@ git clone git@github.kcl.ac.uk:consult/data-miner.git
 ```
 git clone https://github.kcl.ac.uk/consult/data-miner.git
 ```
+
+## Documentation
+
+[View](https://github.kcl.ac.uk/pages/consult/data-miner/).
 
 ## Editing
 
