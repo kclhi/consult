@@ -88,6 +88,36 @@
         "system": "http://unitsofmeasure.org",
         "code": "/min"
       }
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "82290-8",
+            "display": "Frequency of moderate to vigorous aerobic physical activity"
+          }
+        ],
+        "text": ""
+      },
+      "valueQuantity": {
+        "value": "[intensityDurationPercentage]",
+        "unit": "second",
+        "system": "http://unitsofmeasure.org",
+        "code": "second"
+      }
+    }
+  ],
+  "interpretation": [
+    {
+      "coding": [
+        {
+          "system": "",
+          "code": "",
+          "display": ""
+        }
+      ],
+      "text": ""
     }
   ]
 }
