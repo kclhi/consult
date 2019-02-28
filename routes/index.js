@@ -19,7 +19,7 @@ function createFHIRResource(reading, data, callback) {
 
   });
 
-  utils.callFHIRServer(config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation?_format=json", template, function(statusCode) {
+  utils.callFHIRServer(config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation/" + data["id"] + "?_format=json", template, function(statusCode) {
 
     callback(statusCode)
 
