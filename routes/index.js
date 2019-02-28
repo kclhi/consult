@@ -28,7 +28,7 @@ function createFHIRResource(reading, data, callback) {
 }
 
 /**
- * @api {get} /convert/hr Populate a FHIR heart rate template with the supplied values
+ * @api {post} /convert/hr Populate a FHIR heart rate template with the supplied values
  * @apiName ConvertHR
  * @apiGroup Convert
  *
@@ -44,7 +44,7 @@ router.post('/hr', function(req, res, next) {
 });
 
 /**
- * @api {get} /convert/bp Populate a FHIR blood pressure template with the supplied values
+ * @api {post} /convert/bp Populate a FHIR blood pressure template with the supplied values
  * @apiName ConvertBP
  * @apiGroup Convert
  *

@@ -1,6 +1,6 @@
 define({ "api": [
   {
-    "type": "get",
+    "type": "post",
     "url": "/convert/bp",
     "title": "Populate a FHIR blood pressure template with the supplied values",
     "name": "ConvertBP",
@@ -44,7 +44,7 @@ define({ "api": [
     "groupTitle": "Convert"
   },
   {
-    "type": "get",
+    "type": "post",
     "url": "/convert/hr",
     "title": "Populate a FHIR heart rate template with the supplied values",
     "name": "ConvertHR",
