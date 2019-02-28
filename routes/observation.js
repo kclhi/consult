@@ -150,8 +150,8 @@ function processObservation(req, res, callback) {
     // Get observation stats
     req.body.component.forEach(function(measure) {
 
-      // 'c' added (code) as in R colum name references cannot be numerical (bad practice too).
-      const code = "c" + measure["code"].coding[0].code;
+      // 'c' prefix added (code) as in R colum name references cannot be numerical (bad practice too). Any hypens also removed.
+      const code = "c" + measure["code"].coding[0].code.replace("-", "h");
       const value = measure["valueQuantity"].value;
       observationHeaders.push(code);
       observationRow.push(value);
@@ -185,7 +185,7 @@ router.put('/:id', function(req, res, next) {
 
         if (!error && response.statusCode == 200) {
 
-          console.log(response);
+          console.log(response.body);
           res.sendStatus(200);
 
         } else {
@@ -251,6 +251,7 @@ router.put('/:id', function(req, res, next) {
  */
 router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
+  // TODO: Ensure highest count.
   utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
 
     header = [];
@@ -279,7 +280,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
         components.forEach(function(component) {
 
           var code = component.code.coding[0].code;
-          var formattedCode = "\"c" + code.replace("-", "_") + "\"";
+          var formattedCode = "\"c" + code.replace("-", "h") + "\"";
           var value = component.valueQuantity.value;
 
           if ( !header.includes(formattedCode) ) header.push(formattedCode);
