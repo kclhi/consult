@@ -5,6 +5,9 @@
 library(ggplot2)
 library(DBI)
 
+#* @apiTitle Data miner (data-miner)
+#* @apiDescription Analyse patient sensor data.
+
 #* Check blood pressure for exacerbations
 #* @param bp blood pressure data
 #* @param nn history length -- ~MDC should this be a constant?
