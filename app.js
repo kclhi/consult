@@ -58,6 +58,7 @@ var register = require('./routes/register');
 var connect = require('./routes/connect');
 var data = require('./routes/data');
 var ping = require('./routes/ping');
+var simulate = require('./routes/simulate');
 
 router.use('/', ping);
 router.use('/', connect);
@@ -82,6 +83,7 @@ router.use('/', function(req, res, next) {
 
 router.use('/register', register);
 router.use('/data', data);
+router.use('/simulate', simulate);
 
 app.use('/garmin', router);
 
