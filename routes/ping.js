@@ -1,10 +1,12 @@
-var express = require('express');
-var router = express.Router();
-var models = require('../models');
+const express = require('express');
+const router = express.Router();
+const models = require('../models');
+const oauthSignature = require('oauth-signature');
+const jsonFind = require('json-find');
+const request = require('request');
+
 const config = require('../lib/config');
-var oauthSignature = require('oauth-signature');
-var jsonFind = require('json-find');
-var request = require('request');
+const utils = require('../lib/utils');
 
 router.post('/ping', (req, res) => {
 
@@ -59,8 +61,15 @@ router.post('/ping', (req, res) => {
       	try {
 
           var parsedBody = JSON.parse(body);
+          var summaryID;
 
           Object.keys(parsedBody[0]).forEach(function(key) {
+
+            if ( key == "summaryId" ) {
+
+              summaryID = utils.replaceAll(parsedBody[0][key], "-", "");
+
+            }
 
             if (key.indexOf("HeartRate") >= 0) {
 
@@ -80,8 +89,9 @@ router.post('/ping', (req, res) => {
 
         if ( Object.keys(heartRateExtract).length > 0 ) {
 
+          heartRateExtract["id"] = summaryID;
           heartRateExtract["subjectReference"] = user.id;
-          
+
           request.post(config.SENSOR_TO_FHIR_URL + "convert/hr", {
 
 						json: heartRateExtract

@@ -29,6 +29,9 @@ git clone git@github.kcl.ac.uk:consult/device-integration.git
 ```
 git clone https://github.kcl.ac.uk/consult/device-integration.git
 ```
+## Documentation
+
+[View](https://github.kcl.ac.uk/pages/consult/device-integration_garmin/).
 
 ## Editing
 

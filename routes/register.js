@@ -3,7 +3,7 @@ var router = express.Router();
 var auth = require('basic-auth');
 
 /**
- * @api {get} /garmin/register/:patientId Register a patient ID against a device.
+ * @api {get} /register/:patientId Register a patient ID against a device.
  * @apiName registerPatient
  * @apiGroup Register
  *
