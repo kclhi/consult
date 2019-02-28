@@ -48,7 +48,7 @@ app.post('/populate', function(req, res, next) {
 
     const url = config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + resource[0] + "?_format=json";
 
-    utils.callFHIRServer(url, fs.readFileSync("fhir-json-templates/" + resource[1] + ".json", 'utf8'), function(statusCode) {
+    utils.callFHIRServer(url, "POST", fs.readFileSync("fhir-json-templates/" + resource[1] + ".json", 'utf8'), function(statusCode) {
 
       console.log(resource[1] + ": " + statusCode);
       next();
