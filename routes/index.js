@@ -2,30 +2,10 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const request = require('request');
-const config = require('../lib/config.js');
-const utils = require('../lib/utils.js');
 
-function createFHIRResource(reading, data, callback) {
-
-  // TODO: Create patient resource if does not exist (assume default Practitioner and Organization already in system).
-
-  var template = fs.readFileSync("fhir-json-templates/" + reading + ".json", 'utf8');
-
-  template = template.replace("[effectiveDateTime]", new Date().toISOString());
-
-  Object.keys(data).forEach(function(key) {
-
-    template = template.replace("[" + key + "]", data[key]);
-
-  });
-
-  utils.callFHIRServer(config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + "Observation/" + data["id"] + "?_format=json", "PUT", template, function(statusCode) {
-
-    callback(statusCode)
-
-  });
-
-}
+const config = require('../lib/config');
+const utils = require('../lib/utils');
+const fhir = require('../lib/fhir');
 
 /**
  * @api {post} /convert/hr Populate a FHIR heart rate template with the supplied values
@@ -39,7 +19,7 @@ function createFHIRResource(reading, data, callback) {
  */
 router.post('/hr', function(req, res, next) {
 
-  createFHIRResource("hr", req.body, function(status) { res.sendStatus(status); });
+  fhir.createFHIRResource("hr", req.body, function(status) { res.sendStatus(status); });
 
 });
 
@@ -57,7 +37,7 @@ router.post('/hr', function(req, res, next) {
  */
 router.post('/bp', function(req, res, next) {
 
-  createFHIRResource("bp", req.body, function(status) { res.sendStatus(status); });
+  fhir.createFHIRResource("bp", req.body, function(status) { res.sendStatus(status); });
 
 });
 
