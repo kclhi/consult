@@ -1,17 +1,19 @@
-var express = require('express');
-var request = require('request');
-var router = express.Router();
-const config = require('../lib/config');
-var models = require('../models');
-var async = require('async');
+const express = require('express');
+const request = require('request');
+const router = express.Router();
+const async = require('async');
 
-/**
- * @api {get} /simulate/incomingHR Simulate a set of incoming (separate from BP) heart rate values.
- * @apiName simulateHR
- * @apiGroup Simulate
- *
- */
-router.get('/incomingHR', function(req, res, next) {
+const config = require('../lib/config');
+
+module.exports = function(messageObject) {
+
+	/**
+	 * @api {get} /simulate/incomingHR Simulate a set of incoming (separate from BP) heart rate values.
+	 * @apiName simulateHR
+	 * @apiGroup Simulate
+	 *
+	 */
+	router.get('/incomingHR', function(req, res, next) {
 
 		simulatedHRValues = [["3", 82,	92],
 												 ["3", 77,	87],
@@ -42,41 +44,25 @@ router.get('/incomingHR', function(req, res, next) {
 
 		async.eachSeries(simulatedHRValues, function (value, next){
 
-				request.post(config.SENSOR_TO_FHIR_URL + "convert/hr", {
+			var json = {
+				"reading": "hr",
+				"id": "t" + Date.now(),
+				"subjectReference": value[0],
+				"restingHeartRateInBeatsPerMinute": value[1],
+				"maxHeartRateInBeatsPerMinute": value[2],
+				"intensityDurationPercentage": 0
+			};
 
-						json: {
-
-								id: "t" + Date.now(),
-								subjectReference: value[0],
-								restingHeartRateInBeatsPerMinute: value[1],
-								maxHeartRateInBeatsPerMinute: value[2],
-								intensityDurationPercentage: 0
-
-						},
-
-				},
-				function (error, response, body) {
-
-						if (!error && response.statusCode == 200) {
-
-								 console.log(response.body)
-
-						} else {
-
-								 console.log(error)
-
-						}
-
-						next();
-
-				});
+			messageObject.send(config.SENSOR_TO_FHIR_URL + "convert/he", json).then(() => next());
 
 		}, function(err) {
 
-					res.sendStatus(200);
+			res.sendStatus(200);
 
 		});
 
-});
+	});
 
-module.exports = router;
+	return router;
+
+}

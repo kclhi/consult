@@ -54,11 +54,36 @@ app.use('/garmin', grant(grantConfig));
 
 ///////////////////////////
 
+// Routes
 var register = require('./routes/register');
 var connect = require('./routes/connect');
 var data = require('./routes/data');
 var ping = require('./routes/ping');
 var simulate = require('./routes/simulate');
+
+// Route setup involving async
+function init() {
+
+  if ( config.MESSAGE_QUEUE == true ) {
+
+    var amqp = require('amqplib');
+    var QueueMessage = require('./lib/messages/queueMessage');
+
+    return amqp.connect('amqp://localhost').then(function(connection) {
+
+      router.use('/simulate', simulate(new QueueMessage(connection, config.RABBIT_QUEUE)));
+
+    }).catch(console.warn);
+
+  } else {
+
+    var HTTPMessage = require('./lib/messages/httpMessage');
+    router.use('/simulate', simulate(new HTTPMessage()));
+    return Promise.resolve();
+
+  }
+
+}
 
 router.use('/', ping);
 router.use('/', connect);
@@ -83,7 +108,6 @@ router.use('/', function(req, res, next) {
 
 router.use('/register', register);
 router.use('/data', data);
-router.use('/simulate', simulate);
 
 app.use('/garmin', router);
 
@@ -106,5 +130,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+init()
+    .then(() => app.listen(3000))
+    .catch(err=>console.error(err));
 
 module.exports = app;

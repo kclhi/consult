@@ -29,6 +29,14 @@ git clone git@github.kcl.ac.uk:consult/device-integration.git
 ```
 git clone https://github.kcl.ac.uk/consult/device-integration.git
 ```
+
+Configure submodules:
+
+```
+git submodule init
+git submodule update
+```
+
 ## Documentation
 
 [View](https://github.kcl.ac.uk/pages/consult/device-integration_garmin/).
@@ -44,6 +52,32 @@ git add .
 git commit -m "[details of changes]"
 git push
 ```
+## Configuration
+
+Modify `lib/config.js` to include the address of the [sensor-fhir-mapper service](https://github.kcl.ac.uk/consult/sensor-fhir-mapper):
+
+```
+SENSOR_TO_FHIR_URL: '[sensor-fhir-mapper service]'
+```
+
+If using a queue, also specify this in the config file, and supply the queue name.
+
+Create an environment file:
+
+```
+touch .env
+```
+
+Add the following information to this environment file using a text editor:
+
+```
+USERNAME="[username]"
+PASSWORD="[password]"
+GARMIN_CONSUMER_KEY="[key]"
+GARMIN_SECRET="[secret]"
+```
+
+Where [username] and [password] are credentials to secure this service, and [key] and [secret] are your Garmin details.
 
 ## Running
 
@@ -62,29 +96,6 @@ Install dependencies:
 ```
 cat requirements.txt | xargs npm install -g
 ```
-
-Modify `lib/config.js` to include the address of the [sensor-fhir-mapper service](https://github.kcl.ac.uk/consult/sensor-fhir-mapper):
-
-```
-SENSOR_TO_FHIR_URL: '[sensor-fhir-mapper service]'
-```
-
-Create an environment file:
-
-```
-touch .env
-```
-
-Add the following information to this environment file using a text editor:
-
-```
-USERNAME="[username]"
-PASSWORD="[password]"
-GARMIN_CONSUMER_KEY="[key]"
-GARMIN_SECRET="[secret]"
-```
-
-Where [username] and [password] are credentials to secure this service, and [key] and [secret] are your Garmin details.
 
 Run server:
 
@@ -116,7 +127,7 @@ Deployed systems should switch to a production database format (e.g. Postgres).
 
 ## Built With
 
-* [Express](https://expressjs.com/) - The web framework used.
+* [Express](https://expressjs.com/) - Web framework.
 
 ## Contributing
 
