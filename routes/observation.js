@@ -41,13 +41,10 @@ function getPatientStats(patientID, callback) {
       // TODO: Remove async.
       async.each(JSON.parse(medicationDispenseData).entry, function(medicationDispense, callback) {
 
-        var medication = 1;
-
         utils.callFHIRServer(medicationDispense.resource.medicationReference.reference, "", function(medicationData) {
 
-          patientHeaders.push("medication" + medication)
+          patientHeaders.push("medication" + (JSON.parse(medicationDispenseData).entry.findIndex(jsonObject => jsonObject.fullUrl == medicationDispense.fullUrl) + 1));
           patientRow.push(JSON.parse(medicationData)['code']['coding'][0].display);
-          medication += 1;
           callback();
 
         });
@@ -95,17 +92,23 @@ function sendAlert(response, alertField, alertValue, callback) {
   if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD) {
 
     request({
+
       method: "POST",
       url: config.DIALOGUE_MANAGER_URL + "/dialogue/initiate",
       headers: {
+
        "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
+
       },
       json: {
+
        // TODO: Something from the data miner response that indicates which dialogue to initiate.
        "dialogueID": "2",
        // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
        "username": "user",
+
       }
+
      },
      function (error, response, body) {
 
@@ -134,13 +137,21 @@ function sendAlert(response, alertField, alertValue, callback) {
 
 }
 
+function addDateRows(resource, row) {
+
+  resourceTime = new Date(resource.effectiveDateTime);
+  row.push(resourceTime.toISOString().split('T')[0]);
+  row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
+  row.push("\"" + utils.dayOfWeekAsString(resourceTime.getDay()) + "\"");
+  return row;
+
+}
+
 function processObservation(req, res, callback) {
 
   observationHeaders = [];
   observationRow = [];
-
   const patientID = req.body.subject.reference.replace("Patient/", "");
-
   // Get patient stats
   observationHeaders.push("pid");
   observationRow.push(patientID);
@@ -159,6 +170,10 @@ function processObservation(req, res, callback) {
 
     });
 
+    observationHeaders.push("datem");
+    observationHeaders.push("date.month");
+    observationHeaders.push("weekday");
+    observationRow = addDateRows(req.body, observationRow);
     callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
   });
@@ -173,11 +188,15 @@ router.put('/:id', function(req, res, next) {
     processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       request.post(config.DATA_MINER_URL + "/check/hr", {
+
         json: {
+
           "hr": observationHeaders.toString() + "\n" + observationRow.toString(),
           "nn": "7",
           "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+
         },
+
       },
       function (error, response, body) {
 
@@ -204,11 +223,15 @@ router.put('/:id', function(req, res, next) {
     processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       request.post(config.DATA_MINER_URL + "/check/bp", {
+
         json: {
+
           "bp": observationHeaders.toString() + "\n" + observationRow.toString(),
           "nn": "7",
           "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
-        },
+
+        }
+
       },
       function (error, response, body) {
 
@@ -263,6 +286,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
         components = [];
 
+        // Handle single vs. multiple responses.
         if ( resource.resource.component ) {
 
           components = resource.resource.component;
@@ -272,8 +296,6 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
           components.push(resource.resource);
 
         }
-
-        resourceTime = new Date(resource.resource.effectiveDateTime);
 
         row = [];
 
@@ -289,9 +311,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
         });
 
-        row.push(resourceTime.toISOString().split('T')[0]);
-        row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
-        row.push("\"" + utils.dayOfWeekAsString(resourceTime.getDay()) + "\"");
+        row = addDateRows(resource.resource, row);
         rows += row + "\n";
 
       });
@@ -299,7 +319,6 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
       header.push("\"datem\"");
       header.push("\"date.month\"");
       header.push("\"weekday\"\n");
-
       res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
 
     } else {
