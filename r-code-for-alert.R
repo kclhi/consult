@@ -18,12 +18,14 @@ bp.check<-function(bp, nn, ehr) {
   # Get CSV formatted input.
   values.str = gsub("\\n","\n",bp,fixed=T)
   bp<-read.csv(text=values.str)
+  values.str = gsub("\\n","\n",ehr,fixed=T)
+  ehr<-read.csv(text=values.str)
 
   # Add latest values to DB.
   datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
 
   # TODO: Delete from table if outside 'nn' length.
-  dbWriteTable(datadb, "bp", bp, append=TRUE)
+  dbWriteTable(datadb, "bp", merge(bp, ehr), append=TRUE)
 
   # Get all data.
   bp<-dbGetQuery(datadb, 'SELECT * FROM bp')
@@ -70,15 +72,17 @@ hr.check<-function(hr, nn, ehr) {
   # Get CSV formatted input.
   values.str = gsub("\\n","\n",hr,fixed=T)
   hr<-read.csv(text=values.str)
+  values.str = gsub("\\n","\n",ehr,fixed=T)
+  ehr<-read.csv(text=values.str)
 
   # Add latest values to DB.
   datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
 
   # TODO: Delete from table if outside 'nn' length.
-  dbWriteTable(datadb, "hr", hr, append=TRUE)
+  dbWriteTable(datadb, "hr", merge(hr, ehr), append=TRUE)
 
   # Get all data.
-  bp<-dbGetQuery(datadb, 'SELECT * FROM hr')
+  hr<-dbGetQuery(datadb, 'SELECT * FROM hr')
 
   # Mining logic
 
