@@ -12,6 +12,12 @@ router.post('/ping', (req, res) => {
 
   console.log(req.body);
 
+  models.notifications.create({
+
+		data: JSON.stringify(req.body)
+
+	});
+
   const doc = jsonFind(req.body);
 
   const token = doc.checkKey('userAccessToken')

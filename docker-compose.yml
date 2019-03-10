@@ -9,6 +9,8 @@ services:
       - mysql
     depends_on:
       - mysql
+    ports:
+      - 3000:3000
 
   mysql:
     image: mysql:5
@@ -19,6 +21,8 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - 3306:3306
+    volumes:
+      - data_volume:/var/lib/mysql
 
   migration:
     image: device-integration_garmin_webapp:latest
@@ -27,3 +31,6 @@ services:
       - mysql
     depends_on:
       - mysql
+
+volumes:
+  data_volume:
