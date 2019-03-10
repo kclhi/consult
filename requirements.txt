@@ -1,7 +1,13 @@
 express
+express-session
 http-errors
+body-parser
 cookie-parser
 morgan
+serve-favicon
+basic-auth
+oauth-signature
+grant-express
 request
 debug
 pug
@@ -11,3 +17,5 @@ apidoc
 sequelize
 amqplib
 json-find
+sqlite3
+mysql2

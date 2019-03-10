@@ -1,31 +1,29 @@
 // Imports
-var express = require('express');
-var session = require('express-session')
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var request = require('request');
-var auth = require('basic-auth');
-var grant = require('grant-express')
-var auth = require('basic-auth');
+const express = require('express');
+const session = require('express-session')
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const request = require('request');
+const auth = require('basic-auth');
+const grant = require('grant-express')
 
 // Environment variables
 require('dotenv').config()
 
 // Models
-var models = require('./models');
+const models = require('./models');
 
 // Libs
 const config = require('./lib/config');
 
 // Express app and master router
-var app = express();
-var router = express.Router();
+const app = express();
+const router = express.Router();
 
 // Session
-var session = require('express-session');
 app.use(session({
     resave: true,
     saveUninitialized: true,
@@ -47,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 ///////////////////////////
 
-var grantConfig = require('./grant-config.json');
+const grantConfig = require('./grant-config.json');
 grantConfig["garmin"]["key"] = config.GARMIN_CONSUMER_KEY;
 grantConfig["garmin"]["secret"] = config.GARMIN_SECRET;
 app.use('/garmin', grant(grantConfig));
@@ -55,11 +53,11 @@ app.use('/garmin', grant(grantConfig));
 ///////////////////////////
 
 // Routes
-var register = require('./routes/register');
-var connect = require('./routes/connect');
-var data = require('./routes/data');
-var ping = require('./routes/ping');
-var simulate = require('./routes/simulate');
+const register = require('./routes/register');
+const connect = require('./routes/connect');
+const data = require('./routes/data');
+const ping = require('./routes/ping');
+const simulate = require('./routes/simulate');
 
 // Route setup involving async
 function init() {
@@ -90,7 +88,7 @@ router.use('/', connect);
 
 router.use('/', function(req, res, next) {
 
-  var credentials = auth(req)
+  const credentials = auth(req)
 
   if ( !credentials || credentials.name !== config.USERNAME || credentials.pass !== config.PASSWORD ) {
 
@@ -131,8 +129,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-init()
-    .then(() => app.listen(3000))
-    .catch(err=>console.error(err));
+init().then(() => app.listen(process.env.PORT || '3000')).catch(err => console.error(err));
 
 module.exports = app;

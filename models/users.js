@@ -3,16 +3,16 @@ module.exports = function(sequelize, DataTypes) {
 
   var users = sequelize.define('users', {
 
-      id: {
-       primaryKey: true,
-       type: DataTypes.INTEGER
-      },
-      token: {
-       primaryKey: true,
-       type: DataTypes.STRING
-      },
-      secret: DataTypes.STRING,
-      refresh: DataTypes.STRING
+    id: {
+     primaryKey: true,
+     type: DataTypes.INTEGER
+    },
+    token: {
+     primaryKey: true,
+     type: DataTypes.STRING
+    },
+    secret: DataTypes.STRING,
+    refresh: DataTypes.STRING
 
   });
 

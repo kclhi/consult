@@ -8,7 +8,10 @@
 	  "storage": "db.test.sqlite"
   },
   "production": {
-	  "dialect": "sqlite",
-	  "storage": "db.production.sqlite"
+    "username": "user",
+    "password": "password",
+    "database": "database",
+    "host": "mysql",
+    "dialect": "mysql"
   }
 }
