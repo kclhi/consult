@@ -29,24 +29,38 @@ bp.check<-function(bp, nn, ehr) {
 
   # Get all data.
   bp<-dbGetQuery(datadb, 'SELECT * FROM bp')
-  past<-head(bp, n=as.numeric(nn))
-  p1<-mean(past$c271649006)
-  recent<-tail(bp, n=as.numeric(nn))
-  p2<-mean(recent$c271649006)
-  diffr<-(p1/p2)
 
-  if (diffr<1) {res<-"Raised Systolic BP"}
-  else if (diffr==1) {res<-"Systolic BP Stable"}
-  else {res<-"Lower Systolic BP"}
+  # Processing logic
+  bp$sbp<-bp$c271649006 # matches the code
+  bp$dbp<-bp$c271650006
+  bp$hr<-bp$c8867h4
+  past<-head(bp, n=nn)
+  sbp.mean.past<-mean(past$sbp)
+  dbp.mean.past<-mean(past$dbp)
+  recent<-tail(bp, n=nn)
+  sbp.mean.recent<-mean(recent$sbp)
+  dbp.mean.recent<-mean(recent$dbp)
+
+  if (sbp.mean.recent>179){res.sbp<-"Double Reg Flag"}
+  else if (sbp.mean.recent<180 & sbp.mean.recent>149) {res.sbp<-"Red Flag"}
+  else {res.sbp<-"no flag"}
+  sbp.alert.status<-cat("Mean SBP is: ",sbp.mean.recent, res.sbp)
+
+  if (dbp.mean.recent>109){res.dbp<-"Double Reg Flag"}
+  else if (dbp.mean.recent<110 & dbp.mean.recent>94) {res.dbp<-"Red Flag"}
+  else {res.dbp<-"no flag"}
+  dbp.alert.status<-cat(" Mean DBP is: ",dbp.mean.recent, res.dbp)
+
+  bp.alert.status<-cat(sbp.alert.status, " and ", dbp.alert.status)
 
   # Creating the additional information from the patient stats
-  bp.trend<-res
+  bp.trend<-res.dbp
   patient.id<-toString(bp$pid[[1]])
   recent<-tail(bp, n=1)
   last.sys<-recent$c271649006
   last.dia<-recent$c271650006
-  patient.facts<-data.frame(patient.id,bp.trend, last.sys, last.dia)
-  patient.ehr.facts<-data.frame(patient.facts,ehr)
+  patient.facts<-data.frame(patient.id, bp.trend, last.sys, last.dia)
+  patient.ehr.facts<-data.frame(patient.facts, ehr)
 
   #convert to json
   library(jsonlite)
@@ -85,27 +99,12 @@ hr.check<-function(hr, nn, ehr) {
   hr<-dbGetQuery(datadb, 'SELECT * FROM hr')
 
   # Mining logic
+  hr$heart.rate.resting<-hr$c40443h4
+  hr$heart.rate<-hr$c8867h4
+  hr$exercise.freq<-hr$c82290h8
 
   dbDisconnect(datadb)
 
   return("HR received.")
 
-}
-
-bp.plot<-function(){
-  bp<-read.csv("data/bp-cs-p123.csv")
-  ggplot(bp, aes(seq, sys)) + geom_line() +  xlab("Days") + ylab("BP Systolic")+stat_smooth(method = "loess")
-
-  p = ggplot() +
-    geom_line(data = bp, aes(x = seq, y = sys), color = "blue") +
-    geom_line(data = bp, aes(x = seq, y = dia), color = "red") +
-    geom_line(data = bp, aes(x = seq, y = hr), color = "grey") +
-    xlab('Dates') +
-    ylab('Blood pressure') +
-    theme_bw() +
-    ggtitle("SBP, DBP and Heat rate for P123")+
-    scale_colour_manual(name='', values = c('SBP'='blue', 'DBP'="red", 'HR'="grey"), guide='legend') +
-    guides(colour=guide_legend(override.aes = list(linecolour=c(1,1,1))))
-
-  print(p)
 }
