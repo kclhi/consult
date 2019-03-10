@@ -32,5 +32,14 @@ services:
     depends_on:
       - mysql
 
+  proxy:
+    build:
+      context: ./proxy
+    tty: true
+    links:
+      - webapp
+    ports:
+      - '443:443'
+      - '80:80'
 volumes:
   data_volume:
