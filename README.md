@@ -2,7 +2,7 @@
 
 [![Build Status]()]()
 
-Middleware designed to interface with the Garmin API, detailed at https://developerportal.garmin.com and https://healthapi.garmin.com/.
+Middleware designed to interface with the Garmin API.
 
 ## Getting Started
 
@@ -52,9 +52,10 @@ git add .
 git commit -m "[details of changes]"
 git push
 ```
+
 ## Configuration
 
-Modify `lib/config.js` to include the address of the [sensor-fhir-mapper service](https://github.kcl.ac.uk/consult/sensor-fhir-mapper):
+Modify `config/default.js` to include the address of the [sensor-fhir-mapper service](https://github.kcl.ac.uk/consult/sensor-fhir-mapper):
 
 ```
 SENSOR_TO_FHIR_URL: '[sensor-fhir-mapper service]'
@@ -115,15 +116,25 @@ npm test
 
 ## Deployment
 
-Running the software on a server is the same as running it locally: clone and run the project on a remote machine. One can make local changes, push them and then pull them on the remote server.
+Deployment is via [Docker](https://docs.docker.com/compose/install/), and includes containers for this application, a production SQL database and an optional reverse proxy. If using the reverse proxy, fill in the appropriate [configuration](proxy/nginx.conf).
 
-Run in production using NODE_ENV environment variable, e.g.:
+Build these containers:
 
 ```
-NODE_ENV=production npm start
+docker-compose build
 ```
 
-Deployed systems should switch to a production database format (e.g. Postgres).
+Run these containers:
+
+```
+docker-compose up
+```
+
+(Optional) Run without proxy:
+
+```
+docker-compose up --scale proxy=0
+```
 
 ## Built With
 
@@ -149,4 +160,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-*
+* Garmin's original API: https://developerportal.garmin.com and https://healthapi.garmin.com/.
