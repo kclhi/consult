@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3.7"
 
 services:
 
@@ -41,5 +41,11 @@ services:
     ports:
       - '443:443'
       - '80:80'
+      
 volumes:
   data_volume:
+
+networks:
+  default:
+    external:
+      name: device_network

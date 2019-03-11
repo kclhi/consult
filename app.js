@@ -17,7 +17,7 @@ require('dotenv').config()
 const models = require('./models');
 
 // Libs
-const config = require('./lib/config');
+const config = require('config');
 
 // Express app and master router
 const app = express();
@@ -62,14 +62,14 @@ const simulate = require('./routes/simulate');
 // Route setup involving async
 function init() {
 
-  if ( config.MESSAGE_QUEUE == true ) {
+  if ( config.get('message_queue.ACTIVE') == true ) {
 
     var amqp = require('amqplib');
     var QueueMessage = require('./lib/messages/queueMessage');
 
-    return amqp.connect('amqp://localhost').then(function(connection) {
+    return amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
 
-      router.use('/simulate', simulate(new QueueMessage(connection, config.RABBIT_QUEUE)));
+      router.use('/simulate', simulate(new QueueMessage(connection, config.get('message_queue.NAME'))));
 
     }).catch(console.warn);
 
@@ -90,7 +90,7 @@ router.use('/', function(req, res, next) {
 
   const credentials = auth(req)
 
-  if ( !credentials || credentials.name !== config.USERNAME || credentials.pass !== config.PASSWORD ) {
+  if ( !credentials || credentials.name !== config.get('credentials.USERNAME') || credentials.pass !== config.get('credentials.PASSWORD') ) {
 
       res.status(401);
       res.header('WWW-Authenticate', 'Basic realm="forbidden"');

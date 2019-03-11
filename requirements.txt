@@ -19,3 +19,4 @@ amqplib
 json-find
 sqlite3
 mysql2
+config

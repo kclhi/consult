@@ -5,7 +5,7 @@ const oauthSignature = require('oauth-signature');
 const jsonFind = require('json-find');
 const request = require('request');
 
-const config = require('../lib/config');
+const config = require('config');
 const utils = require('../lib/utils');
 
 router.post('/ping', (req, res) => {
@@ -33,12 +33,12 @@ router.post('/ping', (req, res) => {
   }).then(function(user) {
 
     authorisation = {
-      oauth_consumer_key : config.GARMIN_CONSUMER_KEY,
-      oauth_token : token,
-      oauth_nonce : require('crypto').randomBytes(16).toString('base64'),
-      oauth_timestamp : Math.floor(new Date() / 1000),
-      oauth_signature_method : 'HMAC-SHA1',
-      oauth_version : '1.0'
+      oauth_consumer_key: config.get('garmin.CONSUMER_KEY'),
+      oauth_token: token,
+      oauth_nonce: require('crypto').randomBytes(16).toString('base64'),
+      oauth_timestamp: Math.floor(new Date() / 1000),
+      oauth_signature_method: 'HMAC-SHA1',
+      oauth_version: '1.0'
     };
 
     other = {
@@ -50,7 +50,7 @@ router.post('/ping', (req, res) => {
 
     if ( callbackURL ) {
 
-      authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.GARMIN_SECRET, user.secret, { encodeSignature: false });
+      authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.get('garmin.SECRET'), user.secret, { encodeSignature: false });
 
       authorisation = 'OAuth ' + require('querystring').stringify(authorisation, '", ', '="') + '"';
 
@@ -105,7 +105,7 @@ router.post('/ping', (req, res) => {
 
           heartRateExtract["intensityDurationPercentage"] = (totalActivitySeconds / secondsInMeasurementRange) * 100;
 
-          request.post(config.SENSOR_TO_FHIR_URL + "convert/hr", {
+          request.post(config.get('sensor_to_fhir.URL') + "convert/hr", {
 
 						json: heartRateExtract
 

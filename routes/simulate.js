@@ -3,7 +3,7 @@ const request = require('request');
 const router = express.Router();
 const async = require('async');
 
-const config = require('../lib/config');
+const config = require('config');
 
 module.exports = function(messageObject) {
 
@@ -53,7 +53,7 @@ module.exports = function(messageObject) {
 				"intensityDurationPercentage": 0
 			};
 
-			messageObject.send(config.SENSOR_TO_FHIR_URL + "convert/he", json).then(() => next());
+			messageObject.send(config.get('sensor_to_fhir.URL') + "convert/he", json).then(() => next());
 
 		}, function(err) {
 
