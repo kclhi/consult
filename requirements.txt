@@ -13,7 +13,6 @@ debug
 pug
 dotenv
 async
-apidoc
 sequelize
 amqplib
 json-find

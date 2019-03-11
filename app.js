@@ -13,11 +13,11 @@ const grant = require('grant-express')
 // Environment variables
 require('dotenv').config()
 
+// Config
+const config = require('config');
+
 // Models
 const models = require('./models');
-
-// Libs
-const config = require('config');
 
 // Express app and master router
 const app = express();
@@ -36,7 +36,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // Default use
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -129,6 +129,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-init().then(() => app.listen(process.env.PORT || '3000')).catch(err => console.error(err));
+init().then(() => app.listen(process.env.PORT || '3001')).catch(err => console.error(err));
 
 module.exports = app;
