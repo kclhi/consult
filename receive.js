@@ -1,48 +1,59 @@
 const amqp = require('amqplib');
+const async = require('async');
 
 const utils = require('./lib/utils');
 const fhir = require('./lib/fhir');
 const config = require('./lib/config');
 
-amqp.connect('amqp://localhost').then(function(connection) {
+amqp.connect('amqp://' + config.RABBIT_HOST).then(function(connection) {
 
   process.once('SIGINT', function() { connection.close(); });
 
-  return connection.createChannel().then(function(channel) {
+  return async.eachSeries(config.RABBIT_QUEUES, function(queue, callback) {
 
-    var ok = channel.assertQueue(config.RABBIT_QUEUE);
+    connection.createChannel().then(function(channel) {
 
-    ok = ok.then(function(queueOk) {
+      // Only consume one message from the queue at a time. After resource created and ack sent, next is consumed.
+      var ok = channel.prefetch(1);
 
-      return channel.consume(config.RABBIT_QUEUE, function(message) {
+      ok = ok.then(() => channel.assertQueue(queue));
 
-        jsonMessage = JSON.parse(message.content.toString());
+      ok = ok.then(function(queueOk) {
 
-        fhir.createFHIRResource(jsonMessage.reading, jsonMessage, function(statusCode) {
+        return channel.consume(queue, function(message) {
 
-          console.log(statusCode);
+          jsonMessage = JSON.parse(message.content.toString());
 
-          if ( statusCode < 300 ) {
+          fhir.createFHIRResource(jsonMessage.reading, jsonMessage, function(statusCode) {
 
-            return channel.ack(message);
+            if ( statusCode < 300 ) {
 
-          } else {
+              return channel.ack(message);
 
-            return null;
+            } else {
 
-          }
+              return Promise.resolve(statusCode);
+
+            }
+
+          });
 
         });
 
       });
 
+      return ok.then(function(consumeOk) {
+
+        console.log('Listening to queue ' + queue);
+        callback();
+
+      });
+
     });
 
-    return ok.then(function(consumeOk) {
+  }, function(err) {
 
-      console.log('Listening to queue ' + config.RABBIT_QUEUE);
-
-    });
+    return Promise.resolve(err);
 
   });
 

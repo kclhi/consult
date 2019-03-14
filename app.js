@@ -31,7 +31,7 @@ router.use('/', indexRouter);
 
 app.use('/convert', router);
 
-app.post('/populate', function(req, res, next) {
+app.get('/populate', function(req, res, next) {
 
   fhirResources = [["Organization", "organization"],
                    ["Practitioner",	"practitioner"],

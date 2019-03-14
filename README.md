@@ -79,6 +79,8 @@ PASSWORD=[FHIRServerPassword]
 
 Where [FHIRServerUsername] and [FHIRServerPassword] are replaced with their real values.
 
+### Running (HTTP endpoints)
+
 Run server:
 
 ```
@@ -87,17 +89,43 @@ npm start
 
 The server runs by default on port 3001. Visit localhost:3001/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
 
+### Running (Message queue consumer)
+
+Run message consumer:
+
+```
+npm consume
+```
+
 ## Running the tests
 
 -
 
 ## Deployment
 
-Running the software on a server is the same as running it locally: clone and run the project on a remote machine. One can make local changes, push them and then pull them on the remote server.
+Deployment is via [Docker](https://docs.docker.com/compose/install/), and includes containers for this application, and an optional message queue.
+
+Build these containers:
+
+```
+docker-compose build
+```
+
+Run these containers:
+
+```
+docker-compose up
+```
+
+(Optional) Run without queue:
+
+```
+docker-compose up --scale webapp-queue=0 rabbit=0
+```
 
 ## Built With
 
-* [Express](https://expressjs.com/) - The web framework used.
+* [Express](https://expressjs.com/) - Web framework.
 
 ## Contributing
 

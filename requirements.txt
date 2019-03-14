@@ -8,3 +8,4 @@ pug
 dotenv
 async
 apidoc
+amqplib

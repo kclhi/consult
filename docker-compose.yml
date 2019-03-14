@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+
+  webapp-queue:
+    build:
+      context: .
+    command: ["./wait-for-it/wait-for-it.sh", "rabbit:15672", "--", "npm", "run", "consume"]
+    links:
+      - rabbit
+    depends_on:
+      - rabbit
+
+  webapp-api:
+    build:
+      context: .
+    ports:
+      - "3002:3002"
+
+  rabbit:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit"
+    ports:
+      - "15672:15672"
+    volumes:
+      - data_volume:/var/lib/rabbitmq
+
+volumes:
+  data_volume:
+
+networks:
+  default:
+    name: device_network
