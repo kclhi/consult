@@ -9,3 +9,7 @@ dotenv
 async
 json
 apidoc
+mocha
+chai
+chai-http
+uuid

@@ -239,7 +239,7 @@ router.put('/:id', function(req, res, next) {
 
         if (!error && response.statusCode == 200) {
 
-          sendAlert(response, "bp.trend", "Raised", function(status) {
+          sendAlert(response, "bp.trend", "Red", function(status) {
 
             res.sendStatus(status);
 

@@ -85,7 +85,7 @@ Run server:
 npm start
 ```
 
-The server runs by default on port 3002. Visit localhost:3002/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
+The server runs by default on port 3005. Visit localhost:3005/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
 
 ## Running the tests
 

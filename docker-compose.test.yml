@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+
+  webapp-test:
+    image: message-passer_webapp
+    command: ["./wait-for-it/wait-for-it.sh", "webapp:3005", "--", "npm", "test"]
+
+  webapp:
+    build:
+      context: .
+    command: ["./wait-for-it/wait-for-it.sh", "template-server:8080", "--", "npm", "start"]
+    links:
+      - template-server
+    depends_on:
+      - template-server
+
+  template-server:
+    image: big-kcl/template-server:latest
+    links:
+      - neo4j
+    depends_on:
+      - neo4j
+
+  neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=none
+    volumes:
+      - dnc_volume:/data
+    ports:
+      - 7474:7474
+      - 7687:7687
+
+
+
+volumes:
+  dnc_volume:
+
+networks:
+  default:
+    name: dnc_network
