@@ -3,7 +3,7 @@ const router = express.Router();
 const request = require('request');
 const async = require('async');
 const fs = require('fs');
-
+const uuidv1 = require('uuid/v1');
 const provenance = require('../lib/provenance');
 const config = require('../lib/config');
 const utils = require('../lib/utils');
@@ -12,14 +12,13 @@ var lastAlert;
 
 function populateProvenanceTemplateBP(pid, code, value, callback) {
 
-  var fragment = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
-  fragment = fragment.replace("[pid]", pid);
-  fragment = fragment.replace("[company]", "Nokia");
-  fragment = fragment.replace("[code]", code);
-  fragment = fragment.replace("[value]", value);
+  var document = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
+  document = document.replace("[pid]", pid);
+  document = document.replace("[company]", "Nokia");
+  document = document.replace("[code]", code);
+  document = document.replace("[value]", value);
 
-  const ID = pid + "Nokia" + code + value + Date.now();
-  provenance.add(ID, fragment, "temp-0", "provenance-templates/template-bp.json", function(response) { callback(response); });
+  provenance.add(uuidv1(), document, "template-bp", "provenance-templates/template-bp.json", function(response) { callback(response); });
 
 }
 
@@ -94,7 +93,7 @@ function sendAlert(response, alertField, alertValue, callback) {
     request({
 
       method: "POST",
-      url: config.DIALOGUE_MANAGER_URL + "/dialogue/initiate",
+      url: config.DIALOGUE_MANAGER_URL + "/initiate",
       headers: {
 
        "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
@@ -107,22 +106,22 @@ function sendAlert(response, alertField, alertValue, callback) {
        // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
        "username": "user",
 
-      }
+      },
+      rejectUnauthorized: false,
+      requestCert: true
 
      },
      function (error, response, body) {
 
-       console.log("Dialogue manager: " + response.statusCode);
+       if (!error && ( response && response.statusCode == 200 ) ) {
 
-       if (!error && response.statusCode == 200) {
-
-          console.log(response.statusCode);
+          console.log("Dialogue manager: " + response.statusCode);
           lastAlert = new Date();
           callback(200);
 
        } else {
 
-          console.log(error);
+          console.log("Dialogue manager: " + error + " " + ( response.body ? response.body.toString() : "" ) + " " + ( response.statusCode ? response.statusCode : "" ));
           callback(400);
 
        }
@@ -159,22 +158,29 @@ function processObservation(req, res, callback) {
   getPatientStats(patientID, function(patientHeaders, patientRow) {
 
     // Get observation stats
-    req.body.component.forEach(function(measure) {
+    async.eachSeries(req.body.component, function(measure, done) {
 
       // 'c' prefix added (code) as in R colum name references cannot be numerical (bad practice too). Any hypens also removed.
       const code = "c" + measure["code"].coding[0].code.replace("-", "h");
       const value = measure["valueQuantity"].value;
       observationHeaders.push(code);
       observationRow.push(value);
-      populateProvenanceTemplateBP(patientID, code, value, function(response) {});
+      populateProvenanceTemplateBP(patientID, code, value, function(response) {
+
+        console.log("Provenance: " + ( response.body ? response.body : "" ) );
+        done();
+
+      });
+
+    }, function(provenanceError) {
+
+      observationHeaders.push("datem");
+      observationHeaders.push("date.month");
+      observationHeaders.push("weekday");
+      observationRow = addDateRows(req.body, observationRow);
+      callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
     });
-
-    observationHeaders.push("datem");
-    observationHeaders.push("date.month");
-    observationHeaders.push("weekday");
-    observationRow = addDateRows(req.body, observationRow);
-    callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
   });
 
@@ -196,20 +202,20 @@ router.put('/:id', function(req, res, next) {
           "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
 
         },
+        rejectUnauthorized: false,
+        requestCert: true
 
       },
       function (error, response, body) {
 
-        console.log("Data miner: " + response.statusCode);
+        if ( !error && ( response && response.statusCode == 200 ) ) {
 
-        if (!error && response.statusCode == 200) {
-
-          console.log(response.body);
+          console.log("Data miner: " + response.statusCode);
           res.sendStatus(200);
 
         } else {
 
-          console.log(error);
+          console.log("Data miner:" + error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( response.body ? response.body.toString() : "" ));
           res.sendStatus(400);
 
         }
@@ -230,14 +236,16 @@ router.put('/:id', function(req, res, next) {
           "nn": "7",
           "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
 
-        }
+        },
+        rejectUnauthorized: false,
+        requestCert: true
 
       },
       function (error, response, body) {
 
-        console.log("Data miner: " + response.statusCode);
+        if ( !error && ( response && response.statusCode == 200 ) ) {
 
-        if (!error && response.statusCode == 200) {
+          console.log("Data miner: " + response.statusCode);
 
           sendAlert(response, "bp.trend", "Red", function(status) {
 
@@ -247,7 +255,7 @@ router.put('/:id', function(req, res, next) {
 
         } else {
 
-          console.log(error);
+          console.log("Data miner: " + error + " " + ( response.body ? response.body.toString() : "" ) + " " + ( response.statusCode ? response.statusCode : "" ));
           res.sendStatus(400);
 
         }

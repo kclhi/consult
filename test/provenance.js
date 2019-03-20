@@ -9,6 +9,17 @@ const uuidv1 = require('uuid/v1');
 
 chai.use(require('chai-http'));
 
+function createDocument() {
+
+	var document = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
+	document = document.replace("[pid]", uuidv1());
+	document = document.replace("[company]", "ACME Inc.");
+	document = document.replace("[code]", uuidv1());
+	document = document.replace("[value]", uuidv1());
+	return document;
+
+}
+
 describe('provenance', () => {
 
 	describe('/GET Template list (reachable)', () => {
@@ -32,17 +43,31 @@ describe('provenance', () => {
 
 		it('Should be able to add sample template', (done) => {
 
-			var document = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
-		  document = document.replace("[pid]", uuidv1());
-		  document = document.replace("[company]", "ACME Inc.");
-		  document = document.replace("[code]", uuidv1());
-		  document = document.replace("[value]", uuidv1());
-
-		  const ID = uuidv1();
-		  provenance.add(ID, document, "temp-" + uuidv1(), "provenance-templates/template-bp.json", function(response) {
+		  provenance.add(uuidv1(), createDocument(), "temp-0", "provenance-templates/template-bp.json", function(response) {
 
 		    response.should.have.status(200);
 				done();
+
+			});
+
+		});
+
+	});
+
+	describe('/POST Add two documents with same template', () => {
+
+		it('Should be able to have shared template', (done) => {
+
+		  provenance.add(uuidv1(), createDocument(), "temp-0", "provenance-templates/template-bp.json", function(response) {
+
+				response.should.have.status(200);
+
+				provenance.add(uuidv1(), createDocument(), "temp-0", "provenance-templates/template-bp.json", function(response) {
+
+					response.should.have.status(200);
+					done();
+
+			  });
 
 		  });
 

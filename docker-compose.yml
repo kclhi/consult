@@ -1,0 +1,65 @@
+version: "3.7"
+
+services:
+
+  # Uncomment for service discovery:
+
+  #consul-service:
+    #image: gliderlabs/consul-server
+    #command: "--bootstrap"
+    #ports:
+      #- 8500:8500
+    #restart: "no"
+
+  #registrator:
+    #image: gliderlabs/registrator
+    #command: "consul://consul-service:8500"
+    #volumes:
+      #- /var/run/docker.sock:/tmp/docker.sock
+    #links:
+      #- consul-service
+    #depends_on:
+      #- consul-service
+    #restart: "no"
+
+  webapp:
+    build:
+      context: .
+    command: ["./wait-for-it/wait-for-it.sh", "template-server:8080", "--", "npm", "start"]
+    depends_on:
+      - template-server
+
+  template-server:
+    image: big-kcl/template-server:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      #- consul-service
+      - neo4j
+
+  neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+    volumes:
+      - dnc_volume:/data
+    depends_on:
+      - proxy
+    ports:
+      - 7474:7474
+      - 7687:7687
+
+  proxy:
+    build:
+      context: ./proxy
+    tty: true
+    ports:
+      - '443:443'
+      - '80:80'
+
+volumes:
+  dnc_volume:
+
+networks:
+  default:
+    name: network

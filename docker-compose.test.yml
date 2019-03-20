@@ -21,6 +21,8 @@ services:
       - neo4j
     depends_on:
       - neo4j
+    ports:
+      - 8080:8080
 
   neo4j:
     image: neo4j
@@ -31,8 +33,6 @@ services:
     ports:
       - 7474:7474
       - 7687:7687
-
-
 
 volumes:
   dnc_volume:
