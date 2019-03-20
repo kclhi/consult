@@ -12,7 +12,7 @@ library(DBI)
 #* @param bp blood pressure data
 #* @param nn history length -- ~MDC should this be a constant?
 #* @param ehr patient facts
-#* @post /check/bp
+#* @post /mine/check/bp
 bp.check<-function(bp, nn, ehr) {
 
   # Get CSV formatted input.
@@ -41,19 +41,20 @@ bp.check<-function(bp, nn, ehr) {
   sbp.mean.recent<-mean(recent$sbp)
   dbp.mean.recent<-mean(recent$dbp)
 
-  if (sbp.mean.recent>179){res.sbp<-"Double Reg Flag"}
+  if (sbp.mean.recent>179){res.sbp<-"Double Red Flag"}
   else if (sbp.mean.recent<180 & sbp.mean.recent>149) {res.sbp<-"Red Flag"}
   else {res.sbp<-"no flag"}
   sbp.alert.status<-cat("Mean SBP is: ",sbp.mean.recent, res.sbp)
 
-  if (dbp.mean.recent>109){res.dbp<-"Double Reg Flag"}
+  # 109 - ~MDC temporarily trigger alert
+  if (dbp.mean.recent>0){res.dbp<-"Double Red Flag"}
   else if (dbp.mean.recent<110 & dbp.mean.recent>94) {res.dbp<-"Red Flag"}
   else {res.dbp<-"no flag"}
   dbp.alert.status<-cat(" Mean DBP is: ",dbp.mean.recent, res.dbp)
 
   bp.alert.status<-cat(sbp.alert.status, " and ", dbp.alert.status)
 
-  # Creating the additional information from the patient stats
+  # Creating additional information from the patient stats
   bp.trend<-res.dbp
   patient.id<-toString(bp$pid[[1]])
   recent<-tail(bp, n=1)
@@ -62,7 +63,7 @@ bp.check<-function(bp, nn, ehr) {
   patient.facts<-data.frame(patient.id, bp.trend, last.sys, last.dia)
   patient.ehr.facts<-data.frame(patient.facts, ehr)
 
-  #convert to json
+  # Convert to json
   library(jsonlite)
   patientFacts<-toJSON(patient.ehr.facts)
 
@@ -80,7 +81,7 @@ bp.check<-function(bp, nn, ehr) {
 #* @param hr heart rate data
 #* @param nn history length -- ~MDC should this be a constant?
 #* @param ehr patient facts
-#* @post /check/hr
+#* @post /mine/check/hr
 hr.check<-function(hr, nn, ehr) {
 
   # Get CSV formatted input.
