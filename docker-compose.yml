@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+
+  webapp:
+    build:
+      context: .
+
+  proxy:
+    build:
+      context: ./proxy
+    tty: true
+    depends_on:
+      - webapp
+    ports:
+      - '443:443'
+      - '80:80'
+
+volumes:
+  processing_data_volume:
+
+networks:
+  default:
+    external:
+      name: network

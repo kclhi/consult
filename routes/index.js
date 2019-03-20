@@ -229,6 +229,8 @@ router.post('/response', function(req, res, next) {
                   }
               ]
           },
+          rejectUnauthorized: false,
+          requestCert: true
       },
     	function (error, response, body) {
 
@@ -244,7 +246,7 @@ router.post('/response', function(req, res, next) {
 
           res.end();
 
-       });
+        });
 
     });
 
@@ -265,41 +267,111 @@ router.post('/initiate', function(req, res, next) {
   var chatContext = {};
   chatContext.user = req.body.username;
 
-  findResponse("/" + req.body.dialogueID, chatContext, function(response, answerButtonsArr) {
+  findResponse("/" + req.body.dialogueID, chatContext, function(dialogueResponse, answerButtonsArr) {
 
-    request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
-        json: {
-            "response_type": "in_channel",
-            "username": "stroke-companion",
-            "channel": "@" + req.body.username,
-            "attachments": [
-                {
-                    "image_url": "https://images-na.ssl-images-amazon.com/images/I/51gG7k4ZdJL._SX425_.jpg",
-                    "pretext": "",
-                    "text": response.Print,
-                    "actions": answerButtonsArr
-                }
-            ]
-        },
+    request.post(config.CHAT_INTERNAL_URL + "/api/v4/users/login", {
+      json: {
+        "login_id":"connie",
+        "password":"12345"
+      },
+      rejectUnauthorized: false,
+      requestCert: true
     },
     function (error, response, body) {
 
-        if (!error) {
+      if (!error) {
 
-            console.log(response.statusCode);
+        request.get(config.CHAT_INTERNAL_URL + "/api/v4/teams", {
+          headers: {
 
-        } else {
+           "Authorization": "Bearer " + response.headers.token
 
-             console.log(error);
+          },
+          rejectUnauthorized: false,
+          requestCert: true
+        },
+        function (error, teams, body) {
 
-        }
+          if (!error) {
 
-        res.end();
+            request.get(config.CHAT_INTERNAL_URL + "/api/v4/hooks/incoming", {
+              headers: {
+                "Authorization": "Bearer " + response.headers.token
+              },
+              qs: {
+                "team_id": teams.body[0].id
+              },
+              rejectUnauthorized: false,
+              requestCert: true
+            },
+            function (error, response, body) {
+
+              if (!error) {
+
+                request.post((config.CHAT_INTERNAL_URL + "/hooks/" + JSON.parse(response.body)[0].id).replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
+                  json: {
+                    "response_type": "in_channel",
+                    "username": "connie",
+                    "channel": "@" + req.body.username,
+                    "attachments": [
+                      {
+                        "image_url": "https://images-na.ssl-images-amazon.com/images/I/51gG7k4ZdJL._SX425_.jpg",
+                        "pretext": "",
+                        "text": dialogueResponse.Print,
+                        "actions": answerButtonsArr
+                      }
+                    ]
+                  },
+                  rejectUnauthorized: false,
+                  requestCert: true
+                },
+                function (error, response, body) {
+
+                  if (!error) {
+
+                    console.log(response.statusCode);
+
+                  } else {
+
+                    console.log(error);
+
+                  }
+
+                  res.end();
+
+                });
+
+              } else {
+
+                console.log(error);
+
+              }
+
+              res.end();
+
+            });
+
+          } else {
+
+            console.log(error);
+
+          }
+
+          res.end();
+
+        });
+
+      } else {
+
+        console.log(error);
+
+      }
+
+      res.end();
 
     });
 
   });
-
 
 });
 
