@@ -4,11 +4,12 @@ const request = require('request');
 const async = require('async');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
+
 const provenance = require('../lib/provenance');
 const config = require('../lib/config');
 const utils = require('../lib/utils');
 
-var lastAlert;
+let lastAlert = 0;
 
 function populateProvenanceTemplateBP(pid, code, value, callback) {
 
@@ -22,6 +23,14 @@ function populateProvenanceTemplateBP(pid, code, value, callback) {
 
 }
 
+function noParse(target, path, object) {
+
+  var pathInfo = "";
+  if ( path.length > 0 ) pathInfo =  path.toString() + " not a valid path in ";
+  console.log("Could not parse " + target + ". " + pathInfo + ( typeof object === "object" ? JSON.stringify(object) : object))
+
+}
+
 function getPatientStats(patientID, callback) {
 
   patientHeaders = [];
@@ -29,46 +38,113 @@ function getPatientStats(patientID, callback) {
 
   utils.callFHIRServer("Patient/" + patientID, "", function(patientData) {
 
-    patientHeaders.push("birthDate");
-    patientRow.push(JSON.parse(patientData).birthDate);
+    if ( parsedPatientData = utils.JSONParseWrapper(patientData) ) {
 
-    patientHeaders.push("ethnicity");
-    patientRow.push(JSON.parse(patientData).extension[0].extension[0].valueCoding.display);
+      if ( birthDate = parsedPatientData.birthDate ) {
 
-    utils.callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
+        patientHeaders.push("birthDate");
+        patientRow.push(birthDate);
 
-      // TODO: Remove async.
-      async.each(JSON.parse(medicationDispenseData).entry, function(medicationDispense, callback) {
+        if ( ethnicity = utils.validPath(parsedPatientData, ["extension", "0", "extension", "0", "valueCoding", "display"] ) ) {
 
-        utils.callFHIRServer(medicationDispense.resource.medicationReference.reference, "", function(medicationData) {
+          patientHeaders.push("ethnicity");
+          patientRow.push(ethnicity);
 
-          patientHeaders.push("medication" + (JSON.parse(medicationDispenseData).entry.findIndex(jsonObject => jsonObject.fullUrl == medicationDispense.fullUrl) + 1));
-          patientRow.push(JSON.parse(medicationData)['code']['coding'][0].display);
-          callback();
+          utils.callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
 
-        });
+            if ( ( parsedMedicationDispenseData = utils.JSONParseWrapper(medicationDispenseData) ) && parsedMedicationDispenseData.entry ) {
 
-      }, function(medicationDispenseDataError) {
+              // TODO: Remove async.
+              async.each(parsedMedicationDispenseData.entry, function(medicationDispense, done) {
 
-        utils.callFHIRServer("Condition", "subject=" + patientID, function(conditionData) {
+                if ( medicationReference = utils.validPath(medicationDispense, ["resource", "medicationReference", "reference"]) ) {
 
-          var problem = 1;
+                  utils.callFHIRServer(medicationReference, "", function(medicationData) {
 
-          JSON.parse(conditionData).entry.forEach(function(condition) {
+                    if ( ( parsedMedicationData = utils.JSONParseWrapper(medicationData) ) && ( medicationName = utils.validPath(parsedMedicationData, ["code", "coding", "0", "display"]) ) ) {
 
-            patientHeaders.push("problem" + problem)
-            problem += 1;
-            patientRow.push(condition.resource.code.coding[0].display);
+                      patientHeaders.push("medication" + (parsedMedicationDispenseData.entry.findIndex(jsonObject => jsonObject.fullUrl == medicationDispense.fullUrl) + 1));
+                      patientRow.push(medicationName);
+                      done();
+
+                    } else {
+
+                      noParse("medication name", ["code", "coding", "0", "display"], medicationData);
+                      done();
+
+                    }
+
+                  });
+
+                } else {
+
+                  noParse("medication reference", ["resource", "medicationReference", "reference"], medicationDispense);
+                  done();
+
+                }
+
+              }, function(medicationDispenseDataError) {
+
+                utils.callFHIRServer("Condition", "subject=" + patientID, function(conditionData) {
+
+                  var problem = 1;
+
+                  if ( ( parsedConditionData = utils.JSONParseWrapper(conditionData) ) && parsedConditionData.entry ) {
+
+                    parsedConditionData.entry.forEach(function(condition) {
+
+                      if ( conditionName = utils.validPath(condition, ["resource", "code", "coding", "0", "display"]) ) {
+
+                        patientHeaders.push("problem" + problem)
+                        problem += 1;
+                        patientRow.push(conditionName);
+
+                      } else {
+
+                        noParse("condition data", ["resource", "code", "coding", "0", "display"], conditionData);
+                        callback(patientHeaders, patientRow);
+
+                      }
+
+                    });
+
+                  }
+
+                  callback(patientHeaders, patientRow);
+
+                });
+
+              });
+
+            } else {
+
+              noParse("medication dispense data", [], medicationDispenseData);
+              callback(patientHeaders, patientRow);
+
+            }
 
           });
 
+        } else {
+
+          noParse("patient ethnicity", ["extension", "0", "extension", "0", "valueCoding", "display"], patientData);
           callback(patientHeaders, patientRow);
 
-        });
+        }
 
-      });
+      } else {
 
-    });
+        noParse("patient birth date", [], patientData);
+        callback(patientHeaders, patientRow);
+
+      }
+
+    } else {
+
+      noParse("patient data", [], patientData);
+      callback(patientHeaders, patientRow);
+
+    }
 
   });
 
@@ -78,61 +154,62 @@ function sendAlert(response, alertField, alertValue, callback) {
 
   var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
 
-  if ( lastAlert ) {
-
-    minutesSinceLastAlert = Math.floor(((new Date().getTime() - lastAlert.getTime()) / 1000) / 60);
-
-  }
+  if ( lastAlert ) minutesSinceLastAlert = Math.floor(((new Date().getTime() - lastAlert.getTime()) / 1000) / 60);
 
   // TODO: Miner response is oddly nested.
-  minerResponse = JSON.parse(response.body[0]);
+  if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
 
-  // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-  if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD) {
+    if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD ) {
 
-    request({
+      request({
 
-      method: "POST",
-      url: config.DIALOGUE_MANAGER_URL + "/initiate",
-      headers: {
+        method: "POST",
+        url: config.DIALOGUE_MANAGER_URL + "/initiate",
+        headers: {
 
-       "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
+         "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
+
+        },
+        json: {
+
+         // TODO: Something from the data miner response that indicates which dialogue to initiate.
+         "dialogueID": "2",
+         // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
+         "username": "user",
+
+        },
+        rejectUnauthorized: false,
+        requestCert: true
 
       },
-      json: {
+      function (error, response, body) {
 
-       // TODO: Something from the data miner response that indicates which dialogue to initiate.
-       "dialogueID": "2",
-       // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
-       "username": "user",
+        if (!error && ( response && response.statusCode == 200 ) ) {
 
-      },
-      rejectUnauthorized: false,
-      requestCert: true
-
-     },
-     function (error, response, body) {
-
-       if (!error && ( response && response.statusCode == 200 ) ) {
-
-          console.log("Dialogue manager: " + response.statusCode);
           lastAlert = new Date();
           callback(200);
 
-       } else {
+        } else {
 
-          console.log("Dialogue manager: " + error + " " + ( response.body ? response.body.toString() : "" ) + " " + ( response.statusCode ? response.statusCode : "" ));
+          console.log("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
           callback(400);
 
-       }
+        }
 
-     });
+      });
 
-   } else {
+    } else {
 
      callback(200);
 
-   }
+    }
+
+  } else {
+
+    console.log("Could not parse response from data miner.");
+    callback(400);
+
+  }
 
 }
 
@@ -150,119 +227,176 @@ function processObservation(req, res, callback) {
 
   observationHeaders = [];
   observationRow = [];
-  const patientID = req.body.subject.reference.replace("Patient/", "");
-  // Get patient stats
-  observationHeaders.push("pid");
-  observationRow.push(patientID);
 
-  getPatientStats(patientID, function(patientHeaders, patientRow) {
+  if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-    // Get observation stats
-    async.eachSeries(req.body.component, function(measure, done) {
+    patientID = patientID.replace("Patient/", "");
 
-      // 'c' prefix added (code) as in R colum name references cannot be numerical (bad practice too). Any hypens also removed.
-      const code = "c" + measure["code"].coding[0].code.replace("-", "h");
-      const value = measure["valueQuantity"].value;
-      observationHeaders.push(code);
-      observationRow.push(value);
-      populateProvenanceTemplateBP(patientID, code, value, function(response) {
+    // Get patient stats
+    observationHeaders.push("pid");
+    observationRow.push(patientID);
 
-        console.log("Provenance: " + ( response.body ? response.body : "" ) );
-        done();
+    getPatientStats(patientID, function(patientHeaders, patientRow) {
 
-      });
+      if ( patientHeaders.length > 0 && patientRow.length > 0 ) {
 
-    }, function(provenanceError) {
+        if ( measures = utils.validPath(req, ["body", "component"]) ) {
 
-      observationHeaders.push("datem");
-      observationHeaders.push("date.month");
-      observationHeaders.push("weekday");
-      observationRow = addDateRows(req.body, observationRow);
-      callback(observationHeaders, observationRow, patientHeaders, patientRow);
+          // Get observation stats
+          async.eachSeries(measures, function(measure, done) {
+
+            // 'c' prefix added (code) as in R colum name references cannot be numerical (bad practice too). Any hypens also removed.
+            const code = "c" + measure["code"].coding[0].code.replace("-", "h");
+            const value = measure["valueQuantity"].value;
+            observationHeaders.push(code);
+            observationRow.push(value);
+
+            if ( config.TRACK_PROVENANCE ) {
+
+              populateProvenanceTemplateBP(patientID, code, value, function(body) {
+
+                done();
+
+              });
+
+            } else {
+
+              console.warn("Not tracking provenance.");
+              done();
+
+            }
+
+          }, function(provenanceError) {
+
+            observationHeaders.push("datem");
+            observationHeaders.push("date.month");
+            observationHeaders.push("weekday");
+            observationRow = addDateRows(req.body, observationRow);
+            callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+          });
+
+        } else {
+
+          noParse("measures.", ["body", "component"], req);
+          callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+        }
+
+      } else {
+
+        console.log("Did not receive patient information.");
+        callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+      }
 
     });
 
-  });
+  } else {
+
+    noParse("patient ID", ["body", "subject", "reference"], req);
+    callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+  }
 
 }
 
 router.put('/:id', function(req, res, next) {
 
   // Use code to determine type of observation.
-  if ( req.body.code.coding[0].code == config.HR_CODE ) {
+  if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.HR_CODE ) {
 
     processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
-      request.post(config.DATA_MINER_URL + "/check/hr", {
+      if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
 
-        json: {
+        request.post(config.DATA_MINER_URL + "/check/hr", {
 
-          "hr": observationHeaders.toString() + "\n" + observationRow.toString(),
-          "nn": "7",
-          "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+          json: {
+
+            "hr": observationHeaders.toString() + "\n" + observationRow.toString(),
+            "nn": "7",
+            "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+
+          },
+          rejectUnauthorized: false,
+          requestCert: true
 
         },
-        rejectUnauthorized: false,
-        requestCert: true
+        function (error, response, body) {
 
-      },
-      function (error, response, body) {
+          if ( !error && ( response && response.statusCode == 200 ) ) {
 
-        if ( !error && ( response && response.statusCode == 200 ) ) {
+            res.sendStatus(200);
 
-          console.log("Data miner: " + response.statusCode);
-          res.sendStatus(200);
+          } else {
 
-        } else {
+            console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            res.sendStatus(400);
 
-          console.log("Data miner:" + error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( response.body ? response.body.toString() : "" ));
-          res.sendStatus(400);
+          }
 
-        }
+        });
 
-      });
+      } else {
+
+        res.sendStatus(400);
+
+      }
 
     });
 
-  } else if (req.body.code.coding[0].code == config.BP_CODE) {
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.BP_CODE ) {
 
     processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
-      request.post(config.DATA_MINER_URL + "/check/bp", {
+      if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
 
-        json: {
+        request.post(config.DATA_MINER_URL + "/check/bp", {
 
-          "bp": observationHeaders.toString() + "\n" + observationRow.toString(),
-          "nn": "7",
-          "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+          json: {
+
+            "bp": observationHeaders.toString() + "\n" + observationRow.toString(),
+            "nn": "7",
+            "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+
+          },
+          rejectUnauthorized: false,
+          requestCert: true
 
         },
-        rejectUnauthorized: false,
-        requestCert: true
+        function (error, response, body) {
 
-      },
-      function (error, response, body) {
+          if ( !error && ( response && response.statusCode < 400 ) ) {
 
-        if ( !error && ( response && response.statusCode == 200 ) ) {
+            // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
+            sendAlert(response, "bp.trend", "Red", function(status) {
 
-          console.log("Data miner: " + response.statusCode);
+              res.sendStatus(status);
 
-          sendAlert(response, "bp.trend", "Red", function(status) {
+            });
 
-            res.sendStatus(status);
+          } else {
 
-          });
+            console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            res.sendStatus(400);
 
-        } else {
+          }
 
-          console.log("Data miner: " + error + " " + ( response.body ? response.body.toString() : "" ) + " " + ( response.statusCode ? response.statusCode : "" ));
-          res.sendStatus(400);
+        });
 
-        }
+      } else {
 
-      });
+        res.sendStatus(400);
+
+      }
 
     });
+
+  } else {
+
+    noParse("observation type", ["body", "code", "coding", "0", "code"], req);
+    res.sendStatus(400);
 
   }
 
@@ -282,24 +416,26 @@ router.put('/:id', function(req, res, next) {
  */
 router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
-  // TODO: Ensure highest count.
-  utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
+  if ( req.params && req.params.patientID && req.params.code && req.params.start && req.params.end ) {
+
+    // TODO: Ensure highest count.
+    utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
 
     header = [];
     rows = "";
 
-    if ( data && JSON.parse(data).entry ) {
+    if ( data && ( parsedData = utils.JSONParseWrapper(data) ) && parsedData.entry ) {
 
-      JSON.parse(data).entry.forEach(function(resource) {
+      parsedData.entry.forEach(function(resource) {
 
         components = [];
 
         // Handle single vs. multiple responses.
-        if ( resource.resource.component ) {
+        if ( utils.validPath(resource, ["resource", "component"]) ) {
 
           components = resource.resource.component;
 
-        } else if ( resource.resource.valueQuantity ) {
+        } else if ( utils.validPath(resource, ["resource", "valueQuantity"]) ) {
 
           components.push(resource.resource);
 
@@ -309,17 +445,42 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
         components.forEach(function(component) {
 
-          var code = component.code.coding[0].code;
-          var formattedCode = "\"c" + code.replace("-", "h") + "\"";
-          var value = component.valueQuantity.value;
+          var code, value;
 
-          if ( !header.includes(formattedCode) ) header.push(formattedCode);
+          if ( code = utils.validPath(component, ["code", "coding", "0", "code"]) ) {
 
-          row.push(value);
+            if ( value = utils.validPath(component, ["valueQuantity", "value"]) ) {
+
+              var formattedCode = "\"c" + code.replace("-", "h") + "\"";
+
+              if ( !header.includes(formattedCode) ) header.push(formattedCode);
+
+              row.push(value);
+
+            } else {
+
+              noParse("sensor code", ["code", "coding", "0", "code"], component);
+
+            }
+
+          } else {
+
+            noParse("sensor value", ["valueQuantity", "value"], component);
+
+          }
 
         });
 
-        row = addDateRows(resource.resource, row);
+        if ( resource.resource ) {
+
+          row = addDateRows(resource.resource, row);
+
+        } else {
+
+          console.log("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource) : resource.resource));
+
+        }
+
         rows += row + "\n";
 
       });
@@ -331,11 +492,18 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
     } else {
 
-      res.sendStatus(404);
+      console.log("Could not parse FHIR server response.")
+      res.sendStatus(400);
 
     }
 
   });
+
+  } else {
+
+    res.sendStatus(400);
+
+  }
 
 });
 

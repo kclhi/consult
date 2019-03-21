@@ -25,14 +25,16 @@ services:
   webapp:
     build:
       context: .
-    command: ["./wait-for-it/wait-for-it.sh", "template-server:8080", "--", "npm", "start"]
+    command: ["./wait-for-it/wait-for-it.sh", "message-passer_template-server_1:8080", "--", "npm", "start"]
     depends_on:
+      - template-server
+    links:
       - template-server
 
   template-server:
     image: big-kcl/template-server:latest
-    ports:
-      - 8080:8080
+    #ports:
+      #- 8080:8080
     depends_on:
       #- consul-service
       - neo4j
@@ -45,9 +47,6 @@ services:
       - dnc_volume:/data
     depends_on:
       - proxy
-    ports:
-      - 7474:7474
-      - 7687:7687
 
   proxy:
     build:
