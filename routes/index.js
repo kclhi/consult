@@ -23,6 +23,86 @@ function tmplRpl(s) { // Replace template placeholders
     return Handlebars.compile(s)();
 }
 
+let webhook = config.MATTERMOST_WEBHOOK;
+
+function getWebhook(callback) {
+
+  if ( webhook ) {
+
+    callback(webhook);
+
+  } else {
+
+    request.post(config.CHAT_INTERNAL_URL + config.API_PATH + "/users/login", {
+      json: {
+        "login_id": config.MATTERMOST_ADMIN_USERNAME,
+        "password": config.MATTERMOST_ADMIN_PASSWORD
+      },
+      rejectUnauthorized: false,
+      requestCert: true
+    },
+    function (error, response, body) {
+
+      if ( !error && ( response && response.statusCode < 400 ) && ( token = ( response && response.headers.token ? response.headers.token : false ) ) ) {
+
+        request.get(config.CHAT_INTERNAL_URL + config.API_PATH + "/teams", {
+          headers: {
+
+           "Authorization": "Bearer " + token
+
+          },
+          rejectUnauthorized: false,
+          requestCert: true
+        },
+        function (error, response, body) {
+
+          if ( !error && ( response && response.statusCode < 400 ) && ( team = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
+
+            request.get(config.CHAT_INTERNAL_URL + config.API_PATH + "/hooks/incoming", {
+              headers: {
+                "Authorization": "Bearer " + token
+              },
+              qs: {
+                "team_id": team
+              },
+              rejectUnauthorized: false,
+              requestCert: true
+            },
+            function (error, response, body) {
+
+              if ( !error && ( response && response.statusCode < 400 ) && ( id = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
+
+                webhook = config.CHAT_INTERNAL_URL + "/hooks/" + id;
+                callback( webhook );
+
+              } else {
+
+                console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+
+              }
+
+            });
+
+          } else {
+
+            console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+
+          }
+
+        });
+
+      } else {
+
+        console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+
+      }
+
+    });
+
+  }
+
+}
+
 function findResponse(receivedMsg, chatContext, callback) {
 
   var newDialNo  // = msg.payload.newDialNo // Triggered by upstream node if new dialogue
@@ -68,7 +148,7 @@ function findResponse(receivedMsg, chatContext, callback) {
                       {
                           "name": "/" + answer,
                           "integration": {
-                              "url": config.MANAGER_URL,
+                              "url": config.MANAGER_URL + "/response",
                               "context": {
                                   "command": "/" + answer,
                                   "chatContext": chatContext
@@ -164,7 +244,7 @@ function findResponse(receivedMsg, chatContext, callback) {
                   {
                       "name": answer,
                       "integration": {
-                          "url": config.MANAGER_URL,
+                          "url": config.MANAGER_URL + "/response",
                           "context": {
                               "command": answer,
                               "chatContext": chatContext
@@ -185,70 +265,71 @@ function findResponse(receivedMsg, chatContext, callback) {
 
 router.post('/response', function(req, res, next) {
 
-    // New chat session.
-    if ( !req.body.context || !req.body.context.chatContext ) {
+  // New chat session.
+  if ( !req.body.context || !req.body.context.chatContext ) {
 
-        var chatContext = {};
-        chatContext.user = req.body.user_name;
-        chatContext.chatId = req.body.user_id;
+      var chatContext = {};
+      chatContext.user = req.body.user_name;
+      chatContext.chatId = req.body.user_id;
 
-    // For initiated chats, assign them an ID. Could also be done during the initiation.
-    } else if ( !req.body.context.chatContext.chatId ) {
+  // For initiated chats, assign them an ID. Could also be done during the initiation.
+  } else if ( !req.body.context.chatContext.chatId ) {
 
-        var chatContext = req.body.context.chatContext;
-        chatContext.chatId = req.body.user_id;
+      var chatContext = req.body.context.chatContext;
+      chatContext.chatId = req.body.user_id;
 
-    } else  {
+  } else  {
 
-        var chatContext = req.body.context.chatContext;
+      var chatContext = req.body.context.chatContext;
 
-    }
+  }
 
-    if ( req.body.command ) {
+  if ( req.body.command ) {
 
-        var receivedMsg = req.body.command;  // Input from chat server
+      var receivedMsg = req.body.command;  // Input from chat server
 
-    } else if ( req.body.context.command ) {
+  } else if ( req.body.context.command ) {
 
-        var receivedMsg = req.body.context.command;
+      var receivedMsg = req.body.context.command;
 
-    }
+  }
 
-    findResponse(receivedMsg, chatContext, function(response, answerButtonsArr) {
+  findResponse(receivedMsg, chatContext, function(response, answerButtonsArr) {
 
-      request.post(config.MATTERMOST_WEBHOOK.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
-          json: {
-              "response_type": "in_channel",
-              "username": "stroke-companion",
-              "channel": "@" + chatContext.user,
-              "attachments": [
-                  {
-                      "pretext": "",
-                      "text": response.Print,
-                      "actions": answerButtonsArr
-                  }
-              ]
-          },
-          rejectUnauthorized: false,
-          requestCert: true
+    getWebhook(function(webhook) {
+
+      request.post(webhook.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
+        json: {
+          "response_type": "in_channel",
+          "username": "connie",
+          "channel": "@" + chatContext.user,
+          "icon_url": config.MANAGER_URL + "/connie.jpg",
+          "attachments": [
+            {
+              "pretext": "",
+              "text": response.Print,
+              "actions": answerButtonsArr
+            }
+          ]
+        },
+        rejectUnauthorized: false,
+        requestCert: true
       },
     	function (error, response, body) {
 
-          if (!error && response.statusCode == 200) {
+        if (error || ( response && response.statusCode >= 400 )) {
 
-    			     console.log(response.body)
+  		     console.log(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
 
-          } else {
+        }
 
-               console.log(error)
+        res.end();
 
-          }
-
-          res.end();
-
-        });
+      });
 
     });
+
+  });
 
 });
 
@@ -269,105 +350,37 @@ router.post('/initiate', function(req, res, next) {
 
   findResponse("/" + req.body.dialogueID, chatContext, function(dialogueResponse, answerButtonsArr) {
 
-    request.post(config.CHAT_INTERNAL_URL + "/api/v4/users/login", {
-      json: {
-        "login_id":"connie",
-        "password":"12345"
-      },
-      rejectUnauthorized: false,
-      requestCert: true
-    },
-    function (error, response, body) {
+    getWebhook(function(webhook) {
 
-      if (!error) {
-
-        request.get(config.CHAT_INTERNAL_URL + "/api/v4/teams", {
-          headers: {
-
-           "Authorization": "Bearer " + response.headers.token
-
-          },
-          rejectUnauthorized: false,
-          requestCert: true
+      request.post(webhook.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
+        json: {
+          "response_type": "in_channel",
+          "username": "connie",
+          "channel": "@" + req.body.username,
+          "icon_url": config.MANAGER_URL + "/connie.jpg",
+          "attachments": [
+            {
+              "image_url": config.MANAGER_URL + "/warning.jpg",
+              "pretext": "",
+              "text": dialogueResponse.Print,
+              "actions": answerButtonsArr
+            }
+          ]
         },
-        function (error, teams, body) {
+        rejectUnauthorized: false,
+        requestCert: true
+      },
+      function (error, response, body) {
 
-          if (!error) {
+        if (error || ( response && response.statusCode >= 400 )) {
 
-            request.get(config.CHAT_INTERNAL_URL + "/api/v4/hooks/incoming", {
-              headers: {
-                "Authorization": "Bearer " + response.headers.token
-              },
-              qs: {
-                "team_id": teams.body[0].id
-              },
-              rejectUnauthorized: false,
-              requestCert: true
-            },
-            function (error, response, body) {
+  		     console.log(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
 
-              if (!error) {
+        }
 
-                request.post((config.CHAT_INTERNAL_URL + "/hooks/" + JSON.parse(response.body)[0].id).replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
-                  json: {
-                    "response_type": "in_channel",
-                    "username": "connie",
-                    "channel": "@" + req.body.username,
-                    "attachments": [
-                      {
-                        "image_url": "https://images-na.ssl-images-amazon.com/images/I/51gG7k4ZdJL._SX425_.jpg",
-                        "pretext": "",
-                        "text": dialogueResponse.Print,
-                        "actions": answerButtonsArr
-                      }
-                    ]
-                  },
-                  rejectUnauthorized: false,
-                  requestCert: true
-                },
-                function (error, response, body) {
+        res.end();
 
-                  if (!error) {
-
-                    console.log(response.statusCode);
-
-                  } else {
-
-                    console.log(error);
-
-                  }
-
-                  res.end();
-
-                });
-
-              } else {
-
-                console.log(error);
-
-              }
-
-              res.end();
-
-            });
-
-          } else {
-
-            console.log(error);
-
-          }
-
-          res.end();
-
-        });
-
-      } else {
-
-        console.log(error);
-
-      }
-
-      res.end();
+      });
 
     });
 
