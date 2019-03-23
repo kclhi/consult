@@ -1,15 +1,16 @@
 {
-  
+
   "dbConfig": {
     "username": "user",
     "password": "password",
     "database": "database",
-    "host": "mysql",
+    "host": "device-integration_garmin_mysql_1",
     "dialect": "mysql"
   },
 
   "message_queue": {
-    "HOST": "rabbit"
+    "ACTIVE": true,
+    "HOST": "sensor-fhir-mapper_rabbit_1"
   }
 
 }

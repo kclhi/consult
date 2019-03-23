@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const router = express.Router();
 const async = require('async');
+const uuidv1 = require('uuid/v1');
 
 const config = require('config');
 
@@ -13,47 +14,47 @@ module.exports = function(messageObject) {
 	 * @apiGroup Simulate
 	 *
 	 */
-	router.get('/incomingHR', function(req, res, next) {
+	router.get('/incomingHR/:patientID', function(req, res, next) {
 
-		simulatedHRValues = [["3", 82,	92],
-												 ["3", 77,	87],
-												 ["3", 79,	89],
-												 ["3", 79,	89],
-												 ["3", 86,	96],
-												 ["3", 87,	97],
-												 ["3", 79,	89],
-												 ["3", 98,	108],
-												 ["3", 107,	117],
-												 ["3", 98,	108],
-												 ["3", 104,	114],
-												 ["3", 97,	107],
-												 ["3", 94,	104],
-												 ["3", 82,	92],
-												 ["3", 105,	115],
-												 ["3", 88,	98],
-												 ["3", 84,	94],
-												 ["3", 97,	107],
-												 ["3", 94,	104],
-												 ["3", 96,	106],
-												 ["3", 97,	107],
-												 ["3", 86,	96],
-												 ["3", 97,	107],
-												 ["3", 93, 103],
-												 ["3", 81,	91],
-												 ["3", 87,	97]];
+		simulatedHRValues = [[82,	92],
+												 [77,	87],
+												 [79,	89],
+												 [79,	89],
+												 [86,	96],
+												 [87,	97],
+												 [79,	89],
+												 [98,	108],
+												 [107,	117],
+												 [98,	108],
+												 [104,	114],
+												 [97,	107],
+												 [94,	104],
+												 [82,	92],
+												 [105,	115],
+												 [88,	98],
+												 [84,	94],
+												 [97,	107],
+												 [94,	104],
+												 [96,	106],
+												 [97,	107],
+												 [86,	96],
+												 [97,	107],
+												 [93, 103],
+												 [81,	91],
+												 [87,	97]];
 
 		async.eachSeries(simulatedHRValues, function (value, next){
 
 			var json = {
-				"reading": "hr",
-				"id": "t" + Date.now(),
-				"subjectReference": value[0],
-				"restingHeartRateInBeatsPerMinute": value[1],
-				"maxHeartRateInBeatsPerMinute": value[2],
+				"reading": "HR",
+				"id": uuidv1(),
+				"subjectReference": req.params.patientID,
+				"restingHeartRateInBeatsPerMinute": value[0],
+				"maxHeartRateInBeatsPerMinute": value[1],
 				"intensityDurationPercentage": 0
 			};
 
-			messageObject.send(config.get('sensor_to_fhir.URL') + "convert/he", json).then(() => next());
+			messageObject.send(config.get('sensor_to_fhir.URL') + "convert/hr", json).then(() => next());
 
 		}, function(err) {
 

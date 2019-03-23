@@ -1,97 +1,50 @@
 ### Project specific ###
 
-# Created by https://www.gitignore.io/api/node,macos,eclipse
+proxy/locations/*
+!proxy/locations/garmin
 
-### Eclipse ###
+# Created by https://www.gitignore.io/api/node,venv,linux,dropbox,virtualenv,archlinuxpackages
+# Edit at https://www.gitignore.io/?templates=node,venv,linux,dropbox,virtualenv,archlinuxpackages
 
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
+### ArchLinuxPackages ###
+*.tar
+*.tar.*
+*.jar
+*.exe
+*.msi
+*.zip
+*.tgz
+*.log
+*.log.*
+*.sig
 
-# External tool builders
-.externalToolBuilders/
+pkg/
+src/
 
-# Locally stored "Eclipse launch configurations"
-*.launch
+### Dropbox ###
+# Dropbox settings and caches
+.dropbox
+.dropbox.attr
+.dropbox.cache
 
-# PyDev specific (Python IDE for Eclipse)
-*.pydevproject
+### Linux ###
+*~
 
-# CDT-specific (C/C++ Development Tooling)
-.cproject
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
 
-# Java annotation processor (APT)
-.factorypath
+# KDE directory preferences
+.directory
 
-# PDT-specific (PHP Development Tools)
-.buildpath
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
 
-# sbteclipse plugin
-.target
-
-# Tern plugin
-.tern-project
-
-# TeXlipse plugin
-.texlipse
-
-# STS (Spring Tool Suite)
-.springBeans
-
-# Code Recommenders
-.recommenders/
-
-# Scala IDE specific (Scala & Java development for Eclipse)
-.cache-main
-.scala_dependencies
-.worksheet
-
-### Eclipse Patch ###
-# Eclipse Core
-.project
-
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
-### macOS ###
-*.DS_Store
-.AppleDouble
-.LSOverride
-
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
 
 ### Node ###
 # Logs
 logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -111,7 +64,7 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
 # Bower dependency directory (https://bower.io/)
@@ -120,14 +73,14 @@ bower_components
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
+# Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
 # Dependency directories
 node_modules/
 jspm_packages/
 
-# Typescript v1 declaration files
+# TypeScript v1 declaration files
 typings/
 
 # Optional npm cache directory
@@ -140,20 +93,52 @@ typings/
 .node_repl_history
 
 # Output of 'npm pack'
-*.tgz
 
 # Yarn Integrity file
 .yarn-integrity
 
 # dotenv environment variables file
 .env
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+### venv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.Python
+[Ii]nclude
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+
+### VirtualEnv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 
 ### sequelize ###
 *production.sqlite
 
-### nodeenv ###
-env/
-nenv/
-
-
-# End of https://www.gitignore.io/api/node,macos,eclipse
+# End of https://www.gitignore.io/api/node,venv,linux,dropbox,virtualenv,archlinuxpackages
