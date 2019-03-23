@@ -8,9 +8,9 @@ const utils = require('../lib/utils');
 const fhir = require('../lib/fhir');
 
 /**
- * @api {post} /convert/hr Populate a FHIR heart rate template with the supplied values
- * @apiName ConvertHR
- * @apiGroup Convert
+ * @api {post} /create/hr Populate a FHIR heart rate template with the supplied values
+ * @apiName CreateHR
+ * @apiGroup Create
  *
  * @apiParam {String} id Unique ID of this reading.
  * @apiParam {String} averageHeartRateInBeatsPerMinute  Heart rate value.
@@ -19,14 +19,14 @@ const fhir = require('../lib/fhir');
  */
 router.post('/hr', function(req, res, next) {
 
-  fhir.createFHIRResource("hr", req.body, function(status) { res.sendStatus(status); });
+  fhir.createObservationResource("HR", req.body, function(status) { res.sendStatus(status); });
 
 });
 
 /**
- * @api {post} /convert/bp Populate a FHIR blood pressure template with the supplied values
- * @apiName ConvertBP
- * @apiGroup Convert
+ * @api {post} /create/bp Populate a FHIR blood pressure template with the supplied values
+ * @apiName CreateBP
+ * @apiGroup Create
  *
  * @apiParam {String} id Unique ID of this reading.
  * @apiParam {String} 271649006  Systolic blood pressure value.
@@ -37,7 +37,7 @@ router.post('/hr', function(req, res, next) {
  */
 router.post('/bp', function(req, res, next) {
 
-  fhir.createFHIRResource("bp", req.body, function(status) { res.sendStatus(status); });
+  fhir.createObservationResource("BP", req.body, function(status) { res.sendStatus(status); });
 
 });
 

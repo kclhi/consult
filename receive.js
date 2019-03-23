@@ -24,7 +24,7 @@ amqp.connect('amqp://' + config.RABBIT_HOST).then(function(connection) {
 
           jsonMessage = JSON.parse(message.content.toString());
 
-          fhir.createFHIRResource(jsonMessage.reading, jsonMessage, function(statusCode) {
+          fhir.createObservationResource(jsonMessage.reading, jsonMessage, function(statusCode) {
 
             if ( statusCode < 300 ) {
 

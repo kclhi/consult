@@ -5,23 +5,21 @@ services:
   webapp-queue:
     build:
       context: .
-    command: ["./wait-for-it/wait-for-it.sh", "rabbit:15672", "--", "npm", "run", "consume"]
-    links:
-      - rabbit
+    command: ["./wait-for-it/wait-for-it.sh", "sensor-fhir-mapper_rabbit_1:15672", "--", "npm", "run", "consume"]
     depends_on:
+      - rabbit
+    links:
       - rabbit
 
   webapp-api:
     build:
       context: .
-    ports:
-      - "3002:3002"
 
   rabbit:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
-    ports:
-      - "15672:15672"
+    #ports:
+      #- "15672:15672"
     volumes:
       - data_volume:/var/lib/rabbitmq
 
@@ -30,4 +28,4 @@ volumes:
 
 networks:
   default:
-    name: device_network
+    name: network

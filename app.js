@@ -29,39 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 router.use('/', indexRouter);
 
-app.use('/convert', router);
-
-app.get('/populate', function(req, res, next) {
-
-  fhirResources = [["Organization", "organization"],
-                   ["Practitioner",	"practitioner"],
-                   ["Patient", "patient"],
-                   ["Condition", "condition-oa"],
-                   ["Condition", "condition-hypertension"],
-                   ["Medication", "medication-nsaid"],
-                   ["Medication", "medication-thiazide"],
-                   ["MedicationDispense", "medication-dispense-nsaid"],
-                   ["MedicationDispense", "medication-dispense-thiazide"],
-                   ["Subscription", "subscription"]];
-
-  async.eachSeries(fhirResources, function (resource, next){
-
-    const url = config.FHIR_SERVER_URL + config.FHIR_REST_ENDPOINT + resource[0] + "?_format=json";
-
-    utils.callFHIRServer(url, "POST", fs.readFileSync("fhir-json-templates/" + resource[1] + ".json", 'utf8'), function(statusCode) {
-
-      console.log(resource[1] + ": " + statusCode);
-      next();
-
-    });
-
-  }, function(err) {
-
-    res.sendStatus(200);
-
-  });
-
-});
+app.use('/create', router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
