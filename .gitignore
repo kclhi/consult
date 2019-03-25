@@ -1,3 +1,7 @@
+### Project specific ###
+
+proxy/certs/*
+!proxy/certs/gen-domain-cert.sh
 
 # Created by https://www.gitignore.io/api/git,node,linux,dropbox,virtualenv
 # Edit at https://www.gitignore.io/?templates=git,node,linux,dropbox,virtualenv

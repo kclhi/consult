@@ -9,3 +9,4 @@ dotenv
 async
 apidoc
 amqplib
+config

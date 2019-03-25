@@ -5,21 +5,23 @@ services:
   webapp-queue:
     build:
       context: .
-    command: ["./wait-for-it/wait-for-it.sh", "sensor-fhir-mapper_rabbit_1:15672", "--", "npm", "run", "consume"]
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_rabbit_1:15672", "--", "npm", "run", "consume"]
     depends_on:
       - rabbit
     links:
       - rabbit
+    environment:
+      - FHIR_SERVER_ADDRESS=192.168.99.101
 
   webapp-api:
     build:
       context: .
+    environment:
+      - FHIR_SERVER_ADDRESS=192.168.99.101
 
   rabbit:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
-    #ports:
-      #- "15672:15672"
     volumes:
       - data_volume:/var/lib/rabbitmq
 
@@ -28,4 +30,4 @@ volumes:
 
 networks:
   default:
-    name: network
+    name: device_network

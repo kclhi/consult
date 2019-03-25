@@ -6,11 +6,11 @@ const logger = require('morgan');
 const async = require('async');
 const fs = require('fs')
 
-const utils = require('./lib/utils.js')
-const config = require('./lib/config.js')
-
 // Environment variables
 require('dotenv').config()
+
+const config = require('config')
+const utils = require('./lib/utils.js')
 
 var indexRouter = require('./routes/index');
 

@@ -14,7 +14,7 @@ USER $user
 RUN cat requirements.txt | xargs npm install
 
 # Later ensures rabbitmq start can be waited for.
-RUN git clone https://github.com/vishnubob/wait-for-it.git
+COPY ./bin/wait-for-it.sh wait-for-it.sh
 
 ENV NODE_ENV production
 EXPOSE 3002

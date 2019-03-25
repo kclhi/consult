@@ -48,7 +48,7 @@
   "effectiveDateTime": "[effectiveDateTime]",
   "performer": [
     {
-      "reference": "Practitioner/2"
+      "reference": "Practitioner/[practitionerReference]"
     }
   ],
   "interpretation": [

@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const request = require('request');
+const config = require('config');
 
-const config = require('../lib/config');
 const utils = require('../lib/utils');
 const fhir = require('../lib/fhir');
 
+function createObservationResource(template, data, callback) {
+
+  fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), template, data, callback);
+
+}
 /**
  * @api {post} /create/hr Populate a FHIR heart rate template with the supplied values
  * @apiName CreateHR
@@ -19,7 +24,7 @@ const fhir = require('../lib/fhir');
  */
 router.post('/hr', function(req, res, next) {
 
-  fhir.createObservationResource("HR", req.body, function(status) { res.sendStatus(status); });
+  createObservationResource("HR", req.body, function(status) { res.sendStatus(status); });
 
 });
 
@@ -37,7 +42,7 @@ router.post('/hr', function(req, res, next) {
  */
 router.post('/bp', function(req, res, next) {
 
-  fhir.createObservationResource("BP", req.body, function(status) { res.sendStatus(status); });
+  createObservationResource("BP", req.body, function(status) { res.sendStatus(status); });
 
 });
 

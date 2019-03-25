@@ -1,15 +1,15 @@
 const amqp = require('amqplib');
 const async = require('async');
+const config = require('config');
 
 const utils = require('./lib/utils');
 const fhir = require('./lib/fhir');
-const config = require('./lib/config');
 
-amqp.connect('amqp://' + config.RABBIT_HOST).then(function(connection) {
+amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
 
   process.once('SIGINT', function() { connection.close(); });
 
-  return async.eachSeries(config.RABBIT_QUEUES, function(queue, callback) {
+  return async.eachSeries(config.get('message_queue.QUEUES'), function(queue, callback) {
 
     connection.createChannel().then(function(channel) {
 
@@ -24,7 +24,7 @@ amqp.connect('amqp://' + config.RABBIT_HOST).then(function(connection) {
 
           jsonMessage = JSON.parse(message.content.toString());
 
-          fhir.createObservationResource(jsonMessage.reading, jsonMessage, function(statusCode) {
+          fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), jsonMessage.reading, jsonMessage, function(statusCode) {
 
             if ( statusCode < 300 ) {
 
