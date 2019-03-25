@@ -1,10 +1,10 @@
-var express = require('express');
-var request = require('request');
-var router = express.Router();
-var fs = require('fs');
-var Handlebars = require('handlebars');
-
-const config = require('../lib/config');
+const express = require('express');
+const request = require('request');
+const router = express.Router();
+const logger = require('../config/winston');
+const config = require('config');
+const fs = require('fs');
+const Handlebars = require('handlebars');
 
 Handlebars.registerHelper('p1u1stepsHome', function() { return '23095'; });
 Handlebars.registerHelper('p1u1stepsPercTotal', function() { return '65'; });
@@ -23,7 +23,7 @@ function tmplRpl(s) { // Replace template placeholders
     return Handlebars.compile(s)();
 }
 
-let webhook = config.MATTERMOST_WEBHOOK;
+let webhook = config.get('mattermost.WEBHOOK');
 
 function getWebhook(callback) {
 
@@ -33,10 +33,10 @@ function getWebhook(callback) {
 
   } else {
 
-    request.post(config.CHAT_INTERNAL_URL + config.API_PATH + "/users/login", {
+    request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/login", {
       json: {
-        "login_id": config.MATTERMOST_ADMIN_USERNAME,
-        "password": config.MATTERMOST_ADMIN_PASSWORD
+        "login_id": config.get('mattermost.ADMIN_USERNAME'),
+        "password": config.get('mattermost.ADMIN_PASSWORD')
       },
       rejectUnauthorized: false,
       requestCert: true
@@ -45,7 +45,7 @@ function getWebhook(callback) {
 
       if ( !error && ( response && response.statusCode < 400 ) && ( token = ( response && response.headers.token ? response.headers.token : false ) ) ) {
 
-        request.get(config.CHAT_INTERNAL_URL + config.API_PATH + "/teams", {
+        request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/teams", {
           headers: {
 
            "Authorization": "Bearer " + token
@@ -58,7 +58,7 @@ function getWebhook(callback) {
 
           if ( !error && ( response && response.statusCode < 400 ) && ( team = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
 
-            request.get(config.CHAT_INTERNAL_URL + config.API_PATH + "/hooks/incoming", {
+            request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/hooks/incoming", {
               headers: {
                 "Authorization": "Bearer " + token
               },
@@ -72,12 +72,12 @@ function getWebhook(callback) {
 
               if ( !error && ( response && response.statusCode < 400 ) && ( id = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
 
-                webhook = config.CHAT_INTERNAL_URL + "/hooks/" + id;
+                webhook = config.get('mattermost.CHAT_INTERNAL_URL') + "/hooks/" + id;
                 callback( webhook );
 
               } else {
 
-                console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+                logger.error("Error getting webhook: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
 
               }
 
@@ -85,7 +85,7 @@ function getWebhook(callback) {
 
           } else {
 
-            console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+            logger.error("Error getting teams for ID: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
 
           }
 
@@ -93,7 +93,7 @@ function getWebhook(callback) {
 
       } else {
 
-        console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+        logger.error("Error logging in to API: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
 
       }
 
@@ -148,7 +148,7 @@ function findResponse(receivedMsg, chatContext, callback) {
                       {
                           "name": "/" + answer,
                           "integration": {
-                              "url": config.MANAGER_URL + "/response",
+                              "url": config.get('dialogue_manager.URL') + "/response",
                               "context": {
                                   "command": "/" + answer,
                                   "chatContext": chatContext
@@ -244,7 +244,7 @@ function findResponse(receivedMsg, chatContext, callback) {
                   {
                       "name": answer,
                       "integration": {
-                          "url": config.MANAGER_URL + "/response",
+                          "url": config.get('dialogue_manager.URL') + "/response",
                           "context": {
                               "command": answer,
                               "chatContext": chatContext
@@ -268,29 +268,29 @@ router.post('/response', function(req, res, next) {
   // New chat session.
   if ( !req.body.context || !req.body.context.chatContext ) {
 
-      var chatContext = {};
-      chatContext.user = req.body.user_name;
-      chatContext.chatId = req.body.user_id;
+    var chatContext = {};
+    chatContext.user = req.body.user_name;
+    chatContext.chatId = req.body.user_id;
 
   // For initiated chats, assign them an ID. Could also be done during the initiation.
   } else if ( !req.body.context.chatContext.chatId ) {
 
-      var chatContext = req.body.context.chatContext;
-      chatContext.chatId = req.body.user_id;
+    var chatContext = req.body.context.chatContext;
+    chatContext.chatId = req.body.user_id;
 
   } else  {
 
-      var chatContext = req.body.context.chatContext;
+    var chatContext = req.body.context.chatContext;
 
   }
 
   if ( req.body.command ) {
 
-      var receivedMsg = req.body.command;  // Input from chat server
+    var receivedMsg = req.body.command;  // Input from chat server
 
   } else if ( req.body.context.command ) {
 
-      var receivedMsg = req.body.context.command;
+    var receivedMsg = req.body.context.command;
 
   }
 
@@ -298,12 +298,12 @@ router.post('/response', function(req, res, next) {
 
     getWebhook(function(webhook) {
 
-      request.post(webhook.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
+      request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
         json: {
           "response_type": "in_channel",
           "username": "connie",
           "channel": "@" + chatContext.user,
-          "icon_url": config.MANAGER_URL + "/connie.jpg",
+          "icon_url": config.get('dialogue_manager.URL') + "/connie.jpg",
           "attachments": [
             {
               "pretext": "",
@@ -319,11 +319,15 @@ router.post('/response', function(req, res, next) {
 
         if (error || ( response && response.statusCode >= 400 )) {
 
-  		     console.log(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+  		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+           res.end();
+
+        } else {
+
+          // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
+          res.end();
 
         }
-
-        res.end();
 
       });
 
@@ -350,39 +354,63 @@ router.post('/initiate', function(req, res, next) {
 
   findResponse("/" + req.body.dialogueID, chatContext, function(dialogueResponse, answerButtonsArr) {
 
-    getWebhook(function(webhook) {
+    if ( dialogueResponse && dialogueResponse.Print && answerButtonsArr ) {
 
-      request.post(webhook.replace(config.CHAT_EXTERNAL_URL, config.CHAT_INTERNAL_URL), {
-        json: {
-          "response_type": "in_channel",
-          "username": "connie",
-          "channel": "@" + req.body.username,
-          "icon_url": config.MANAGER_URL + "/connie.jpg",
-          "attachments": [
-            {
-              "image_url": config.MANAGER_URL + "/warning.jpg",
-              "pretext": "",
-              "text": dialogueResponse.Print,
-              "actions": answerButtonsArr
+      getWebhook(function(webhook) {
+
+        if ( webhook ) {
+
+          webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL'));
+
+          request.post(webhook, {
+            json: {
+              "response_type": "in_channel",
+              "username": "connie",
+              "channel": "@" + req.body.username,
+              "icon_url": config.get('dialogue_manager.URL') + "/connie.jpg",
+              "attachments": [
+                {
+                  "image_url": config.get('dialogue_manager.URL') + "/warning.jpg",
+                  "pretext": "",
+                  "text": dialogueResponse.Print,
+                  "actions": answerButtonsArr
+                }
+              ]
+            },
+            rejectUnauthorized: false,
+            requestCert: true
+          },
+          function (error, response, body) {
+
+            if (error || ( response && response.statusCode >= 400 )) {
+
+              logger.error("Error initiating dialogue: " + error + " " + ( response && response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+              res.sendStatus(400);
+
+            } else {
+
+              logger.info("Dialogue initiated: " + webhook + " " + req.body.username + " " + ( typeof dialogueResponse.Print === "object" ? JSON.stringify(dialogueResponse.Print) : dialogueResponse.Print )  + " " + ( typeof answerButtonsArr === "object" ? JSON.stringify(answerButtonsArr) : answerButtonsArr ));
+              res.sendStatus(200);
+
             }
-          ]
-        },
-        rejectUnauthorized: false,
-        requestCert: true
-      },
-      function (error, response, body) {
 
-        if (error || ( response && response.statusCode >= 400 )) {
+          });
 
-  		     console.log(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+        } else {
+
+          logger.error("Failed to get webhook: " + webhook);
+          res.sendStatus(400);
 
         }
 
-        res.end();
-
       });
 
-    });
+    } else {
+
+      logger.error("Failed to get dialogue response: " + (dialogueResponse && typeof dialogueResponse === "object" ? JSON.stringify(dialogueResponse) : dialogueResponse) + " " + answerButtonsArr.toString());
+      res.sendStatus(400);
+
+    }
 
   });
 

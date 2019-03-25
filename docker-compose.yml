@@ -5,6 +5,10 @@ services:
   webapp:
     build:
       context: .
+    environment:
+      - DNC_ADDRESS=danvers
+      - UI_ADDRESS=192.168.99.105
+    restart: unless-stopped
 
   proxy:
     build:
@@ -15,11 +19,11 @@ services:
     ports:
       - '443:443'
       - '80:80'
+    restart: unless-stopped
 
 volumes:
-  processing_data_volume:
+  dnc_volume:
 
 networks:
   default:
-    external:
-      name: network
+    name: dnc_network
