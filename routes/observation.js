@@ -4,9 +4,9 @@ const request = require('request');
 const async = require('async');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
+const config = require('config');
 
 const provenance = require('../lib/provenance');
-const config = require('../lib/config');
 const utils = require('../lib/utils');
 
 let lastAlert = 0;
@@ -27,7 +27,7 @@ function noParse(target, path, object) {
 
   var pathInfo = "";
   if ( path.length > 0 ) pathInfo =  path.toString() + " not a valid path in ";
-  console.log("Could not parse " + target + ". " + pathInfo + ( typeof object === "object" ? JSON.stringify(object) : object))
+  console.error("Could not parse " + target + ". " + pathInfo + ( typeof object === "object" ? JSON.stringify(object) : object))
 
 }
 
@@ -159,15 +159,15 @@ function sendAlert(response, alertField, alertValue, callback) {
   // TODO: Miner response is oddly nested.
   if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
 
-    if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD ) {
+    if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) {
 
       request({
 
         method: "POST",
-        url: config.DIALOGUE_MANAGER_URL + "/initiate",
+        url: config.get('dialogue_manager.URL') + "/initiate",
         headers: {
 
-         "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
+         "Authorization": "Basic " + new Buffer(config.get('credentials.USERNAME') + ":" + config.get('credentials.PASSWORD')).toString("base64")
 
         },
         json: {
@@ -191,7 +191,7 @@ function sendAlert(response, alertField, alertValue, callback) {
 
         } else {
 
-          console.log("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
+          console.error("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
           callback(400);
 
         }
@@ -206,7 +206,7 @@ function sendAlert(response, alertField, alertValue, callback) {
 
   } else {
 
-    console.log("Could not parse response from data miner.");
+    console.error("Could not parse response from data miner.");
     callback(400);
 
   }
@@ -251,7 +251,7 @@ function processObservation(req, res, callback) {
             observationHeaders.push(code);
             observationRow.push(value);
 
-            if ( config.TRACK_PROVENANCE ) {
+            if ( config.get('provenance_server.TRACK') ) {
 
               populateProvenanceTemplateBP(patientID, code, value, function(body) {
 
@@ -285,7 +285,7 @@ function processObservation(req, res, callback) {
 
       } else {
 
-        console.log("Did not receive patient information.");
+        console.error("Did not receive patient information.");
         callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
       }
@@ -304,13 +304,13 @@ function processObservation(req, res, callback) {
 router.put('/:id', function(req, res, next) {
 
   // Use code to determine type of observation.
-  if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.HR_CODE ) {
+  if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.HR_CODE') ) {
 
     processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
 
-        request.post(config.DATA_MINER_URL + "/check/hr", {
+        request.post(config.get('data_miner.URL') + "/check/hr", {
 
           json: {
 
@@ -331,7 +331,7 @@ router.put('/:id', function(req, res, next) {
 
           } else {
 
-            console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            console.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
             res.sendStatus(400);
 
           }
@@ -346,13 +346,13 @@ router.put('/:id', function(req, res, next) {
 
     });
 
-  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.BP_CODE ) {
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.BP_CODE') ) {
 
     processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
 
-        request.post(config.DATA_MINER_URL + "/check/bp", {
+        request.post(config.get('data_miner.URL') + "/check/bp", {
 
           json: {
 
@@ -378,7 +378,7 @@ router.put('/:id', function(req, res, next) {
 
           } else {
 
-            console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            console.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
             res.sendStatus(400);
 
           }
@@ -477,7 +477,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
         } else {
 
-          console.log("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource) : resource.resource));
+          console.error("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource) : resource.resource));
 
         }
 
@@ -492,7 +492,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
     } else {
 
-      console.log("Could not parse FHIR server response.")
+      console.error("Could not parse FHIR server response.")
       res.sendStatus(400);
 
     }

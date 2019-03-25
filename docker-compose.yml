@@ -22,14 +22,28 @@ services:
       #- consul-service
     #restart: "no"
 
+  proxy:
+    build:
+      context: ./proxy
+    depends_on:
+      - webapp
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_webapp_1:3005", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '443:443'
+      - '80:80'
+
   webapp:
     build:
       context: .
-    command: ["./wait-for-it/wait-for-it.sh", "message-passer_template-server_1:8080", "--", "npm", "start"]
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_template-server_1:8080", "--", "npm", "start"]
     depends_on:
       - template-server
-    links:
-      - template-server
+    environment:
+      # Under single docker machine (i.e. single host) use allocated hostname of single proxy handling all routing (e.g. device-integration_nokia_proxy_1), otherwise use machine (host) addresses.
+      - FHIR_SERVER_ADDRESS=192.168.99.101
+      - DNC_ADDRESS=192.168.99.102
+      - PROCESSING_ADDRESS=192.168.99.103
 
   template-server:
     image: big-kcl/template-server:latest
@@ -45,20 +59,11 @@ services:
       - NEO4J_AUTH=neo4j/12345
     volumes:
       - dnc_volume:/data
-    depends_on:
-      - proxy
-
-  proxy:
-    build:
-      context: ./proxy
-    tty: true
-    ports:
-      - '443:443'
-      - '80:80'
 
 volumes:
   dnc_volume:
 
 networks:
   default:
-    name: network
+    external:
+      name: dnc_network

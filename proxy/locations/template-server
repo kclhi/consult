@@ -1,10 +1,10 @@
-location / {
+location /provenance {
 
   proxy_set_header        Host $host;
   proxy_set_header        X-Real-IP $remote_addr;
   proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
   proxy_set_header        X-Forwarded-Proto $scheme;
-  proxy_pass              http://message-passer_webapp_1:3005; # Hostname from docker-compose
+  proxy_pass              http://message-passer_template-server_1:8080; # Hostname from docker-compose
   proxy_read_timeout      90;
 
 }

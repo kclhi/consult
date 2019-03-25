@@ -13,3 +13,5 @@ mocha
 chai
 chai-http
 uuid
+config
+winston
