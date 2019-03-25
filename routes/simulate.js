@@ -13,8 +13,10 @@ module.exports = function(messageObject) {
 	 * @apiName simulateHR
 	 * @apiGroup Simulate
 	 *
+	 * @apiParam {String} patientID Patient unique ID.
+	 * @apiParam {String} practitionerID Practitioner unique ID.
 	 */
-	router.get('/incomingHR/:patientID', function(req, res, next) {
+	router.get('/incomingHR/:patientID/:practitionerID', function(req, res, next) {
 
 		simulatedHRValues = [[82,	92],
 												 [77,	87],
@@ -49,6 +51,7 @@ module.exports = function(messageObject) {
 				"reading": "HR",
 				"id": uuidv1(),
 				"subjectReference": req.params.patientID,
+				"practitionerReference": req.params.practitionerID,
 				"restingHeartRateInBeatsPerMinute": value[0],
 				"maxHeartRateInBeatsPerMinute": value[1],
 				"intensityDurationPercentage": 0

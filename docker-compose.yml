@@ -20,7 +20,7 @@ services:
 
   migration:
     image: device-integration_garmin_webapp:latest
-    command: ["./wait-for-it/wait-for-it.sh", "device-integration_garmin_mysql_1:3306", "--", "npm", "run", "migrate"]
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_garmin_mysql_1:3306", "--", "npm", "run", "migrate"]
     links:
       - mysql
     depends_on:
@@ -40,4 +40,4 @@ volumes:
 networks:
   default:
     external:
-      name: network
+      name: device_network

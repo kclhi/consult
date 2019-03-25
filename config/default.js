@@ -11,7 +11,7 @@ module.exports = {
   },
 
   sensor_to_fhir: {
-    URL: 'http://localhost:3001/',
+    URL: 'http://localhost/populate',
   },
 
   message_queue: {
@@ -19,5 +19,5 @@ module.exports = {
     HOST: "localhost",
     NAME: "device-integration_garmin-sensor-fhir-mapper"
   }
-  
+
 };

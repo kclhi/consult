@@ -20,7 +20,7 @@ RUN npm install sequelize-cli -g
 ENV PATH="/home/$user/.npm-packages/bin:${PATH}"
 
 # Later ensures SQL start can be waited for.
-RUN git clone https://github.com/vishnubob/wait-for-it.git
+COPY ./bin/wait-for-it.sh wait-for-it.sh
 
 # Run config
 ENV NODE_ENV production
