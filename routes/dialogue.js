@@ -386,7 +386,7 @@ router.post('/initiate', function(req, res, next) {
 
             if (error || ( response && response.statusCode >= 400 )) {
 
-              logger.error("Error initiating dialogue: " + error + " " + ( response && response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+              logger.error("Error initiating dialogue: " + ( webhook ? webhook : "" ) + error + " " + ( response && response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
               res.sendStatus(400);
 
             } else {
