@@ -1,11 +1,14 @@
 FROM nginx
 
 RUN mkdir /etc/nginx/ssl
-# Replace with loaded secrets: https://docs.docker.com/engine/swarm/secrets/#use-secrets-in-compose
-COPY nginx.crt /etc/nginx/ssl/nginx.crt
-COPY nginx.key /etc/nginx/ssl/nginx.key
+
+# In swarm, can replace with loaded secrets: https://docs.docker.com/engine/swarm/secrets/#use-secrets-in-compose
+COPY ./certs/maximoff.crt /etc/nginx/ssl/maximoff.crt
+COPY ./certs/maximoff.key /etc/nginx/ssl/maximoff.key
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY locations /etc/nginx/locations
+
+COPY bin/wait-for-it.sh wait-for-it.sh
 
 CMD ["nginx", "-g", "daemon off;"]

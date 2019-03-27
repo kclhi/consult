@@ -1,4 +1,8 @@
 # Project specific
+
+proxy/certs/*
+!proxy/certs/gen-domain-cert.sh
+proxy/locations/*
 output/
 *.pdf
 *.sqlite

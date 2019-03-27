@@ -2,19 +2,20 @@ version: "3.7"
 
 services:
 
-  webapp:
-    build:
-      context: .
-
   proxy:
     build:
       context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "data-miner_webapp_1:3006", "--", "nginx", "-g", "daemon off;"]
     tty: true
     depends_on:
       - webapp
     ports:
       - '443:443'
       - '80:80'
+
+  webapp:
+    build:
+      context: .
 
 volumes:
   processing_data_volume:
