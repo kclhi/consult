@@ -2,9 +2,26 @@ version: "3.7"
 
 services:
 
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_garmin_webapp_1:3001", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '443:443'
+      - '80:80'
+    depends_on:
+      - webapp
+
   webapp:
     build:
       context: .
+    depends_on:
+      - mysql
+
+  migration:
+    image: device-integration_garmin_webapp:latest
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_garmin_mysql_1:3306", "--", "npm", "run", "migrate"]
     depends_on:
       - mysql
 
@@ -17,23 +34,7 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - sensor_data_volume:/var/lib/mysql
-
-  migration:
-    image: device-integration_garmin_webapp:latest
-    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_garmin_mysql_1:3306", "--", "npm", "run", "migrate"]
-    links:
-      - mysql
-    depends_on:
-      - mysql
-
-  proxy:
-    build:
-      context: ./proxy
-    tty: true
-    ports:
-      - '443:443'
-      - '80:80'
-
+      
 volumes:
   sensor_data_volume:
 
