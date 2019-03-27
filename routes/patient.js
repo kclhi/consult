@@ -5,6 +5,7 @@ const async = require('async');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 const config = require('config');
+const logger = require('../config/winston');
 
 const provenance = require('../lib/provenance');
 const utils = require('../lib/utils');
@@ -37,7 +38,7 @@ router.put('/:id', function(req, res, next) {
 
     } else {
 
-      console.log("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
+      logger.error("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
       res.send(400);
 
     }

@@ -5,6 +5,7 @@ const async = require('async');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 const config = require('config');
+const logger = require('../config/winston');
 
 const provenance = require('../lib/provenance');
 const utils = require('../lib/utils');
@@ -27,7 +28,7 @@ function noParse(target, path, object) {
 
   var pathInfo = "";
   if ( path.length > 0 ) pathInfo =  path.toString() + " not a valid path in ";
-  console.error("Could not parse " + target + ". " + pathInfo + ( typeof object === "object" ? JSON.stringify(object) : object))
+  logger.error("Could not parse " + target + ". " + pathInfo + ( typeof object === "object" ? JSON.stringify(object) : object))
 
 }
 
@@ -159,7 +160,7 @@ function sendAlert(response, alertField, alertValue, callback) {
   // TODO: Miner response is oddly nested.
   if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
 
-    if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) {
+    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && alertFieldData.indexOf(alertValue) > -1 && minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) {
 
       request({
 
@@ -186,12 +187,13 @@ function sendAlert(response, alertField, alertValue, callback) {
 
         if (!error && ( response && response.statusCode == 200 ) ) {
 
+          logger.info("Message passer instructed dialogue manager to initiate alert with user.")
           lastAlert = new Date();
           callback(200);
 
         } else {
 
-          console.error("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
+          logger.error("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
           callback(400);
 
         }
@@ -200,13 +202,14 @@ function sendAlert(response, alertField, alertValue, callback) {
 
     } else {
 
-     callback(200);
+      logger.info("Did not alert on miner response. Alert field: " + alertField + ". Alert value: " + alertValue + ". Minutes since last alert: " + minutesSinceLastAlert + ". Max alert period: " + config.get('dialogue_manager.MAX_ALERT_PERIOD'));
+      callback(200);
 
     }
 
   } else {
 
-    console.error("Could not parse response from data miner.");
+    logger.error("Could not parse response from data miner.");
     callback(400);
 
   }
@@ -218,6 +221,7 @@ function addDateRows(resource, row) {
   resourceTime = new Date(resource.effectiveDateTime);
   row.push(resourceTime.toISOString().split('T')[0]);
   row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
+  row.push(resourceTime.toISOString().split('T')[1].substring(0, resourceTime.toISOString().split('T')[1].indexOf(".")));
   row.push("\"" + utils.dayOfWeekAsString(resourceTime.getDay()) + "\"");
   return row;
 
@@ -261,7 +265,7 @@ function processObservation(req, res, callback) {
 
             } else {
 
-              console.warn("Not tracking provenance.");
+              logger.warn("Not tracking provenance.");
               done();
 
             }
@@ -270,6 +274,7 @@ function processObservation(req, res, callback) {
 
             observationHeaders.push("datem");
             observationHeaders.push("date.month");
+            observationHeaders.push("time");
             observationHeaders.push("weekday");
             observationRow = addDateRows(req.body, observationRow);
             callback(observationHeaders, observationRow, patientHeaders, patientRow);
@@ -285,7 +290,7 @@ function processObservation(req, res, callback) {
 
       } else {
 
-        console.error("Did not receive patient information.");
+        logger.error("Did not receive patient information.");
         callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
       }
@@ -327,11 +332,12 @@ router.put('/:id', function(req, res, next) {
 
           if ( !error && ( response && response.statusCode == 200 ) ) {
 
+            logger.info("Contacted data miner for analysis of heart rate.");
             res.sendStatus(200);
 
           } else {
 
-            console.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            logger.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
             res.sendStatus(400);
 
           }
@@ -340,6 +346,7 @@ router.put('/:id', function(req, res, next) {
 
       } else {
 
+        logger.error("Missing observation or patient headers.")
         res.sendStatus(400);
 
       }
@@ -369,6 +376,8 @@ router.put('/:id', function(req, res, next) {
 
           if ( !error && ( response && response.statusCode < 400 ) ) {
 
+            logger.info("Contacted data miner for analysis of blood pressure.");
+
             // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
             sendAlert(response, "bp.trend", "Red", function(status) {
 
@@ -378,7 +387,7 @@ router.put('/:id', function(req, res, next) {
 
           } else {
 
-            console.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            logger.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
             res.sendStatus(400);
 
           }
@@ -387,6 +396,7 @@ router.put('/:id', function(req, res, next) {
 
       } else {
 
+        logger.error("Missing observation or patient headers.")
         res.sendStatus(400);
 
       }
@@ -477,7 +487,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
         } else {
 
-          console.error("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource) : resource.resource));
+          logger.error("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource) : resource.resource));
 
         }
 
@@ -487,12 +497,13 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
       header.push("\"datem\"");
       header.push("\"date.month\"");
+      header.push("\"time\"");
       header.push("\"weekday\"\n");
       res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
 
     } else {
 
-      console.error("Could not parse FHIR server response.")
+      logger.error("Could not parse FHIR server response.")
       res.sendStatus(400);
 
     }
