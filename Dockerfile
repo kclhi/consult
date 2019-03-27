@@ -2,6 +2,9 @@ FROM node:11
 
 ENV user node
 
+# Replace with root cert.
+COPY ./proxy/certs/consult.crt consult.crt
+
 COPY package.json /home/$user/
 COPY . /home/$user/
 

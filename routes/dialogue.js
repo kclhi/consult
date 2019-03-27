@@ -34,39 +34,39 @@ function getWebhook(callback) {
   } else {
 
     request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/login", {
+
       json: {
         "login_id": config.get('mattermost.ADMIN_USERNAME'),
         "password": config.get('mattermost.ADMIN_PASSWORD')
-      },
-      rejectUnauthorized: false,
-      requestCert: true
+      }
+
     },
     function (error, response, body) {
 
       if ( !error && ( response && response.statusCode < 400 ) && ( token = ( response && response.headers.token ? response.headers.token : false ) ) ) {
 
         request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/teams", {
+
           headers: {
-
            "Authorization": "Bearer " + token
-
           },
-          rejectUnauthorized: false,
           requestCert: true
+
         },
         function (error, response, body) {
 
           if ( !error && ( response && response.statusCode < 400 ) && ( team = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
 
             request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/hooks/incoming", {
+
               headers: {
                 "Authorization": "Bearer " + token
               },
               qs: {
                 "team_id": team
               },
-              rejectUnauthorized: false,
               requestCert: true
+
             },
             function (error, response, body) {
 
@@ -299,11 +299,12 @@ router.post('/response', function(req, res, next) {
     getWebhook(function(webhook) {
 
       request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
+
         json: {
           "response_type": "in_channel",
           "username": "connie",
           "channel": "@" + chatContext.user,
-          "icon_url": config.get('dialogue_manager.URL') + "/connie.jpg",
+          "icon_url": config.get('dialogue_manager.URL') + "/beaker.jpg",
           "attachments": [
             {
               "pretext": "",
@@ -312,8 +313,8 @@ router.post('/response', function(req, res, next) {
             }
           ]
         },
-        rejectUnauthorized: false,
         requestCert: true
+
       },
     	function (error, response, body) {
 
@@ -363,11 +364,12 @@ router.post('/initiate', function(req, res, next) {
           webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL'));
 
           request.post(webhook, {
+
             json: {
               "response_type": "in_channel",
               "username": "connie",
               "channel": "@" + req.body.username,
-              "icon_url": config.get('dialogue_manager.URL') + "/connie.jpg",
+              "icon_url": config.get('dialogue_manager.URL') + "/beaker.jpg",
               "attachments": [
                 {
                   "image_url": config.get('dialogue_manager.URL') + "/warning.jpg",
@@ -377,8 +379,8 @@ router.post('/initiate', function(req, res, next) {
                 }
               ]
             },
-            rejectUnauthorized: false,
             requestCert: true
+
           },
           function (error, response, body) {
 

@@ -2,24 +2,29 @@ version: "3.7"
 
 services:
 
-  webapp:
-    build:
-      context: .
-    environment:
-      - DNC_ADDRESS=danvers
-      - UI_ADDRESS=192.168.99.105
-    restart: unless-stopped
-
   proxy:
     build:
       context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "data-miner_webapp_1:3006", "--", "nginx", "-g", "daemon off;"]
     tty: true
     depends_on:
       - webapp
     ports:
       - '443:443'
       - '80:80'
-    restart: unless-stopped
+
+  webapp:
+    build:
+      context: .
+    environment:
+      # Under single docker machine (i.e. single host) use allocated hostname of single proxy handling all routing (e.g. device-integration_nokia_proxy_1), otherwise use machine (host) addresses.
+      - DNC_ADDRESS=danvers
+      - UI_ADDRESS=carter
+      - NODE_EXTRA_CA_CERTS=/consult.crt
+    extra_hosts:
+      # If servers at IP rather than known host, name on server's certificate : server IP.
+      danvers: 192.168.99.102
+      carter: 192.168.99.105
 
 volumes:
   dnc_volume:

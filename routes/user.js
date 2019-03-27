@@ -18,18 +18,19 @@ const config = require('config');
 router.post('/create', function(req, res, next) {
 
   request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/login", {
+
     json: {
       "login_id": config.get('mattermost.ADMIN_USERNAME'),
       "password": config.get('mattermost.ADMIN_PASSWORD')
-    },
-    rejectUnauthorized: false,
-    requestCert: true
+    }
+
   },
   function (error, response, body) {
 
     if ( !error && ( response && response.statusCode < 400 ) && ( token = ( response && response.headers.token ? response.headers.token : false ) ) ) {
 
       request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/", {
+
         headers: {
          "Authorization": "Bearer " + token
         },
@@ -37,9 +38,8 @@ router.post('/create', function(req, res, next) {
           "username": req.body.id,
           "password": req.body.password,
           "email": req.body.email
-        },
-        rejectUnauthorized: false,
-        requestCert: true
+        }
+
       },
       function (error, response, body) {
 
