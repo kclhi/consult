@@ -57,7 +57,7 @@ module.exports = function(messageObject) {
 				"intensityDurationPercentage": 0
 			};
 
-			messageObject.send(config.get('sensor_to_fhir.URL') + "convert/hr", json).then(() => next());
+			messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", json).then(() => next());
 
 		}, function(err) {
 
