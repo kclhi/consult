@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+
+  template-server:
+    image: big-kcl/template-server:latest
+    ports:
+      - 8081:8080
+    depends_on:
+      - neo4j
+
+  neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+    volumes:
+      - dnc_volume:/data
+    ports:
+      - 7474:7474
+
+volumes:
+  dnc_volume:

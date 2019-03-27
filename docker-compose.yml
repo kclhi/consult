@@ -67,37 +67,31 @@ services:
       - dnc_volume:/data
 
   phpldapadmin:
-   image: osixia/phpldapadmin:latest
-   container_name: phpldapadmin
-   environment:
-     PHPLDAPADMIN_LDAP_HOSTS: "openldap"
-     PHPLDAPADMIN_HTTPS=false:
-   ports:
-     - "8081:80"
-   depends_on:
-     - openldap
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+      - PHPLDAPADMIN_HTTPS=false
+    depends_on:
+      - openldap
 
-   openldap:
+  openldap:
     image: osixia/openldap:latest
     environment:
-      LDAP_TLS: 'true'
-      LDAP_TLS_CRT_FILENAME: 'fullchain.pem'
-      LDAP_TLS_KEY_FILENAME: 'privkey.pem'
-      LDAP_TLS_CA_CRT_FILENAME: 'fullchain.pem'
-      LDAP_ORGANISATION: "consult"
-      LDAP_DOMAIN: "kontextwork.com"
-      LDAP_BASE_DN: "dc=kontextwork,dc=de"
-      LDAP_ADMIN_PASSWORD: "verysecret"
-      LDAP_TLS_CIPHER_SUITE: "NORMAL"
-      LDAP_TLS_VERIFY_CLIENT: "allow"
+      - LDAP_TLS=true
+      - LDAP_TLS_CRT_FILENAME=fullchain.pem
+      - LDAP_TLS_KEY_FILENAME=privkey.pem
+      - LDAP_TLS_CA_CRT_FILENAME=fullchain.pem
+      - LDAP_ORGANISATION=consult
+      - LDAP_DOMAIN=kontextwork.com
+      - LDAP_BASE_DN=dc=kontextwork,dc=de
+      - LDAP_ADMIN_PASSWORD=verysecret
+      - LDAP_TLS_CIPHER_SUITE=NORMAL
+      - LDAP_TLS_VERIFY_CLIENT=allow
     volumes:
       - dnc_volume:/var/lib/ldap
       - dnc_volume:/etc/ldap/slapd.d
       - dnc_volume:/container/service/slapd/assets/certs/
-    ports:
-      - "389:389"
-      - "639:639"
-    hostname: "danvers"
 
 volumes:
   dnc_volume:
