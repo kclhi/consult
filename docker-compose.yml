@@ -3,27 +3,43 @@ version: "3.7"
 services:
 
   webapp-queue:
+    image: "consult-kcl/sensor-fhir-mapper_queue"
     build:
       context: .
     command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_rabbit_1:15672", "--", "npm", "run", "consume"]
     depends_on:
       - rabbit
-    links:
-      - rabbit
     environment:
-      - FHIR_SERVER_ADDRESS=192.168.99.101
-
-  webapp-api:
-    build:
-      context: .
-    environment:
-      - FHIR_SERVER_ADDRESS=192.168.99.101
+      - FHIR_SERVER_ADDRESS=romanova
+      - NODE_EXTRA_CA_CERTS=/consult.crt
+    extra_hosts:
+      # If fhir server at IP rather than known host, name on fhir server's certificate : fhir server IP.
+      romanova: 192.168.99.101
 
   rabbit:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
     volumes:
       - data_volume:/var/lib/rabbitmq
+
+  proxy:
+    image: "consult-kcl/sensor-fhir-mapper_proxy"
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_webapp-api_1:3002", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '443:443'
+      - '80:80'
+    depends_on:
+      - webapp-api
+
+  webapp-api:
+    image: "consult-kcl/sensor-fhir-mapper_api"
+    build:
+      context: .
+    environment:
+      - FHIR_SERVER_ADDRESS=192.168.99.101
 
 volumes:
   data_volume:

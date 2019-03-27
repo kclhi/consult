@@ -5,56 +5,67 @@ const config = require('config');
 const utils = require('./lib/utils');
 const fhir = require('./lib/fhir');
 
-amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
+function init() {
 
-  process.once('SIGINT', function() { connection.close(); });
+  amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
 
-  return async.eachSeries(config.get('message_queue.QUEUES'), function(queue, callback) {
+    process.once('SIGINT', function() { connection.close(); });
 
-    connection.createChannel().then(function(channel) {
+    return async.eachSeries(config.get('message_queue.QUEUES'), function(queue, callback) {
 
-      // Only consume one message from the queue at a time. After resource created and ack sent, next is consumed.
-      var ok = channel.prefetch(1);
+      connection.createChannel().then(function(channel) {
 
-      ok = ok.then(() => channel.assertQueue(queue));
+        // Only consume one message from the queue at a time. After resource created and ack sent, next is consumed.
+        var ok = channel.prefetch(1);
 
-      ok = ok.then(function(queueOk) {
+        ok = ok.then(() => channel.assertQueue(queue));
 
-        return channel.consume(queue, function(message) {
+        ok = ok.then(function(queueOk) {
 
-          jsonMessage = JSON.parse(message.content.toString());
+          return channel.consume(queue, function(message) {
 
-          fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), jsonMessage.reading, jsonMessage, function(statusCode) {
+            jsonMessage = JSON.parse(message.content.toString());
 
-            if ( statusCode < 300 ) {
+            fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), jsonMessage.reading, jsonMessage, function(statusCode) {
 
-              return channel.ack(message);
+              if ( statusCode < 300 ) {
 
-            } else {
+                return channel.ack(message);
 
-              return Promise.resolve(statusCode);
+              } else {
 
-            }
+                return Promise.resolve(statusCode);
+
+              }
+
+            });
 
           });
 
         });
 
+        return ok.then(function(consumeOk) {
+
+          console.log('Listening to queue ' + queue);
+          callback();
+
+        });
+
       });
 
-      return ok.then(function(consumeOk) {
+    }, function(err) {
 
-        console.log('Listening to queue ' + queue);
-        callback();
-
-      });
+      return Promise.resolve(err);
 
     });
 
-  }, function(err) {
+  }).catch(function(error) {
 
-    return Promise.resolve(err);
+    console.log(error);
+    return setTimeout(init, 5000);
 
   });
 
-}).catch(console.warn);
+};
+
+init();
