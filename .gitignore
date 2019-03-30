@@ -3,9 +3,11 @@
 proxy/certs/*
 !proxy/certs/gen-ca-cert.sh
 !proxy/certs/gen-domain-cert.sh
+ldap/certs/*
 proxy/locations/*
 !proxy/locations/message-passer
 !proxy/locations/template-server
+!proxy/locations/phpldapadmin
 
 # Created by https://www.gitignore.io/api/git,node,linux,dropbox,virtualenv
 # Edit at https://www.gitignore.io/?templates=git,node,linux,dropbox,virtualenv

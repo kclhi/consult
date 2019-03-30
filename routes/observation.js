@@ -503,7 +503,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
     } else {
 
-      logger.error("Could not parse FHIR server response.")
+      logger.error("Could not parse FHIR server response: " + ( data ? data : ""));
       res.sendStatus(400);
 
     }

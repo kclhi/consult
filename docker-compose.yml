@@ -27,11 +27,14 @@ services:
       context: ./proxy
     depends_on:
       - webapp
-    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_webapp_1:3005", "--", "nginx", "-g", "daemon off;"]
+      - openldap
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_webapp_1:3005", "--", "./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:389", "--", "nginx", "-g", "daemon off;"]
     tty: true
     ports:
       - '443:443'
       - '80:80'
+      - '389:389'
+      - '636:636'
 
   webapp:
     build:
@@ -66,37 +69,45 @@ services:
     volumes:
       - dnc_volume:/data
 
+  openldap:
+    build:
+      context: ldap
+    image: consult-kcl/openldap:latest
+    depends_on:
+      - phpldapadmin
+    command: --loglevel debug
+    environment:
+      - LDAP_TLS_CRT_FILENAME=danvers.crt
+      - LDAP_TLS_KEY_FILENAME=danvers.key
+      - LDAP_TLS_CA_CRT_FILENAME=consult.crt
+      - LDAP_ORGANISATION=consult
+      - LDAP_DOMAIN=consult.kcl.ac.uk
+      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
+      - LDAP_ADMIN_PASSWORD=root
+      - LDAP_TLS_CIPHER_SUITE=NORMAL
+      - LDAP_TLS_VERIFY_CLIENT=allow
+    volumes:
+      - ldap_volume:/var/lib/ldap
+      - ldap_volume:/etc/ldap/slapd.d
+    #ports:
+      #- '389:389'
+      #- '636:636'
+
   phpldapadmin:
     image: osixia/phpldapadmin:latest
     container_name: phpldapadmin
     environment:
-      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+      - PHPLDAPADMIN_SERVER_PATH=/users
       - PHPLDAPADMIN_HTTPS=false
-    depends_on:
-      - openldap
-
-  openldap:
-    image: osixia/openldap:latest
-    environment:
-      - LDAP_TLS=true
-      - LDAP_TLS_CRT_FILENAME=fullchain.pem
-      - LDAP_TLS_KEY_FILENAME=privkey.pem
-      - LDAP_TLS_CA_CRT_FILENAME=fullchain.pem
-      - LDAP_ORGANISATION=consult
-      - LDAP_DOMAIN=kontextwork.com
-      - LDAP_BASE_DN=dc=kontextwork,dc=de
-      - LDAP_ADMIN_PASSWORD=verysecret
-      - LDAP_TLS_CIPHER_SUITE=NORMAL
-      - LDAP_TLS_VERIFY_CLIENT=allow
-    volumes:
-      - dnc_volume:/var/lib/ldap
-      - dnc_volume:/etc/ldap/slapd.d
-      - dnc_volume:/container/service/slapd/assets/certs/
+      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'proxy': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+    ports:
+      - '8001:80'
 
 volumes:
   dnc_volume:
+  ldap_volume:
 
 networks:
   default:
-    external:
+    #external:
       name: dnc_network
