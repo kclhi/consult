@@ -84,7 +84,7 @@
         ]
       },
       "valueQuantity": {
-        "value": "[271649006]",
+        "value": "[c271649006]",
         "unit": "mmHg",
         "system": "http://unitsofmeasure.org",
         "code": "mm[Hg]"
@@ -113,7 +113,7 @@
         ]
       },
       "valueQuantity": {
-        "value": "[271650006]",
+        "value": "[c271650006]",
         "unit": "mmHg",
         "system": "http://unitsofmeasure.org",
         "code": "mm[Hg]"
@@ -143,7 +143,7 @@
         "text": "Heart rate"
       },
       "valueQuantity": {
-        "value": "[8867-4]",
+        "value": "[c8867h4]",
         "unit": "beats/minute",
         "system": "http://unitsofmeasure.org",
         "code": "/min"
