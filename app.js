@@ -10,6 +10,7 @@ const logger = require('./config/winston');
 require('dotenv').config()
 
 const app = express();
+const router = express.Router();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,8 +25,10 @@ app.use("/dialogue", express.static(path.join(__dirname, 'public')));
 const dialogueRouter = require('./routes/dialogue');
 const userRouter = require('./routes/user');
 
-app.use('/dialogue', dialogueRouter);
-app.use('/user', userRouter);
+router.use('/', dialogueRouter);
+router.use('/user', userRouter);
+
+app.use('/dialogue', router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

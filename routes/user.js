@@ -2,8 +2,10 @@ const express = require('express');
 const request = require('request');
 const router = express.Router();
 const fs = require('fs');
-
+const logger = require('../config/winston');
 const config = require('config');
+
+const mattermost = require('../lib/mattermost');
 
 /**
  * @api {post} /create Create a Mattermost user.
@@ -17,40 +19,69 @@ const config = require('config');
  */
 router.post('/create', function(req, res, next) {
 
-  request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/login", {
+  mattermost.login(function(token) {
 
-    json: {
-      "login_id": config.get('mattermost.ADMIN_USERNAME'),
-      "password": config.get('mattermost.ADMIN_PASSWORD')
-    }
+    if ( token ) {
 
-  },
-  function (error, response, body) {
+      mattermost.getTeamID(token, function(team) {
 
-    if ( !error && ( response && response.statusCode < 400 ) && ( token = ( response && response.headers.token ? response.headers.token : false ) ) ) {
+        if ( team ) {
 
-      request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/", {
+          request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users", {
 
-        headers: {
-         "Authorization": "Bearer " + token
-        },
-        json: {
-          "username": req.body.id,
-          "password": req.body.password,
-          "email": req.body.email
-        }
+            headers: {
+             "Authorization": "Bearer " + token
+            },
+            json: {
+              "username": req.body.username,
+              "password": req.body.password,
+              "email": req.body.email
+            }
 
-      },
-      function (error, response, body) {
+          },
+          function (error, response, body) {
 
-        if ( !error && ( response && response.statusCode < 400 ) && ( team = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
+            if ( !error && ( response && response.statusCode < 400 ) ) {
 
-          res.sendStatus(200);
+              request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/teams/" + team + "/members", {
+
+                headers: {
+                 "Authorization": "Bearer " + token
+                },
+                json: {
+                  "team_id": team,
+                  "user_id": body.id
+                }
+
+              },
+              function (error, response, body) {
+
+                if ( !error && ( response && response.statusCode < 400 ) ) {
+
+                  logger.info("Created user.");
+                  res.sendStatus(200);
+
+                } else {
+
+                  logger.error("Error adding user to team: " + error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+                  res.sendStatus(400);
+
+                }
+
+              });
+
+            } else {
+
+              logger.error("Error adding user: " + error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+              res.sendStatus(400);
+
+            }
+
+          });
 
         } else {
 
-          console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
-          res.sendStatus(400);
+          logger.error("Got null value for team.");
 
         }
 
@@ -58,8 +89,7 @@ router.post('/create', function(req, res, next) {
 
     } else {
 
-      console.log(error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
-      res.sendStatus(400);
+      logger.error("Got null value for token.");
 
     }
 

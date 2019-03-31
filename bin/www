@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('dnc:server');
+var debug = require('debug')('dialogue-manager:server');
 var http = require('http');
 
 /**

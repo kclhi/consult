@@ -6,6 +6,8 @@ const config = require('config');
 const fs = require('fs');
 const Handlebars = require('handlebars');
 
+const mattermost = require('../lib/mattermost');
+
 Handlebars.registerHelper('p1u1stepsHome', function() { return '23095'; });
 Handlebars.registerHelper('p1u1stepsPercTotal', function() { return '65'; });
 Handlebars.registerHelper('p1u2stepsPercTotal', function() { return '80'; });
@@ -33,29 +35,13 @@ function getWebhook(callback) {
 
   } else {
 
-    request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users/login", {
+    mattermost.login(function(token) {
 
-      json: {
-        "login_id": config.get('mattermost.ADMIN_USERNAME'),
-        "password": config.get('mattermost.ADMIN_PASSWORD')
-      }
+      if ( token ) {
 
-    },
-    function (error, response, body) {
+        mattermost.getTeamID(token, function(team) {
 
-      if ( !error && ( response && response.statusCode < 400 ) && ( token = ( response && response.headers.token ? response.headers.token : false ) ) ) {
-
-        request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/teams", {
-
-          headers: {
-           "Authorization": "Bearer " + token
-          },
-          requestCert: true
-
-        },
-        function (error, response, body) {
-
-          if ( !error && ( response && response.statusCode < 400 ) && ( team = ( body && JSON.parse(body)[0].id ? JSON.parse(body)[0].id : false ) ) ) {
+          if ( team ) {
 
             request.get(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/hooks/incoming", {
 
@@ -85,7 +71,7 @@ function getWebhook(callback) {
 
           } else {
 
-            logger.error("Error getting teams for ID: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+            logger.error("Got null value for team.")
 
           }
 
@@ -93,7 +79,7 @@ function getWebhook(callback) {
 
       } else {
 
-        logger.error("Error logging in to API: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+        logger.error("Got null value for token.")
 
       }
 
