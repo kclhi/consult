@@ -28,7 +28,8 @@ services:
     depends_on:
       - webapp
       - openldap
-    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_webapp_1:3005", "--", "./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:389", "--", "nginx", "-g", "daemon off;"]
+    # Note: A 'wait for it' for the webapp makes extra sure the message-passer is available for reference from the message-passer location, but this results in a circular dependency between proxy and webapp, so omitted for now, and rely on upstream variable reference hack in message-passer location definition. 
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "nginx", "-g", "daemon off;"]
     tty: true
     ports:
       - '443:443'
@@ -39,7 +40,7 @@ services:
   webapp:
     build:
       context: .
-    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_template-server_1:8080", "--", "npm", "start"]
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_template-server_1:8080", "--", "./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "npm", "start"]
     depends_on:
       - template-server
     environment:
@@ -69,12 +70,23 @@ services:
     volumes:
       - dnc_volume:/data
 
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    depends_on:
+      - openldap
+    container_name: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_SERVER_PATH=/users
+      - PHPLDAPADMIN_HTTPS=false
+      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+    ports:
+      - 8082:80
+      - 8083:443
+
   openldap:
     build:
       context: ldap
     image: consult-kcl/openldap:latest
-    depends_on:
-      - phpldapadmin
     command: --loglevel debug
     environment:
       - LDAP_TLS_CRT_FILENAME=danvers.crt
@@ -89,19 +101,6 @@ services:
     volumes:
       - ldap_volume:/var/lib/ldap
       - ldap_volume:/etc/ldap/slapd.d
-    #ports:
-      #- '389:389'
-      #- '636:636'
-
-  phpldapadmin:
-    image: osixia/phpldapadmin:latest
-    container_name: phpldapadmin
-    environment:
-      - PHPLDAPADMIN_SERVER_PATH=/users
-      - PHPLDAPADMIN_HTTPS=false
-      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'proxy': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
-    ports:
-      - '8001:80'
 
 volumes:
   dnc_volume:
@@ -109,5 +108,5 @@ volumes:
 
 networks:
   default:
-    #external:
+    external:
       name: dnc_network

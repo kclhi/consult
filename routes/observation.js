@@ -24,14 +24,6 @@ function populateProvenanceTemplateBP(pid, code, value, callback) {
 
 }
 
-function noParse(target, path, object) {
-
-  var pathInfo = "";
-  if ( path.length > 0 ) pathInfo =  path.toString() + " not a valid path in ";
-  logger.error("Could not parse " + target + ". " + pathInfo + ( typeof object === "object" ? JSON.stringify(object) : object))
-
-}
-
 function getPatientStats(patientID, callback) {
 
   patientHeaders = [];
@@ -70,7 +62,7 @@ function getPatientStats(patientID, callback) {
 
                     } else {
 
-                      noParse("medication name", ["code", "coding", "0", "display"], medicationData);
+                      utils.noParse("medication name", ["code", "coding", "0", "display"], medicationData);
                       done();
 
                     }
@@ -79,7 +71,7 @@ function getPatientStats(patientID, callback) {
 
                 } else {
 
-                  noParse("medication reference", ["resource", "medicationReference", "reference"], medicationDispense);
+                  utils.noParse("medication reference", ["resource", "medicationReference", "reference"], medicationDispense);
                   done();
 
                 }
@@ -102,7 +94,7 @@ function getPatientStats(patientID, callback) {
 
                       } else {
 
-                        noParse("condition data", ["resource", "code", "coding", "0", "display"], conditionData);
+                        utils.noParse("condition data", ["resource", "code", "coding", "0", "display"], conditionData);
                         callback(patientHeaders, patientRow);
 
                       }
@@ -119,7 +111,7 @@ function getPatientStats(patientID, callback) {
 
             } else {
 
-              noParse("medication dispense data", [], medicationDispenseData);
+              utils.noParse("medication dispense data", [], medicationDispenseData);
               callback(patientHeaders, patientRow);
 
             }
@@ -128,21 +120,21 @@ function getPatientStats(patientID, callback) {
 
         } else {
 
-          noParse("patient ethnicity", ["extension", "0", "extension", "0", "valueCoding", "display"], patientData);
+          utils.noParse("patient ethnicity", ["extension", "0", "extension", "0", "valueCoding", "display"], patientData);
           callback(patientHeaders, patientRow);
 
         }
 
       } else {
 
-        noParse("patient birth date", [], patientData);
+        utils.noParse("patient birth date", [], patientData);
         callback(patientHeaders, patientRow);
 
       }
 
     } else {
 
-      noParse("patient data", [], patientData);
+      utils.noParse("patient data", [], patientData);
       callback(patientHeaders, patientRow);
 
     }
@@ -151,7 +143,7 @@ function getPatientStats(patientID, callback) {
 
 }
 
-function sendAlert(response, alertField, alertValue, callback) {
+function sendAlert(response, patientID, alertField, alertValue, callback) {
 
   var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
 
@@ -176,10 +168,9 @@ function sendAlert(response, alertField, alertValue, callback) {
          // TODO: Something from the data miner response that indicates which dialogue to initiate.
          "dialogueID": "2",
          // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
-         "username": "user",
+         "username": patientID,
 
         },
-        rejectUnauthorized: false,
         requestCert: true
 
       },
@@ -283,7 +274,7 @@ function processObservation(req, res, callback) {
 
         } else {
 
-          noParse("measures.", ["body", "component"], req);
+          utils.noParse("measures.", ["body", "component"], req);
           callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
         }
@@ -299,7 +290,7 @@ function processObservation(req, res, callback) {
 
   } else {
 
-    noParse("patient ID", ["body", "subject", "reference"], req);
+    utils.noParse("patient ID", ["body", "subject", "reference"], req);
     callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
   }
@@ -324,7 +315,6 @@ router.put('/:id', function(req, res, next) {
             "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
 
           },
-          rejectUnauthorized: false,
           requestCert: true
 
         },
@@ -368,7 +358,6 @@ router.put('/:id', function(req, res, next) {
             "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
 
           },
-          rejectUnauthorized: false,
           requestCert: true
 
         },
@@ -378,12 +367,21 @@ router.put('/:id', function(req, res, next) {
 
             logger.info("Contacted data miner for analysis of blood pressure.");
 
-            // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-            sendAlert(response, "bp.trend", "Red", function(status) {
+            if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-              res.sendStatus(status);
+              // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
+              sendAlert(response, patientID.replace("Patient/", ""), "bp.trend", "Red", function(status) {
 
-            });
+                res.sendStatus(status);
+
+              });
+
+            } else {
+
+              utils.noParse("patient ID", ["body", "subject", "reference"], req);
+              res.sendStatus(400);
+
+            }
 
           } else {
 
@@ -405,7 +403,7 @@ router.put('/:id', function(req, res, next) {
 
   } else {
 
-    noParse("observation type", ["body", "code", "coding", "0", "code"], req);
+    utils.noParse("observation type", ["body", "code", "coding", "0", "code"], req);
     res.sendStatus(400);
 
   }
@@ -469,13 +467,13 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
             } else {
 
-              noParse("sensor code", ["code", "coding", "0", "code"], component);
+              utils.noParse("sensor code", ["code", "coding", "0", "code"], component);
 
             }
 
           } else {
 
-            noParse("sensor value", ["valueQuantity", "value"], component);
+            utils.noParse("sensor value", ["valueQuantity", "value"], component);
 
           }
 
