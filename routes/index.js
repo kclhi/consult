@@ -20,6 +20,7 @@ function createObservationResource(template, data, callback) {
  * @apiParam {String} id Unique ID of this reading.
  * @apiParam {String} averageHeartRateInBeatsPerMinute  Heart rate value.
  * @apiParam {String} subjectReference ID of the patient to which this reading pertains.
+ * @apiParam {String} practitionerReference ID of the practitioner to whom the patient to which this reading pertains is assigned.
  *
  */
 router.post('/hr', function(req, res, next) {
@@ -38,11 +39,29 @@ router.post('/hr', function(req, res, next) {
  * @apiParam {String} 271650006  Diastolic blood pressure value.
  * @apiParam {String} 8867-4  Heart rate value.
  * @apiParam {String} subjectReference ID of the patient to which this reading pertains.
+ * @apiParam {String} practitionerReference ID of the practitioner to whom the patient to which this reading pertains is assigned.
  *
  */
 router.post('/bp', function(req, res, next) {
 
   createObservationResource("BP", req.body, function(status) { res.sendStatus(status); });
+
+});
+
+/**
+ * @api {post} /create/ecg Populate a FHIR ECG template with the supplied values
+ * @apiName CreateECG
+ * @apiGroup Create
+ *
+ * @apiParam {String} id Unique ID of this reading.
+ * @apiParam {String} data  ECG data.
+ * @apiParam {String} subjectReference ID of the patient to which this reading pertains.
+ * @apiParam {String} practitionerReference ID of the practitioner to whom the patient to which this reading pertains is assigned.
+ *
+ */
+router.post('/ecg', function(req, res, next) {
+  
+  createObservationResource("ECG", req.body, function(status) { res.sendStatus(status); });
 
 });
 
