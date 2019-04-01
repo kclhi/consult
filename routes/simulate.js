@@ -10,6 +10,14 @@ const config = require('config');
 
 module.exports = function(messageObject) {
 
+	/**
+	 * @api {get} /simulate/incomingECG/:patientID/:practitionerID Grab simulated ECG data from vital patch API and push through system.
+	 * @apiName simulateECG
+	 * @apiGroup Simulate
+	 *
+	 * @apiParam {String} patientID Patient unique ID.
+	 * @apiParam {String} practitionerID Practitioner unique ID.
+	 */
 	router.get('/incomingECG/:patientID/:practitionerID', function(req, res, next) {
 
 		request.post("https://us-central1-mbshealthstream.cloudfunctions.net/getEcgFilesByPatchId", {
