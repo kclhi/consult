@@ -1,0 +1,46 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_vitalpatch_webapp_1:3003", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '443:443'
+      - '80:80'
+
+  webapp:
+    build:
+      context: .
+    depends_on:
+      - mysql
+    environment:
+      - MESSAGE_PASSER_ADDRESS=danvers
+
+  migration:
+    image: device-integration_vitalpatch_webapp:latest
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_vitalpatch_mysql_1:3306", "--", "npm", "run", "migrate"]
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:5
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - sensor_data_volume:/var/lib/mysql
+
+
+
+volumes:
+  sensor_data_volume:
+
+networks:
+  default:
+    external:
+      name: device_network
