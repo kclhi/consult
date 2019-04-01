@@ -401,6 +401,10 @@ router.put('/:id', function(req, res, next) {
 
     });
 
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.ECG_CODE') ) {
+
+    // Process ECG.
+
   } else {
 
     utils.noParse("observation type", ["body", "code", "coding", "0", "code"], req);
@@ -429,84 +433,84 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
     // TODO: Ensure highest count.
     utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
 
-    header = [];
-    rows = "";
+      header = [];
+      rows = "";
 
-    if ( data && ( parsedData = utils.JSONParseWrapper(data) ) && parsedData.entry ) {
+      if ( data && ( parsedData = utils.JSONParseWrapper(data) ) && parsedData.entry ) {
 
-      parsedData.entry.forEach(function(resource) {
+        parsedData.entry.forEach(function(resource) {
 
-        components = [];
+          components = [];
 
-        // Handle single vs. multiple responses.
-        if ( utils.validPath(resource, ["resource", "component"]) ) {
+          // Handle single vs. multiple responses.
+          if ( utils.validPath(resource, ["resource", "component"]) ) {
 
-          components = resource.resource.component;
+            components = resource.resource.component;
 
-        } else if ( utils.validPath(resource, ["resource", "valueQuantity"]) ) {
+          } else if ( utils.validPath(resource, ["resource", "valueQuantity"]) || utils.validPath(resource, ["resource", "valueSampledData"]) ) {
 
-          components.push(resource.resource);
-
-        }
-
-        row = [];
-
-        components.forEach(function(component) {
-
-          var code, value;
-
-          if ( code = utils.validPath(component, ["code", "coding", "0", "code"]) ) {
-
-            if ( value = utils.validPath(component, ["valueQuantity", "value"]) ) {
-
-              var formattedCode = "\"c" + code.replace("-", "h") + "\"";
-
-              if ( !header.includes(formattedCode) ) header.push(formattedCode);
-
-              row.push(value);
-
-            } else {
-
-              utils.noParse("sensor code", ["code", "coding", "0", "code"], component);
-
-            }
-
-          } else {
-
-            utils.noParse("sensor value", ["valueQuantity", "value"], component);
+            components.push(resource.resource);
 
           }
 
+          row = [];
+
+          components.forEach(function(component) {
+
+            var code, value;
+
+            if ( code = utils.validPath(component, ["code", "coding", "0", "code"]) ) {
+
+              if ( ( value = utils.validPath(component, ["valueQuantity", "value"]) ) || ( value = utils.validPath(component, ["valueSampledData", "data"]) ) ) {
+
+                var formattedCode = "\"c" + code.replace("-", "h") + "\"";
+
+                if ( !header.includes(formattedCode) ) header.push(formattedCode);
+
+                row.push("\"" + value + "\"");
+
+              } else {
+
+                utils.noParse("sensor value", ["code", "coding", "0", "code"], component);
+
+              }
+
+            } else {
+
+              utils.noParse("sensor code", ["valueQuantity", "value"], component);
+
+            }
+
+          });
+
+          if ( resource.resource ) {
+
+            row = addDateRows(resource.resource, row);
+
+          } else {
+
+            logger.error("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource).substring(0, 300) : resource.resource));
+
+          }
+
+          rows += row + "\n";
+
         });
 
-        if ( resource.resource ) {
+        header.push("\"datem\"");
+        header.push("\"date.month\"");
+        header.push("\"time\"");
+        header.push("\"weekday\"\n");
+        res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
 
-          row = addDateRows(resource.resource, row);
+      } else {
 
-        } else {
+        logger.error("Could not parse FHIR server response: " + ( data ? data : ""));
+        res.sendStatus(400);
 
-          logger.error("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource) : resource.resource));
+      }
 
-        }
-
-        rows += row + "\n";
-
-      });
-
-      header.push("\"datem\"");
-      header.push("\"date.month\"");
-      header.push("\"time\"");
-      header.push("\"weekday\"\n");
-      res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
-
-    } else {
-
-      logger.error("Could not parse FHIR server response: " + ( data ? data : ""));
-      res.sendStatus(400);
-
-    }
-
-  });
+    });
 
   } else {
 

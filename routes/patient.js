@@ -25,12 +25,14 @@ module.exports = function(ldapClient) {
       userPassword: "12345"
     }
 
-    ldapClient.add("cn=" + req.params.id + ",dc=consult,dc=kcl,dc=ac,dc=uk", entry, function(err) {
+    logger.info("Recieved new patient entry. Adding LDAP entry...");
 
-      if ( err ) {
+    ldapClient.add("cn=" + req.params.id + ", dc=consult, dc=kcl, dc=ac, dc=uk", entry, function(error) {
 
-        logger.error("Error adding user: " + err);
-        res.send(400);
+      if ( error ) {
+
+        logger.error("Error adding user to LDAP service: " + error);
+        res.sendStatus(400);
 
       } else {
 
