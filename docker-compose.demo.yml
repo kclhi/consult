@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "data-miner_webapp_1:3006", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    depends_on:
+      - webapp
+    ports:
+      - '3007:443'
+
+  webapp:
+    build:
+      context: .
+    environment:
+      - DNC_ADDRESS=danvers:3005
+      - UI_ADDRESS=carter:8000
+      - NODE_EXTRA_CA_CERTS=/consult.crt
+    extra_hosts:
+      danvers: 172.21.0.1
+      carter: 172.23.0.1
+
+volumes:
+  dnc_volume:
+
+networks:
+  default:
+    name: dnc_network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/16
