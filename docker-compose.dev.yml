@@ -17,6 +17,7 @@ services:
       - dnc_volume:/data
     ports:
       - 7474:7474
+      - 7687:7687
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest

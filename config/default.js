@@ -2,11 +2,13 @@ module.exports = {
 
   credentials: {
     USERNAME: process.env.USERNAME,
-    PASSWORD: process.env.PASSWORD,
+    PASSWORD: process.env.PASSWORD
   },
 
   fhir_server: {
-    REST_ENDPOINT: "/"
+    REST_ENDPOINT: "/",
+    USERNAME: process.env.FHIR_USERNAME,
+    PASSWORD: process.env.FHIR_PASSWORD
   },
 
   provenance_server: {

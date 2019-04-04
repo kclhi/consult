@@ -2,38 +2,16 @@ version: "3.7"
 
 services:
 
-  # Uncomment for service discovery:
-
-  #consul-service:
-    #image: gliderlabs/consul-server
-    #command: "--bootstrap"
-    #ports:
-      #- 8500:8500
-    #restart: "no"
-
-  #registrator:
-    #image: gliderlabs/registrator
-    #command: "consul://consul-service:8500"
-    #volumes:
-      #- /var/run/docker.sock:/tmp/docker.sock
-    #links:
-      #- consul-service
-    #depends_on:
-      #- consul-service
-    #restart: "no"
-
   proxy:
     build:
       context: ./proxy
     depends_on:
       - webapp
       - openldap
-    # Note: A 'wait for it' for the webapp makes extra sure the message-passer is available for reference from the message-passer location, but this results in a circular dependency between proxy and webapp, so omitted for now, and rely on upstream variable reference hack in message-passer location definition.
     command: ["./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "nginx", "-g", "daemon off;"]
     tty: true
     ports:
-      - '443:443'
-      - '80:80'
+      - '3005:443'
       - '389:389'
       - '636:636'
 
@@ -44,24 +22,19 @@ services:
     depends_on:
       - template-server
     environment:
-      # Under single docker machine (i.e. single host) use allocated hostname of single proxy handling all routing (e.g. device-integration_nokia_proxy_1), otherwise use machine (host) addresses.
-      - FHIR_SERVER_ADDRESS=romanova
+      - FHIR_SERVER_ADDRESS=romanova:8080
       - LDAP_ADDRESS=danvers
-      - DNC_ADDRESS=danvers
-      - PROCESSING_ADDRESS=maximoff
+      - DNC_ADDRESS=danvers:3005
+      - PROCESSING_ADDRESS=maximoff:3006
       - NODE_EXTRA_CA_CERTS=/consult.crt
     extra_hosts:
-      # If server at IP rather than known host, name on server's certificate : server IP.
-      romanova: 192.168.99.101
-      danvers: 192.168.99.102
-      maximoff: 192.168.99.103
+      romanova: 172.20.0.1
+      danvers: 172.21.0.1
+      maximoff: 172.22.0.1
 
   template-server:
     image: big-kcl/template-server:latest
-    #ports:
-      #- 8080:8080
     depends_on:
-      #- consul-service
       - neo4j
 
   neo4j:
@@ -70,6 +43,9 @@ services:
       - NEO4J_AUTH=neo4j/12345
     volumes:
       - dnc_volume:/data
+    ports:
+      - 7474:7474
+      - 7687:7687
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest

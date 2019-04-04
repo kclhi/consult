@@ -6,14 +6,14 @@ module.exports = {
   },
 
   ldap_server: {
-    HOST: "danvers",
+    HOST: process.env.LDAP_ADDRESS,
     PROTOCOL: "ldaps"
   },
 
   provenance_server: {
-    // TODO: Add proxy entry.
+    // TODO: Add proxy entry to facilitate service discovery.
     URL: "http://message-passer_template-server_1:8080",
-    TRACK: false
+    TRACK: true
   },
 
   data_miner: {

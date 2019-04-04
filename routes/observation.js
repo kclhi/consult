@@ -24,12 +24,18 @@ function populateProvenanceTemplateBP(pid, code, value, callback) {
 
 }
 
+function callFHIRServer(query, params, callback) {
+
+  utils.callFHIRServer(query, params, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
+
+}
+
 function getPatientStats(patientID, callback) {
 
   patientHeaders = [];
   patientRow = [];
 
-  utils.callFHIRServer("Patient/" + patientID, "", function(patientData) {
+  callFHIRServer("Patient/" + patientID, "", function(patientData) {
 
     if ( parsedPatientData = utils.JSONParseWrapper(patientData) ) {
 
@@ -43,7 +49,7 @@ function getPatientStats(patientID, callback) {
           patientHeaders.push("ethnicity");
           patientRow.push(ethnicity);
 
-          utils.callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
+          callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
 
             if ( ( parsedMedicationDispenseData = utils.JSONParseWrapper(medicationDispenseData) ) && parsedMedicationDispenseData.entry ) {
 
@@ -52,7 +58,7 @@ function getPatientStats(patientID, callback) {
 
                 if ( medicationReference = utils.validPath(medicationDispense, ["resource", "medicationReference", "reference"]) ) {
 
-                  utils.callFHIRServer(medicationReference, "", function(medicationData) {
+                  callFHIRServer(medicationReference, "", function(medicationData) {
 
                     if ( ( parsedMedicationData = utils.JSONParseWrapper(medicationData) ) && ( medicationName = utils.validPath(parsedMedicationData, ["code", "coding", "0", "display"]) ) ) {
 
@@ -78,7 +84,7 @@ function getPatientStats(patientID, callback) {
 
               }, function(medicationDispenseDataError) {
 
-                utils.callFHIRServer("Condition", "subject=" + patientID, function(conditionData) {
+                callFHIRServer("Condition", "subject=" + patientID, function(conditionData) {
 
                   var problem = 1;
 
@@ -327,7 +333,7 @@ router.put('/:id', function(req, res, next) {
 
           } else {
 
-            logger.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            logger.error("Could not contact the data miner: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
             res.sendStatus(400);
 
           }
@@ -385,7 +391,7 @@ router.put('/:id', function(req, res, next) {
 
           } else {
 
-            logger.error(error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            logger.error("Could not contact data miner: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
             res.sendStatus(400);
 
           }
@@ -431,7 +437,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
   if ( req.params && req.params.patientID && req.params.code && req.params.start && req.params.end ) {
 
     // TODO: Ensure highest count.
-    utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
+    callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
 
       header = [];
       rows = "";

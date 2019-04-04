@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 org=consult-ca
-domain=romanova
 
 sudo trust anchor --remove consult.crt || true
 
