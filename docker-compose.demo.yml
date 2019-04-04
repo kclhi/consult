@@ -8,8 +8,7 @@ services:
     command: ["./wait-for-it.sh", "--timeout=0", "device-integration_garmin_webapp_1:3001", "--", "nginx", "-g", "daemon off;"]
     tty: true
     ports:
-      - '443:443'
-      - '80:80'
+      - '3001:443'
     depends_on:
       - webapp
 
