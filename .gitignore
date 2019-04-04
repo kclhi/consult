@@ -1,7 +1,7 @@
 ### Project specific ###
 
 proxy/locations/*
-!proxy/locations/ecg
+!proxy/locations/vitalpatch
 proxy/certs/*
 !proxy/certs/gen-domain-cert.sh
 
