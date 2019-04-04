@@ -24,7 +24,7 @@ Sends messages to: fhir-server ([install](https://github.kcl.ac.uk/consult/fhir-
 git clone git@github.kcl.ac.uk:consult/sensor-fhir-mapper.git
 ```
 
-(Alternative) Clone this repository using HTTPs, suppling username and password:
+(Alternative) Clone this repository using HTTPs, supplying username and password:
 
 ```
 git clone https://github.kcl.ac.uk/consult/sensor-fhir-mapper.git
@@ -103,7 +103,9 @@ npm consume
 
 ## Deployment
 
-Deployment is via [Docker](https://docs.docker.com/compose/install/), and includes containers for this application, and an optional message queue.
+Deployment is via [Docker](https://docs.docker.com/compose/install/), and includes containers for this application, a proxy and an optional message queue.
+
+Specify the address of the FHIR server in [docker-compose](docker-compose.yml). If a hostname, reference its corresponding certificate. Also specify the address of the hostname if unlikely to be present in the DNS.
 
 Build these containers:
 
@@ -122,6 +124,10 @@ docker-compose up
 ```
 docker-compose up --scale webapp-queue=0 rabbit=0
 ```
+
+### Custom certs
+
+To use custom certificates for communication with this service's proxy, reference them in the proxy's [Dockerfile](proxy/Dockerfile). The [gen-domain-cert](proxy/certs/gen-domain-cert.sh) script can be used to generate custom certs (e.g. 'stacy.crt') using a CA root cert (e.g. 'consult.crt') and accompanying keys. If distributing an image outside of an organisation, edit [Dockerfile](proxy/Dockerfile) and [docker-compose](docker-compose.yml) to mount a volume on the host containing the certs instead, so that images are not transferred with the certs inside then.
 
 ## Built With
 

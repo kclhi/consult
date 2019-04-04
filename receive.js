@@ -1,5 +1,6 @@
 const amqp = require('amqplib');
 const async = require('async');
+require('dotenv').config()
 const config = require('config');
 
 const utils = require('./lib/utils');
@@ -38,7 +39,7 @@ function init() {
 
               }
 
-            });
+            }, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
           });
 

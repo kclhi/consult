@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+
+  webapp-queue:
+    image: "consult-kcl/sensor-fhir-mapper_queue"
+    build:
+      context: .
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_rabbit_1:15672", "--", "npm", "run", "consume"]
+    depends_on:
+      - rabbit
+    environment:
+      - FHIR_SERVER_ADDRESS=romanova:8080
+      - NODE_EXTRA_CA_CERTS=/consult.crt
+    extra_hosts:
+      romanova: 172.20.0.1
+
+  rabbit:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit"
+    volumes:
+      - data_volume:/var/lib/rabbitmq
+
+  proxy:
+    image: "consult-kcl/sensor-fhir-mapper_proxy"
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_webapp-api_1:3002", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '3000:443'
+    depends_on:
+      - webapp-api
+
+  webapp-api:
+    image: "consult-kcl/sensor-fhir-mapper_api"
+    build:
+      context: .
+    environment:
+      - FHIR_SERVER_ADDRESS=172.20.0.1:8080
+
+volumes:
+  data_volume:
+
+networks:
+  default:
+    name: device_network
+    # Control subnet in demo version and use gateway as entry into network (form of port forwarding) to emulate different hots.
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
