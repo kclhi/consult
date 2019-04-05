@@ -5,6 +5,7 @@ RUN R -e "install.packages('RSQLite')"
 RUN R -e "install.packages('ggplot2')"
 
 COPY . .
+RUN touch data.sqlite
 
 EXPOSE 3006
 
