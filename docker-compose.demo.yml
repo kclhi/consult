@@ -56,7 +56,10 @@ services:
       - PHPLDAPADMIN_SERVER_PATH=/users
       - PHPLDAPADMIN_HTTPS=false
       - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
-
+    ports:
+      - 8082:80
+      - 8083:443
+      
   openldap:
     build:
       context: ldap

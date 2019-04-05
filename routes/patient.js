@@ -27,7 +27,8 @@ module.exports = function(ldapClient) {
 
     logger.info("Recieved new patient entry. Adding LDAP entry...");
 
-    ldapClient.add("cn=" + req.params.id + ", dc=consult, dc=kcl, dc=ac, dc=uk", entry, function(error) {
+    // NB: No spaces between LDAP domain string entries.
+    ldapClient.add("cn=" + req.params.id + ",dc=consult,dc=kcl,dc=ac,dc=uk", entry, function(error) {
 
       if ( error ) {
 

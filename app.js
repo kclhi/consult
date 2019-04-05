@@ -39,30 +39,26 @@ function init() {
   ldapClient.on('error', error => {
 
     logger.error(error);
-    setTimeout(init, 5000);
+    return setTimeout(init, 5000);
 
   });
 
-  return new Promise((resolve, reject) => {
+  ldapClient.on('connect', connect => {
 
-    ldapClient.on('connect', connect => {
+    ldapClient.bind('cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk', process.env.LDAP_MANAGER_PASSWORD, function(error) {
 
-      ldapClient.bind('cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk', process.env.LDAP_MANAGER_PASSWORD, function(err) {
+      if (error) {
 
-        if (err) {
+        logger.error(error);
+        return setTimeout(init, 5000);
 
-          throw Error(err);
-          reject(err);
+      } else {
 
-        } else {
+        app.use('/Patient', patient(ldapClient));
+        logger.info("Connected to LDAP server.");
+        start();
 
-          app.use('/Patient', patient(ldapClient));
-          logger.info("Connected to LDAP server.");
-          resolve();
-
-        }
-
-      });
+      }
 
     });
 
@@ -70,10 +66,10 @@ function init() {
 
 }
 
-app.use('/Observation', observation);
-
 // Add errors routes after async routes added.
-init().then(function() {
+function start() {
+
+  app.use('/Observation', observation);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -97,8 +93,14 @@ init().then(function() {
 
   });
 
-  app.listen(process.env.PORT || '3005');
+  try {
+    app.listen(process.env.PORT || '3005')
+  } catch(err) {
+    console.error(err);
+  }
 
-}).catch(err => console.error(err));
+}
+
+init();
 
 module.exports = app;

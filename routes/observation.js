@@ -12,15 +12,15 @@ const utils = require('../lib/utils');
 
 let lastAlert = 0;
 
-function populateProvenanceTemplateBP(pid, code, value, callback) {
+function populateProvenanceTemplate(type, pid, code, value, callback) {
 
-  var document = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
+  var document = fs.readFileSync('provenance-templates/template-sensor-fragment.json', 'utf8');
   document = document.replace("[pid]", pid);
-  document = document.replace("[company]", "Nokia");
+  document = document.replace("[company]", config.get('companies.' + type));
   document = document.replace("[code]", code);
   document = document.replace("[value]", value);
 
-  provenance.add(uuidv1(), document, "template-bp", "provenance-templates/template-bp.json", function(response) { callback(response); });
+  provenance.add(uuidv1(), document, "template-sensor", "provenance-templates/template-sensor.json", function(response) { callback(response); });
 
 }
 
@@ -224,7 +224,7 @@ function addDateRows(resource, row) {
 
 }
 
-function processObservation(req, res, callback) {
+function processObservation(req, res, type, callback) {
 
   observationHeaders = [];
   observationRow = [];
@@ -254,8 +254,9 @@ function processObservation(req, res, callback) {
 
             if ( config.get('provenance_server.TRACK') ) {
 
-              populateProvenanceTemplateBP(patientID, code, value, function(body) {
+              populateProvenanceTemplate(type, patientID, code, value, function(body) {
 
+                logger.info("Added provenance entry.");
                 done();
 
               });
@@ -308,7 +309,7 @@ router.put('/:id', function(req, res, next) {
   // Use code to determine type of observation.
   if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.HR_CODE') ) {
 
-    processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
+    processObservation(req, res, "HR", function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
 
@@ -351,7 +352,7 @@ router.put('/:id', function(req, res, next) {
 
   } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.BP_CODE') ) {
 
-    processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
+    processObservation(req, res, "BP", function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
 
