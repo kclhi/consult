@@ -12,7 +12,7 @@
                 },
                 "data": {
                     "field": "data",
-                    "seqType": "Sequelize.STRING"
+                    "seqType": "Sequelize.TEXT"
                 },
                 "createdAt": {
                     "allowNull": false,
@@ -33,7 +33,7 @@
                 "id": {
                     "primaryKey": true,
                     "field": "id",
-                    "seqType": "Sequelize.INTEGER"
+                    "seqType": "Sequelize.STRING"
                 },
                 "token": {
                     "primaryKey": true,

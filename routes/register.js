@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var auth = require('basic-auth');
+const express = require('express');
+const router = express.Router();
+const auth = require('basic-auth');
+const logger = require('../config/winston');
 
 /**
  * @api {get} /register/:patientId Register a patient ID against a device.
@@ -12,8 +13,9 @@ var auth = require('basic-auth');
  */
 router.get('/:patientId', (req, res) => {
 
-    req.session.patientId = req.params.patientId
-    res.redirect('/garmin/connect/garmin');
+  // TODO: Verify patient exists in system?
+  req.session.patientId = req.params.patientId
+  res.redirect('/garmin/connect/garmin');
 
 });
 

@@ -3,7 +3,8 @@ const express = require('express');
 const session = require('express-session')
 const path = require('path');
 const favicon = require('serve-favicon');
-const logger = require('morgan');
+const morgan = require('morgan');
+const logger = require('./config/winston');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const request = require('request');
@@ -37,7 +38,7 @@ app.set('view engine', 'pug');
 
 // Default use
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(morgan('combined', { stream: logger.stream }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -46,8 +47,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 ///////////////////////////
 
 const grantConfig = require('./grant-config.json');
-grantConfig["garmin"]["key"] = config.GARMIN_CONSUMER_KEY;
-grantConfig["garmin"]["secret"] = config.GARMIN_SECRET;
+grantConfig["garmin"]["key"] = config.get('garmin.CONSUMER_KEY');
+grantConfig["garmin"]["secret"] = config.get('garmin.SECRET');
 app.use('/garmin', grant(grantConfig));
 
 ///////////////////////////
@@ -68,74 +69,88 @@ function init() {
 
   if ( config.get('message_queue.ACTIVE') == true ) {
 
-    return amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
+    amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
 
-      console.log("Connected to " + config.get('message_queue.HOST'));
+      logger.info("Connected to " + config.get('message_queue.HOST'));
       router.use('/simulate', simulate(new QueueMessage(connection, config.get('message_queue.NAME'))));
+      router.use('/', ping(new QueueMessage(connection, config.get('message_queue.NAME'))));
+      start();
 
     }).catch(function(error) {
 
-      console.log(error);
+      logger.info(error);
       // Retry connection if server is not ready.
-      return setTimeout(init, 5000);
+      setTimeout(init, 5000);
 
     });
 
   } else {
 
     router.use('/simulate', simulate(new HTTPMessage()));
-    return Promise.resolve();
+    router.use('/', ping(new HTTPMessage()));
+    start();
 
   }
 
 }
 
-router.use('/', ping);
-router.use('/', connect);
+function start() {
 
-router.use('/', function(req, res, next) {
+  router.use('/', connect);
 
-  const credentials = auth(req)
+  router.use('/', function(req, res, next) {
 
-  if ( !credentials || credentials.name !== config.get('credentials.USERNAME') || credentials.pass !== config.get('credentials.PASSWORD') ) {
+    const credentials = auth(req)
+
+    if ( !credentials || credentials.name !== config.get('credentials.USERNAME') || credentials.pass !== config.get('credentials.PASSWORD') ) {
 
       res.status(401);
       res.header('WWW-Authenticate', 'Basic realm="forbidden"');
       res.send('Access denied');
 
-  } else {
+    } else {
 
       next();
 
+    }
+
+  });
+
+  router.use('/register', register);
+  router.use('/data', data);
+
+  app.use('/garmin', router);
+
+  ///////////////////////////
+
+  // catch 404 and forward to error handler
+  app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
+
+  // error handler
+  app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  });
+
+  try {
+    app.listen(process.env.PORT || '3001')
+  } catch(err) {
+    logger.error(err);
   }
 
-});
+}
 
-router.use('/register', register);
-router.use('/data', data);
-
-app.use('/garmin', router);
-
-///////////////////////////
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-init().then(() => app.listen(process.env.PORT || '3001')).catch(err => console.error(err));
+init();
 
 module.exports = app;

@@ -1,37 +1,46 @@
-var express = require('express');
-var router = express.Router();
-var models = require('../models');
+const express = require('express');
+const router = express.Router();
+const models = require('../models');
+const logger = require('../config/winston');
 
 router.get('/callback', (req, res) => {
 
-    if (!req.session.patientId) {
-      res.end();
-      return;
-    }
+  if (!req.session.patientId) {
+    res.end();
+    return;
+  }
+
+  if ( req.query.access_token && req.query.access_secret ) {
 
     // TODO: Update details if user happens to register again OR disable re-registration.
     models.users.findOrCreate({
 
-        where: {
+      where: {
 
-            id: req.session.patientId
+        id: req.session.patientId
 
-        },
-        defaults: {
+      },
+      defaults: {
 
-            id: req.session.patientId,
-            token: req.query.access_token,
-            secret: req.query.access_secret
+        id: req.session.patientId,
+        token: req.query.access_token,
+        secret: req.query.access_secret
 
-        }
+      }
 
     }).error(function(err) {
 
-        console.log(err);
+      logger.error(err);
 
     }).then(function() {});
 
-    res.end();
+  } else {
+
+    logger.error("Did not get access token and secret in header, instead got: " + ( req.query ? req.query : "none."));
+
+  }
+
+  res.sendStatus(200);
 
 });
 

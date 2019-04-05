@@ -5,7 +5,7 @@ module.exports = function(sequelize, DataTypes) {
 
     id: {
      primaryKey: true,
-     type: DataTypes.INTEGER
+     type: DataTypes.STRING
     },
     token: {
      primaryKey: true,
