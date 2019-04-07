@@ -11,7 +11,7 @@ module.exports = {
 
   provenance_server: {
   	URL: "http://localhost:8081",
-    TRACK: true
+    TRACK: false
   },
 
   data_miner: {

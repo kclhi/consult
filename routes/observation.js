@@ -149,7 +149,7 @@ function getPatientStats(patientID, callback) {
 
 }
 
-function sendAlert(response, patientID, alertField, alertValue, callback) {
+function sendAlert(response, patientID, dialogueID, alertField, alertValues, readingCode, callback) {
 
   var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
 
@@ -158,7 +158,10 @@ function sendAlert(response, patientID, alertField, alertValue, callback) {
   // TODO: Miner response is oddly nested.
   if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
 
-    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && alertFieldData.indexOf(alertValue) > -1 && minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) {
+    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && ( reading = utils.validPath(minerResponse, ["0", readingCode]) ) && ( alertValues.indexOf(alertFieldData) > -1 ) && ( minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) ) {
+
+      var dialogueParams = {};
+      dialogueParams.ALERT_READING = reading;
 
       request({
 
@@ -171,9 +174,8 @@ function sendAlert(response, patientID, alertField, alertValue, callback) {
         },
         json: {
 
-         // TODO: Something from the data miner response that indicates which dialogue to initiate.
-         "dialogueID": "2",
-         // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
+         "dialogueID": dialogueID,
+         "dialogueParams": dialogueParams,
          "username": patientID,
 
         },
@@ -199,7 +201,7 @@ function sendAlert(response, patientID, alertField, alertValue, callback) {
 
     } else {
 
-      logger.info("Did not alert on miner response. Alert field: " + alertField + ". Alert value: " + alertValue + ". Minutes since last alert: " + minutesSinceLastAlert + ". Max alert period: " + config.get('dialogue_manager.MAX_ALERT_PERIOD'));
+      logger.info("Did not alert on miner response. Alert field: " + alertField + ". Data in alert field: " + alertFieldData + ". Alert value: " + alertValues + ". Minutes since last alert: " + minutesSinceLastAlert + ". Max alert period: " + config.get('dialogue_manager.MAX_ALERT_PERIOD') + ". Reading: " + reading);
       callback(200);
 
     }
@@ -309,6 +311,8 @@ router.put('/:id', function(req, res, next) {
   // Use code to determine type of observation.
   if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.HR_CODE') ) {
 
+    logger.info("Received HR value.");
+
     processObservation(req, res, "HR", function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
@@ -352,6 +356,8 @@ router.put('/:id', function(req, res, next) {
 
   } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.BP_CODE') ) {
 
+    logger.info("Received BP value.");
+
     processObservation(req, res, "BP", function(observationHeaders, observationRow, patientHeaders, patientRow) {
 
       if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
@@ -376,10 +382,13 @@ router.put('/:id', function(req, res, next) {
 
             if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-              // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-              sendAlert(response, patientID.replace("Patient/", ""), "bp.trend", "Red", function(status) {
+              sendAlert(response, patientID.replace("Patient/", ""), 2, "res.sbp", ["Amber", "Red Flag"], "c271649006", function(sbpStatus) {
 
-                res.sendStatus(status);
+                sendAlert(response, patientID.replace("Patient/", ""), 2, "res.dbp", ["Amber", "Red Flag"], "c271650006", function(dbpStatus) {
+
+                  res.sendStatus(Math.min(sbpStatus, dbpStatus));
+
+                });
 
               });
 
@@ -464,27 +473,29 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
           components.forEach(function(component) {
 
-            var code, value;
+            var code, valueQuantity, valueSampledData;
 
             if ( code = utils.validPath(component, ["code", "coding", "0", "code"]) ) {
 
-              if ( ( value = utils.validPath(component, ["valueQuantity", "value"]) ) || ( value = utils.validPath(component, ["valueSampledData", "data"]) ) ) {
+              // Because if quantity if 0, will be matched as false without strict equality.
+              if ( ( ( valueQuantity = utils.validPath(component, ["valueQuantity", "value"]) ) !== false ) || ( ( valueSampledData = utils.validPath(component, ["valueSampledData", "data"]) ) !== false ) ) {
 
                 var formattedCode = "\"c" + code.replace("-", "h") + "\"";
 
                 if ( !header.includes(formattedCode) ) header.push(formattedCode);
 
-                row.push("\"" + value + "\"");
+                row.push("\"" + ( ( valueQuantity && valueQuantity !== false ) ? valueQuantity : valueSampledData ) + "\"");
 
               } else {
 
-                utils.noParse("sensor value", ["code", "coding", "0", "code"], component);
+                if (!valueQuantity) utils.noParse("sensor code (input " + req.params.code + ")", ["valueQuantity", "value"], component);
+                if (!valueSampledData) utils.noParse("sensor code (input " + req.params.code + ")", ["valueSampledData", "data"], component);
 
               }
 
             } else {
 
-              utils.noParse("sensor code", ["valueQuantity", "value"], component);
+              utils.noParse("sensor value (input " + req.params.code + ")", ["code", "coding", "0", "code"], component);
 
             }
 
