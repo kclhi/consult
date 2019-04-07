@@ -37,39 +37,34 @@ bp.check<-function(bp, nn, ehr) {
   past<-head(bp, n=nn)
   sbp.mean.past<-mean(past$sbp)
   dbp.mean.past<-mean(past$dbp)
-  recent<-tail(bp, n=nn)
+  recent<-tail(bp, n=1)
   sbp.mean.recent<-mean(recent$sbp)
   dbp.mean.recent<-mean(recent$dbp)
 
-  if (sbp.mean.recent>179){res.sbp<-"Double Red Flag"}
+  if (sbp.mean.recent>179){res.sbp<-"Double Reg Flag"}
   else if (sbp.mean.recent<180 & sbp.mean.recent>149) {res.sbp<-"Red Flag"}
-  else {res.sbp<-"no flag"}
-  sbp.alert.status<-cat("Mean SBP is: ",sbp.mean.recent, res.sbp)
+  else if (sbp.mean.recent<150 & sbp.mean.recent>134) {res.sbp<-"Amber Flag"}
+  else {res.sbp<-"no alert"}
+  # sbp.alert.status<-cat("Mean SBP is: ",sbp.mean.recent, res.sbp)
+  # return(sbp.alert.status)
 
-  # 109 - ~MDC temporarily trigger alert
-  if (dbp.mean.recent>0){res.dbp<-"Double Red Flag"}
+  if (dbp.mean.recent>109){res.dbp<-"Double Reg Flag"}
   else if (dbp.mean.recent<110 & dbp.mean.recent>94) {res.dbp<-"Red Flag"}
-  else {res.dbp<-"no flag"}
-  dbp.alert.status<-cat(" Mean DBP is: ",dbp.mean.recent, res.dbp)
+  else if (dbp.mean.recent<95 & dbp.mean.recent>84) {res.dbp<-"Amber Flag"}
+  else {res.dbp<-"no alert"}
+  #dbp.alert.status<-cat(" Mean DBP is: ",dbp.mean.recent, res.dbp)
+  # return(dbp.alert.status)
 
-  bp.alert.status<-cat(sbp.alert.status, " and ", dbp.alert.status)
-
-  # Creating additional information from the patient stats
-  bp.trend<-res.dbp
-  patient.id<-toString(bp$pid[[1]])
-  recent<-tail(bp, n=1)
-  last.sys<-recent$c271649006
-  last.dia<-recent$c271650006
-  patient.facts<-data.frame(patient.id, bp.trend, last.sys, last.dia)
-  patient.ehr.facts<-data.frame(patient.facts, ehr)
+  patient.facts<-tail(bp, n=1)
+  alert.content<-data.frame(res.sbp, res.dbp, patient.facts)
 
   # Convert to json
   library(jsonlite)
-  patientFacts<-toJSON(patient.ehr.facts)
+  alertContent<-toJSON(alert.content)
 
   dbDisconnect(datadb)
 
-  return(patientFacts)
+  return(alertContent)
 
   #future improvements:
   #Use dates, and check file is sorted by date before computing the means
