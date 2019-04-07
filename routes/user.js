@@ -82,6 +82,7 @@ router.post('/create', function(req, res, next) {
         } else {
 
           logger.error("Got null value for team.");
+          res.sendStatus(400);
 
         }
 
@@ -90,6 +91,7 @@ router.post('/create', function(req, res, next) {
     } else {
 
       logger.error("Got null value for token.");
+      res.sendStatus(400);
 
     }
 

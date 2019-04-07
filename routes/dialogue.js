@@ -245,6 +245,12 @@ function findResponse(receivedMsg, chatContext, callback) {
 
   }
 
+  Object.keys(chat.dialogueParams).forEach(function(key) {
+
+    response.Print = response.Print.replace("[" + key + "]", chat.dialogueParams[key]);
+
+  });
+
   callback(response, answerButtonsArr);
 
 }
@@ -338,6 +344,7 @@ router.post('/initiate', function(req, res, next) {
 
   var chatContext = {};
   chatContext.user = req.body.username;
+  chatContext.dialogueParams = req.body.dialogueParams;
 
   findResponse("/" + req.body.dialogueID, chatContext, function(dialogueResponse, answerButtonsArr) {
 

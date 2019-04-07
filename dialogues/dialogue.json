@@ -188,7 +188,7 @@
 		"Step": "1",
 		"BranchLevel": "1",
 		"Comment": "Triggered by app",
-		"Print": "Hi, it looks like your blood pressure is 128 which is slightly elevated compared to your baseline. You can see this on the Dashboard by going to the Blood Pressure Tab and selecting to focus on monthly summaries of your Systolic Blood Pressure. Last week you enquired about 'back pain' are you still experiencing it?",
+		"Print": "Hi, it looks like your blood pressure is [ALERT_READING] which is slightly elevated compared to your baseline. You can see this on the Dashboard by going to the Blood Pressure Tab and selecting to focus on monthly summaries of your Systolic Blood Pressure. Last week you enquired about 'back pain' are you still experiencing it?",
 		"CondJmp": [
 			{
 				"msg": "Yes",
