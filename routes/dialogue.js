@@ -4,9 +4,11 @@ const router = express.Router();
 const logger = require('../config/winston');
 const config = require('config');
 const fs = require('fs');
+const async = require('async');
 const Handlebars = require('handlebars');
 
 const mattermost = require('../lib/mattermost');
+const utils = require('../lib/utils');
 
 Handlebars.registerHelper('p1u1stepsHome', function() { return '23095'; });
 Handlebars.registerHelper('p1u1stepsPercTotal', function() { return '65'; });
@@ -108,61 +110,63 @@ function findResponse(receivedMsg, chatContext, callback) {
 
   // Delete old session (> 10 min = 600 s)
   if (Math.round(+new Date()/1000) - ctx.lastMsgTs > 600) {
-      chat = {};
+    chat = {};
   }
 
   // Load scripted dialoges as array of JSON objects
-  var dialArr = JSON.parse(fs.readFileSync('dialogues/dialogue.json', 'utf8'));
+  var dialArr = [];
+
+  for ( var dialogue = 1; dialogue < 6; dialogue+=1 ) {
+    dialArr = dialArr.concat(JSON.parse(fs.readFileSync('dialogues/' + dialogue + '.json', 'utf8')));
+  }
 
   if (receivedMsg.trim() == '/start')  { // hard-code specfic dialogue for demo
       // receivedMsg = '/1';
   }
 
   if (receivedMsg.trim().startsWith("/") ) { // is command
-      var cmd = receivedMsg.trim();
-      var dialIds = Array.from(new Set( dialArr.map(a => a.Dialogue) )).sort() // get unique set of Dialogue IDs
+    var cmd = receivedMsg.trim();
+    var dialIds = Array.from(new Set( dialArr.map(a => a.Dialogue) )).sort() // get unique set of Dialogue IDs
 
-      switch (cmd) {
-      case '/start': // Hard-coded menu
-      case '/starttest':
-          // send keyboard with all options
-          response.Print = "Hi, how can I help you? Please select from the buttons further below which dialogue you want to start.";
+    switch (cmd) {
+    case '/start': // Hard-coded menu
+    case '/starttest':
+      // send keyboard with all options
+      response.Print = "Hi, how can I help you? Please select from the buttons further below which dialogue you want to start.";
 
-          for (const answer of dialIds) {
-              if ( answer ) {
-                  answerButtonsArr.push(
-                      {
-                          "name": "/" + answer,
-                          "integration": {
-                              "url": config.get('dialogue_manager.URL') + "/response",
-                              "context": {
-                                  "command": "/" + answer,
-                                  "chatContext": chatContext
-                              }
-                          }
-                      },
-                  );
+      for (const answer of dialIds) {
+        if ( answer ) {
+          answerButtonsArr.push({
+            "name": "/" + answer,
+            "integration": {
+              "url": config.get('dialogue_manager.URL') + "/response",
+              "context": {
+                "command": "/" + answer,
+                "chatContext": chatContext
               }
-          }
-          processUserMessage = false;
-          break;
-
-      case '/help': // Send short summary
-          response.Print = "Show menu with /start command."
-          processUserMessage = false;
-          break;
-
-      default:
-          const id = cmd.replace('/','') ;
-          if ( dialIds.indexOf(id) >= 0 ) // keyboard command is valid dialogue ID
-          {
-              newDialNo = id; // Start new dialogue with this id
-          }
-          else { // an unknown command
-              response.Print = "Sorry, I don't know this command. Please use /start to begin a conversation."
-              processUserMessage = false;
-          }
+            }
+          });
+        }
       }
+      processUserMessage = false;
+      break;
+
+    case '/help': // Send short summary
+      response.Print = "Show menu with /start command."
+      processUserMessage = false;
+      break;
+
+    default:
+      const id = cmd.replace('/','') ;
+      if ( dialIds.indexOf(id) >= 0 ) // keyboard command is valid dialogue ID
+      {
+        newDialNo = id; // Start new dialogue with this id
+      }
+      else { // an unknown command
+        response.Print = "Sorry, I don't know this command. Please use /start to begin a conversation."
+        processUserMessage = false;
+      }
+    }
   }
   else { // Msg is not a command
       // Just continue and treat as normal dialogue (??)
@@ -170,6 +174,7 @@ function findResponse(receivedMsg, chatContext, callback) {
 
   if (processUserMessage) { // user input is processed (not if it was command)
 
+      var msgRow;
       // if ( ctx.lastMsgDialNo ) // ## This was checked in RULES node. Need to check here??
       dialNo = ctx.lastMsgDialNo; // if undefined ...??
       stepNo = ctx.lastMsgStepNo; // if undefined ...??
@@ -182,25 +187,25 @@ function findResponse(receivedMsg, chatContext, callback) {
           stepNo = 1; // Start at the beginning
       }
       else { // Handle user response to previous message. Find previous script step
-          var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
-          if (idx >= 0 ) { // this was the previous step
-              var condjmpArr = dialArr[idx].CondJmp // If undefined ...
-              idx = condjmpArr.findIndex(i => ( tmplRpl(i.msg) == receivedMsg ) );
-              if (idx >= 0 ) {
-                  stepNo = condjmpArr[idx].n // Process next step // If undefined ...
-              } // else stepNo is unchanged. Will repeat previous message automatically.
-          }
-          else {
-              response.Print = "Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!";
-              error = 1; // END
-          }
+        var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
+        if (idx >= 0 ) { // this was the previous step
+          var condjmpArr = dialArr[idx].CondJmp // If undefined ...
+          idx = condjmpArr.findIndex(i => ( tmplRpl(i.msg) == receivedMsg ) );
+          if (idx >= 0 ) {
+            stepNo = condjmpArr[idx].n // Process next step // If undefined ...
+          } // else stepNo is unchanged. Will repeat previous message automatically.
+        }
+        else {
+            response.Print = "Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!";
+            error = 1; // END
+        }
       }
 
       // Find response to message
       var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
 
       if (idx >= 0 ) { //  entry found
-          var msgRow       = dialArr[idx] //
+          msgRow       = dialArr[idx] //
           var condjmpArr   = msgRow.CondJmp // If undefined ...
           response.Answers = condjmpArr.map(a => tmplRpl(a.msg) ); // Array of available answers
           // response.Print   = Handlebars.compile(msgRow.Print)(); // Compile tags in msg
@@ -243,18 +248,254 @@ function findResponse(receivedMsg, chatContext, callback) {
 
       }
 
+      // Dynamic chat response logic.
+
+      // Replace content of chat response with content in dialogueParams context variable.
+      if ( chat.dialogueParams ) {
+
+        Object.keys(chat.dialogueParams).forEach(function(key) {
+
+          response.Print = response.Print.replace("[" + key + "]", chat.dialogueParams[key]);
+
+        });
+
+      }
+
+      // Does our print response require information from an external source?
+      if ( msgRow.External ) {
+
+        logger.debug("Response is external");
+
+        // Do we need to create anything for the body of this external call?
+        if ( msgRow.External.Body ) {
+
+          logger.debug("Response requires body components. Gathering...");
+          externalCallBody = {};
+
+          // Look at each item specified for the body of this external call.
+          async.eachSeries(Object.keys(msgRow.External.Body), function(item, next) {
+
+            item = msgRow.External.Body[item];
+
+            // Get value for body from chat context
+            if ( item.Value.Type == "context" ) {
+
+              logger.debug("Context body item: " + JSON.stringify(item));
+
+              if ( chatContext[item.Value.Key] ) {
+
+                externalCallBody[item.Key] = chatContext[item.Value.Key];
+                logger.debug("Added externalCallBody entry for " +  item.Key);
+
+              } else {
+
+                logger.error("Could not find requested chat context item: " + item.Value.Key);
+                callback(null, null);
+
+              }
+
+              next();
+
+            // Get value for body from another external call
+            } else if ( item.Value.Type == "external" ) {
+
+              logger.debug("External body item: " + JSON.stringify(item));
+
+              var URL = item.Value.URL;
+
+              // Do we need to add anything to the URL of this nested external call, required to populate the body.
+              if ( item.Value.Path ) {
+
+                logger.debug("Adding to URL...");
+
+                Object.keys(item.Value.Path).forEach(function(pathItem) {
+
+                  pathItem = item.Value.Path[pathItem];
+
+                  // If the item to add to the path of the nested external call comes from the chat context, add it.
+                  if ( pathItem.Type == "context" ) {
+
+                    logger.debug("Trying to resolve context item: " + pathItem.Key);
+
+                    if ( chatContext[pathItem.Key] ) {
+
+                      logger.debug("Adding to the path of nested external call to populate body.");
+                      URL += "/" + chatContext[pathItem.Key];
+
+                    } else {
+
+                      logger.error("Could not find requested chat context item: " + pathItem.Key);
+                      callback(null, null);
+
+                    }
+
+                  }
+
+                });
+
+              }
+
+              externalCallNestedRequestBody = {};
+
+              // Do we need to add anything to the request body of this nested external call, required to populate the body.
+              // ~MDC some repetition here, so recursion may be viable.
+              if ( item.Value.Body ) {
+
+                // Look at each item specified for the body of this nested external call.
+                Object.keys(item.Value.Body).forEach(function(bodyItem) {
+
+                  bodyItem = item.Value.Body[bodyItem];
+                  logger.debug("Nested external call body item: " + JSON.stringify(bodyItem));
+
+                  // If the item to add to the request body of the nested external call comes from the chat context, add it.
+                  if ( bodyItem.Value.Type == "context" ) {
+
+                    logger.debug("Trying to resolve context item: " + bodyItem.Value.Key);
+
+                    if ( chatContext[bodyItem.Value.Key] ) {
+
+                      externalCallNestedRequestBody[bodyItem.Key] = chatContext[bodyItem.Value.Key];
+                      logger.debug("Added externalCallNestedRequestBody entry for " + bodyItem.Key);
+
+                    } else {
+
+                      logger.error("Could not find requested chat context item: " + pathItem.Value.Key);
+                      callback(null, null);
+
+                    }
+
+                  } else if ( bodyItem.Value.Type == "literal" ) {
+
+                    externalCallNestedRequestBody[bodyItem.Key] = bodyItem.Value.Value;
+                    logger.debug("Added externalCallNestedRequestBody entry for " + bodyItem.Key);
+
+                  }
+
+                });
+
+              }
+
+              // Make external call to populate body item.
+              request({
+
+                url: URL,
+                method: item.Value.Method,
+                json: externalCallNestedRequestBody
+
+              }, function (error, response, body) {
+
+                if ( error || (response && response.statusCode >= 400) || !body ) {
+
+                  logger.error("Failed to populate body item with external call: " + ( error ? error : "" ) + " Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ));
+                  callback(null, null);
+
+                } else {
+
+                  if ( parsedBody = utils.JSONParseWrapper(body) ) {
+
+                    externalCallBody[item.Key] = parsedBody;
+
+                  } else {
+
+                    externalCallBody[item.Key] = body;
+
+                  }
+
+                  logger.debug("Added externalCallBody entry for " + item.Key);
+                  next();
+
+                }
+
+              });
+
+            // Item to add to body is a simple literal
+            } else if ( item.Value.Type = "literal" ) {
+
+              logger.debug("Literal body item: " + JSON.stringify(item));
+
+              externalCallBody[item.Key] = item.Value.Value;
+              logger.debug("Added externalCallBody entry for " + item.Key);
+              next();
+
+            }
+
+          }, function(bodyConstructionError) {
+
+            logger.info("Full body for external call ready.");
+
+            // Make external call and replace printed response with returned value after external call body populated.
+            externalURLResponse(msgRow, response, externalCallBody, function(response) {
+
+              callback(response, answerButtonsArr);
+
+            });
+
+          });
+
+        } else {
+
+          // Make external call and replace printed response with returned value without call body.
+          externalURLResponse(msgRow, response, {}, function(response) {
+
+            callback(response, answerButtonsArr);
+
+          });
+
+        }
+
+      } else {
+
+        // Return printed response unchanged.
+        callback(response, answerButtonsArr);
+
+      }
+
+  } else {
+
+    callback(response, answerButtonsArr);
+
   }
-
-  Object.keys(chat.dialogueParams).forEach(function(key) {
-
-    response.Print = response.Print.replace("[" + key + "]", chat.dialogueParams[key]);
-
-  });
-
-  callback(response, answerButtonsArr);
 
 }
 
+function externalURLResponse(msgRow, messageResponse, externalCallBody, callback) {
+
+  // Main external call.
+  request({
+
+    url: msgRow.External.URL,
+    method: msgRow.External.Method,
+    json: externalCallBody
+
+  }, function (error, response, body) {
+
+    if ( error || (response && response.statusCode >= 400) || !body ) {
+
+      logger.error("Failed to call external source for dynamic print return: " + ( error ? error : "" ) + " Status: " + ( response && response.statuscode ? response.statusCode : "Status code unknown" ));
+      callback(null);
+
+    } else {
+
+      logger.debug("Received from external source for dynamic print return: " + JSON.stringify(body));
+
+      if ( parsedBody = utils.JSONParseWrapper(body) ) {
+
+        Object.keys(parsedBody).forEach(function(key) {
+
+          logger.debug("Replacing [" + key + "] with " + parsedBody[key]);
+          messageResponse.Print = messageResponse.Print.replace("[" + key + "]", parsedBody[key]);
+
+        });
+
+      }
+
+      callback(messageResponse);
+
+    }
+
+  });
+
+}
 router.post('/response', function(req, res, next) {
 
   // New chat session.
@@ -287,6 +528,15 @@ router.post('/response', function(req, res, next) {
   }
 
   findResponse(receivedMsg, chatContext, function(response, answerButtonsArr) {
+
+    // Don't allow template responses to go back to user.
+    if ( !response || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
+
+      response = {};
+      response.Print = "Sorry, we aren't able to process a response for you right now.";
+      answerButtonsArr = [];
+
+    }
 
     getWebhook(function(webhook) {
 

@@ -1,0 +1,94 @@
+[
+	{
+		"Dialogue": "4",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "Triggered by user considering intervention",
+		"Print": "What intervention do you want to consider?",
+		"CondJmp": [
+			{
+				"msg": "Stop smoking",
+				"n": "110"
+			},
+			{
+				"msg": "Lower cholesterol",
+				"n": "120"
+			},
+			{
+				"msg": "Lower bp",
+				"n": "130"
+			},
+			{
+				"msg": "Antiplatelet",
+				"n": "140"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "110",
+		"BranchLevel": "1.1",
+		"Comment": "Display Cates plots for 'stop smoking' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Stop Smoking\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "Show diagrams in chat?",
+		"Actions": "can ask if they want to check another intervention?",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "120",
+		"BranchLevel": "1.2",
+		"Comment": "Display Cates plots for 'lower cholesterol' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Lower Cholesterol\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "130",
+		"BranchLevel": "1.3",
+		"Comment": "Display Cates plots for 'lower bp' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Lower Blood Pressure\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "4",
+		"Step": "140",
+		"BranchLevel": "1.4",
+		"Comment": "Display Cates plots for 'antiplatelet' vs baseline. Explain the difference in risk",
+		"Print": "Please click on the Risk page in the Dashboard and select the \"Antiplatelet\" diagrams. This diagram shows that ...",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

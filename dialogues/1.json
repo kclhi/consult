@@ -1,0 +1,244 @@
+[
+	{
+		"Dialogue": "1",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "Triggered by user asking for some advice re painkillers - Advice button",
+		"Print": "What can I help you with?",
+		"CondJmp": [
+			{
+				"msg": "Medication",
+				"n": "110"
+			},
+			{
+				"msg": "Reminder",
+				"n": "120"
+			},
+			{
+				"msg": "Symptom",
+				"n": "130"
+			},
+			{
+				"msg": "Overview",
+				"n": "140"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "110",
+		"BranchLevel": "1.1",
+		"Comment": "",
+		"Print": "Do you want to know more about medication? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "120",
+		"BranchLevel": "1.2",
+		"Comment": "",
+		"Print": "You want a reminder? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "130",
+		"BranchLevel": "1.3",
+		"Comment": "",
+		"Print": "Ok, what symptom?",
+		"CondJmp": [
+			{
+				"msg": "Headache",
+				"n": "131"
+			},
+			{
+				"msg": "Backpain",
+				"n": "132"
+			},
+			{
+				"msg": "Gastrointestinal",
+				"n": "135"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "131",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Do you want to know more about the symptom of headache? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "132",
+		"BranchLevel": "1.1.3",
+		"Comment": "if 'backpain', then",
+		"External": {
+			"URL": "http://localhost:5000/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "backpain"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"URL": "http://localhost:3006/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		"Print": "It is recommended that you take: [drug_name], would you like more details?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "133"
+			},
+			{
+				"msg": "No",
+				"n": "134"
+			}
+		],
+		"Media": "",
+		"Actions": "instantiates ASPT and this goes into the text in 1.1.3.1 User can ask arg engine \"Why x\" or \"Why not y\".",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "133",
+		"BranchLevel": "1.1.3.1",
+		"Comment": "if 'yes', then",
+		"Print": "Given your medical history and that 'Ibuprofen' helps with back pain then 'ibuprofen\" is recommended.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "Arg Engine provides list of questions (options) user can ask. Arg Engine answers questions / explains reasoning.",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "134",
+		"BranchLevel": "1.1.3.2",
+		"Comment": "if 'no', then",
+		"Print": "Ok, you know where you can find me.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "135",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Do you want to know more about the symptom of gastronintestinal pain? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "140",
+		"BranchLevel": "1.4",
+		"Comment": "",
+		"Print": "Do you want an overview? That will be implemented in the next version of the Stroke Companion.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

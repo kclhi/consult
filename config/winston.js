@@ -12,7 +12,7 @@ var options = {
     colorize: false,
   },
   console: {
-    level: 'info', // debug
+    level: 'debug', // debug
     handleExceptions: true,
     json: false,
     colorize: true,
