@@ -10,6 +10,7 @@ const crypto = require('crypto');
 const generatePassword = require('password-generator');
 
 const provenance = require('../lib/provenance');
+const patient = require('../lib/patient');
 const utils = require('../lib/utils');
 
 let ldapClient;
@@ -162,6 +163,49 @@ router.put('/:id', function(req, res, next) {
 
     logger.info("Automatic patient registration is disabled. Patient must be registered manually.");
     res.sendStatus(200);
+
+  }
+
+});
+
+/**
+ * @api {get} /:patientID Request patient information
+ * @apiName GetPatient
+ * @apiGroup Patient
+ *
+ * @apiParam {Number} patientID Users unique ID.
+ */
+router.get('/:patientID', function(req, res, next) {
+
+  if ( req.params && req.params.patientID ) {
+
+    patient.getPatientStats(req.params.patientID, function(patientHeaders, patientRow) {
+
+      if ( patientHeaders && patientRow ) {
+
+        patientHeadersRow = {};
+        patientHeadersRow["pid"] = req.params.patientID;
+
+        patientHeaders.forEach(function(patientHeader) {
+
+          patientHeadersRow[patientHeader] = patientRow[patientHeaders.indexOf(patientHeader)];
+
+        })
+
+        res.send(patientHeadersRow);
+
+      } else {
+
+        logger.error("Could not find patient.");
+        res.send(404);
+
+      }
+
+    });
+
+  } else {
+
+    res.sendStatus(400);
 
   }
 

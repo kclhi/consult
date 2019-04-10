@@ -8,6 +8,7 @@ const config = require('config');
 const logger = require('../config/winston');
 
 const provenance = require('../lib/provenance');
+const patient = require('../lib/patient');
 const utils = require('../lib/utils');
 
 let lastAlert = 0;
@@ -27,125 +28,6 @@ function populateProvenanceTemplate(type, pid, code, value, callback) {
 function callFHIRServer(query, params, callback) {
 
   utils.callFHIRServer(query, params, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
-
-}
-
-function getPatientStats(patientID, callback) {
-
-  patientHeaders = [];
-  patientRow = [];
-
-  callFHIRServer("Patient/" + patientID, "", function(patientData) {
-
-    if ( parsedPatientData = utils.JSONParseWrapper(patientData) ) {
-
-      if ( birthDate = parsedPatientData.birthDate ) {
-
-        patientHeaders.push("birthDate");
-        patientRow.push(birthDate);
-
-        if ( ethnicity = utils.validPath(parsedPatientData, ["extension", "0", "extension", "0", "valueCoding", "display"] ) ) {
-
-          patientHeaders.push("ethnicity");
-          patientRow.push(ethnicity);
-
-          callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
-
-            if ( ( parsedMedicationDispenseData = utils.JSONParseWrapper(medicationDispenseData) ) && parsedMedicationDispenseData.entry ) {
-
-              // TODO: Remove async.
-              async.each(parsedMedicationDispenseData.entry, function(medicationDispense, done) {
-
-                if ( medicationReference = utils.validPath(medicationDispense, ["resource", "medicationReference", "reference"]) ) {
-
-                  callFHIRServer(medicationReference, "", function(medicationData) {
-
-                    if ( ( parsedMedicationData = utils.JSONParseWrapper(medicationData) ) && ( medicationName = utils.validPath(parsedMedicationData, ["code", "coding", "0", "display"]) ) ) {
-
-                      patientHeaders.push("medication" + (parsedMedicationDispenseData.entry.findIndex(jsonObject => jsonObject.fullUrl == medicationDispense.fullUrl) + 1));
-                      patientRow.push(medicationName);
-                      done();
-
-                    } else {
-
-                      utils.noParse("medication name", ["code", "coding", "0", "display"], medicationData);
-                      done();
-
-                    }
-
-                  });
-
-                } else {
-
-                  utils.noParse("medication reference", ["resource", "medicationReference", "reference"], medicationDispense);
-                  done();
-
-                }
-
-              }, function(medicationDispenseDataError) {
-
-                callFHIRServer("Condition", "subject=" + patientID, function(conditionData) {
-
-                  var problem = 1;
-
-                  if ( ( parsedConditionData = utils.JSONParseWrapper(conditionData) ) && parsedConditionData.entry ) {
-
-                    parsedConditionData.entry.forEach(function(condition) {
-
-                      if ( conditionName = utils.validPath(condition, ["resource", "code", "coding", "0", "display"]) ) {
-
-                        patientHeaders.push("problem" + problem)
-                        problem += 1;
-                        patientRow.push(conditionName);
-
-                      } else {
-
-                        utils.noParse("condition data", ["resource", "code", "coding", "0", "display"], conditionData);
-                        callback(patientHeaders, patientRow);
-
-                      }
-
-                    });
-
-                  }
-
-                  callback(patientHeaders, patientRow);
-
-                });
-
-              });
-
-            } else {
-
-              utils.noParse("medication dispense data", [], medicationDispenseData);
-              callback(patientHeaders, patientRow);
-
-            }
-
-          });
-
-        } else {
-
-          utils.noParse("patient ethnicity", ["extension", "0", "extension", "0", "valueCoding", "display"], patientData);
-          callback(patientHeaders, patientRow);
-
-        }
-
-      } else {
-
-        utils.noParse("patient birth date", [], patientData);
-        callback(patientHeaders, patientRow);
-
-      }
-
-    } else {
-
-      utils.noParse("patient data", [], patientData);
-      callback(patientHeaders, patientRow);
-
-    }
-
-  });
 
 }
 
@@ -239,7 +121,7 @@ function processObservation(req, res, type, callback) {
     observationHeaders.push("pid");
     observationRow.push(patientID);
 
-    getPatientStats(patientID, function(patientHeaders, patientRow) {
+    patient.getPatientStats(patientID, function(patientHeaders, patientRow) {
 
       if ( patientHeaders.length > 0 && patientRow.length > 0 ) {
 
@@ -431,7 +313,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 /**
- * @api {get} /:patientID/:code/:start/:end Request User information
+ * @api {get} /:patientID/:code/:start/:end Request patient vitals (Observation) information
  * @apiName GetObservations
  * @apiGroup Observations
  *

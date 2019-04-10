@@ -36,7 +36,7 @@ module.exports = {
   },
 
   user_registration: {
-    ENABLED: true
+    ENABLED: false
   }
 
 };
