@@ -2,7 +2,12 @@ module.exports = {
 
   credentials: {
     USERNAME: process.env.USERNAME,
-    PASSWORD: process.env.PASSWORD
+    PASSWORD: process.env.PASSWORD,
+    SECRET: process.env.SECRET
+  },
+
+  ldap_server: {
+    MANAGER_PASSWORD: process.env.LDAP_MANAGER_PASSWORD
   },
 
   fhir_server: {
@@ -28,6 +33,10 @@ module.exports = {
   companies: {
     BP: "Nokia",
     HR: "Garmin"
+  },
+
+  user_registration: {
+    ENABLED: true
   }
 
 };

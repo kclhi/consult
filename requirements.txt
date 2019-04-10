@@ -16,3 +16,4 @@ uuid
 config
 winston
 ldapjs
+password-generator

@@ -5,12 +5,12 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const logger = require('./config/winston');
 const ldap = require('ldapjs');
+const uuidv1 = require('uuid/v1');
 
 // Environment variables
 require('dotenv').config();
 
 const config = require('config');
-
 const app = express();
 
 // view engine setup
@@ -24,11 +24,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const { patient, updateLDAPClient } = require('./routes/patient');
 const observation = require('./routes/observation');
-const patient = require('./routes/patient');
 
 // Route setup involving async
-function init() {
+function init(callback) {
 
   var ldapClient = ldap.createClient({
 
@@ -36,40 +36,36 @@ function init() {
 
   });
 
+  ldapClient.on('close', close => {
+
+    logger.debug("Connection closed by LDAP server. Reconnecting...");
+    init(()=>{});
+
+  });
+
   ldapClient.on('error', error => {
 
-    logger.error(error);
-    return setTimeout(init, 5000);
+    logger.error("Error connecting to LDAP server: " + error);
+    setTimeout(init, 5000, callback);
 
   });
 
   ldapClient.on('connect', connect => {
 
-    ldapClient.bind('cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk', process.env.LDAP_MANAGER_PASSWORD, function(error) {
-
-      if (error) {
-
-        logger.error(error);
-        return setTimeout(init, 5000);
-
-      } else {
-
-        app.use('/Patient', patient(ldapClient));
-        logger.info("Connected to LDAP server.");
-        start();
-
-      }
-
-    });
+    updateLDAPClient(ldapClient);
+    logger.info("Connected to LDAP server.");
+    callback();
 
   });
 
 }
 
-// Add errors routes after async routes added.
-function start() {
+init(function() {
 
+  app.use('/Patient', patient);
   app.use('/Observation', observation);
+
+  // Add errors routes after async routes added.
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -94,13 +90,16 @@ function start() {
   });
 
   try {
-    app.listen(process.env.PORT || '3005')
+
+    app.listen(process.env.PORT || '3005');
+    logger.info("Main app started.");
+
   } catch(err) {
+
     console.error(err);
+
   }
 
-}
-
-init();
+});
 
 module.exports = app;
