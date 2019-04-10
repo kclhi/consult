@@ -8,27 +8,16 @@ library(DBI)
 #* @apiTitle Data miner (data-miner)
 #* @apiDescription Analyse patient sensor data.
 
-#* Check blood pressure for exacerbations
-#* @param bp blood pressure data
+#* Get latest blood pressure information
+#* @param pid patient ID
 #* @param nn history length -- ~MDC should this be a constant?
-#* @param ehr patient facts
-#* @post /mine/check/bp
-bp.check<-function(bp, nn, ehr) {
+#* @post /mine/get/bp
+bp.get<-function(pid, nn) {
 
-  # Get CSV formatted input.
-  values.str = gsub("\\n","\n",bp,fixed=T)
-  bp<-read.csv(text=values.str)
-  values.str = gsub("\\n","\n",ehr,fixed=T)
-  ehr<-read.csv(text=values.str)
-
-  # Add latest values to DB.
   datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
 
-  # TODO: Delete from table if outside 'nn' length.
-  dbWriteTable(datadb, "bp", merge(bp, ehr), append=TRUE)
-
   # Get all data.
-  bp<-dbGetQuery(datadb, 'SELECT * FROM bp')
+  bp<-dbGetQuery(datadb, paste('SELECT * FROM bp WHERE pid="', pid, '"', "", sep=""));
 
   # Processing logic
   bp$sbp<-bp$c271649006 # matches the code
@@ -64,7 +53,34 @@ bp.check<-function(bp, nn, ehr) {
 
   dbDisconnect(datadb)
 
+  print(alertContent)
   return(alertContent)
+
+}
+
+#* @apiTitle Data miner (data-miner)
+#* @apiDescription Analyse patient sensor data.
+
+#* Check blood pressure for exacerbations
+#* @param bp blood pressure data
+#* @param nn history length -- ~MDC should this be a constant?
+#* @param ehr patient facts
+#* @post /mine/check/bp
+bp.check<-function(bp, nn, ehr) {
+
+  # Get CSV formatted input.
+  values.str = gsub("\\n","\n",bp,fixed=T)
+  bp<-read.csv(text=values.str)
+  values.str = gsub("\\n","\n",ehr,fixed=T)
+  ehr<-read.csv(text=values.str)
+
+  # Add latest values to DB.
+  datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
+
+  # TODO: Delete from table if outside 'nn' length.
+  dbWriteTable(datadb, "bp", merge(bp, ehr), append=TRUE);
+
+  return(bp.get(bp$pid, nn));
 
   #future improvements:
   #Use dates, and check file is sorted by date before computing the means
@@ -92,7 +108,7 @@ hr.check<-function(hr, nn, ehr) {
   dbWriteTable(datadb, "hr", merge(hr, ehr), append=TRUE)
 
   # Get all data.
-  hr<-dbGetQuery(datadb, 'SELECT * FROM hr')
+  hr<-dbGetQuery(datadb, paste('SELECT * FROM hr WHERE pid="', hr$pid, '"', "", sep=""))
 
   # Mining logic
   hr$heart.rate.resting<-hr$c40443h4
