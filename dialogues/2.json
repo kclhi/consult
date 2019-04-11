@@ -3,120 +3,32 @@
 		"Dialogue": "2",
 		"Step": "1",
 		"BranchLevel": "1",
+		"Comment": "This is triggered by an amber value for BP",
+		"Print": "Hi, it looks like your latest BP ([ALERT_READING]) reading was above the threshold. Have you been feeling stressed recently?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "101"
+			},
+			{
+				"msg": "No",
+				"n": "102"
+			},
+			{
+				"msg": "I am not sure",
+				"n": "103"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "101",
+		"BranchLevel": "1",
 		"Comment": "Triggered by app",
-		"Print": "Hi, it looks like your blood pressure is [ALERT_READING] which is slightly elevated compared to your baseline. You can see this on the Dashboard by going to the Blood Pressure Tab and selecting to focus on monthly summaries of your Systolic Blood Pressure. Last week you enquired about 'back pain' are you still experiencing it?",
-		"CondJmp": [
-			{
-				"msg": "Yes",
-				"n": "110"
-			},
-			{
-				"msg": "No",
-				"n": "120"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": "BP value"
-	},
-	{
-		"Dialogue": "2",
-		"Step": "110",
-		"BranchLevel": "1.1",
-		"Comment": "if 'yes', then",
-		"Print": "Last week it was recommended that you take 'ibuprofen',  are you taking the full dose allowed?",
-		"CondJmp": [
-			{
-				"msg": "Yes",
-				"n": "111"
-			},
-			{
-				"msg": "No",
-				"n": "115"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "2",
-		"Step": "111",
-		"BranchLevel": "1.1.1",
-		"Comment": "if 'yes', then",
-		"Print": "Consider changing your painkiller; there are two options: Given your medical history and that 'paracetamol' helps with back pain then 'paracetamol\" is recommended. It is recommended that you consider 'paracetamol'. Given your medical history and that 'codeine' helps with back pain then 'codeine\" is recommended.",
-		"CondJmp": [
-			{
-				"msg": "Continue",
-				"n": "112"
-			}
-		],
-		"Media": "",
-		"Actions": "instantiates ASPT ArgEngine provides options.",
-		"Var": ""
-	},
-	{
-		"Dialogue": "",
-		"Step": "112",
-		"BranchLevel": "",
-		"Comment": "",
-		"Print": "Do you have a preference?",
-		"CondJmp": [
-			{
-				"msg": "Yes",
-				"n": "114"
-			},
-			{
-				"msg": "No",
-				"n": "113"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "2",
-		"Step": "113",
-		"BranchLevel": "1.1.1.2",
-		"Comment": "if 'no', then",
-		"Print": "'paracetamol' may not be as effective at lowering the pain, however it is more gentle on the digestive system. 'codeine' is more effective at loweing pain, however it can cause addiction.",
-		"CondJmp": [
-			{
-				"msg": "Continue",
-				"n": "114"
-			}
-		],
-		"Media": "",
-		"Actions": "this can be where the GP preferences are imposed ArgEngine explains.",
-		"Var": ""
-	},
-	{
-		"Dialogue": "",
-		"Step": "114",
-		"BranchLevel": "",
-		"Comment": "",
-		"Print": "What do you prefer?",
-		"CondJmp": [
-			{
-				"msg": "Codeine",
-				"n": "9999"
-			},
-			{
-				"msg": "Paracetamol",
-				"n": "9999"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "2",
-		"Step": "115",
-		"BranchLevel": "1.1.2",
-		"Comment": "if 'no', then",
-		"Print": "Consider taking the maximal dose",
+		"Print": "This could explain this raised value of BP. These are some activities you can consider to help",
 		"CondJmp": [
 			{
 				"msg": "END",
@@ -129,62 +41,26 @@
 	},
 	{
 		"Dialogue": "2",
-		"Step": "120",
-		"BranchLevel": "1.2",
-		"Comment": "if 'no', then",
-		"Print": "Are you feeling anxious or stressed?",
-		"CondJmp": [
-			{
-				"msg": "Yes",
-				"n": "121"
-			},
-			{
-				"msg": "No",
-				"n": "122"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "2",
-		"Step": "121",
-		"BranchLevel": "1.2.1",
-		"Comment": "if 'yes', then",
-		"Print": "Consider talking to your GP about managing stress",
-		"CondJmp": [
-			{
-				"msg": "END",
-				"n": "0"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "2",
-		"Step": "122",
-		"BranchLevel": "1.2.2",
-		"Comment": "if 'no', then",
-		"Print": "Consider talking to your GP about possibly adjusting your BP medication",
-		"CondJmp": [
-			{
-				"msg": "END",
-				"n": "0"
-			}
-		],
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "2",
-		"Step": "9999",
-		"BranchLevel": "",
+		"Step": "102",
+		"BranchLevel": "1",
 		"Comment": "",
-		"Print": "Goodbye.",
+		"Print": "If this raised level persists then we recommend that you consult your paharmacist, 111 or GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "103",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "",
 		"CondJmp": [
 			{
 				"msg": "END",

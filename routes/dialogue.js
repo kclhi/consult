@@ -10,6 +10,8 @@ const Handlebars = require('handlebars');
 const mattermost = require('../lib/mattermost');
 const utils = require('../lib/utils');
 
+const connieAvatar = "connie.jpg"
+
 Handlebars.registerHelper('p1u1stepsHome', function() { return '23095'; });
 Handlebars.registerHelper('p1u1stepsPercTotal', function() { return '65'; });
 Handlebars.registerHelper('p1u2stepsPercTotal', function() { return '80'; });
@@ -132,7 +134,7 @@ function findResponse(receivedMsg, chatContext, callback) {
     case '/start': // Hard-coded menu
     case '/starttest':
       // send keyboard with all options
-      response.Print = "Hi, how can I help you? Please select from the buttons further below which dialogue you want to start.";
+      response.Print = "How can I help you? Please select from the buttons below to start.";
 
       for (const answer of dialIds) {
         if ( answer ) {
@@ -421,7 +423,7 @@ function findResponse(receivedMsg, chatContext, callback) {
 
           }, function(bodyConstructionError) {
 
-            logger.info("Full body for external call ready.");
+            logger.debug("Full body for external call ready.");
 
             // Make external call and replace printed response with returned value after external call body populated.
             externalURLResponse(msgRow, response, externalCallBody, function(response) {
@@ -546,7 +548,7 @@ router.post('/response', function(req, res, next) {
           "response_type": "in_channel",
           "username": "connie",
           "channel": "@" + chatContext.user,
-          "icon_url": config.get('dialogue_manager.URL') + "/beaker.jpg",
+          "icon_url": config.get('dialogue_manager.URL') + "/" + connieAvatar,
           "attachments": [
             {
               "pretext": "",
@@ -612,7 +614,7 @@ router.post('/initiate', function(req, res, next) {
               "response_type": "in_channel",
               "username": "connie",
               "channel": "@" + req.body.username,
-              "icon_url": config.get('dialogue_manager.URL') + "/beaker.jpg",
+              "icon_url": config.get('dialogue_manager.URL') + "/" + connieAvatar,
               "attachments": [
                 {
                   "image_url": config.get('dialogue_manager.URL') + "/warning.jpg",
