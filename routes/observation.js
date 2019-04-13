@@ -40,7 +40,7 @@ function sendAlert(response, patientID, dialogueID, alertField, alertValues, rea
   // TODO: Miner response is oddly nested.
   if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
 
-    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && ( reading = utils.validPath(minerResponse, ["0", readingCode]) ) && ( alertValues.indexOf(alertFieldData) > -1 ) && ( minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) ) {
+    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && ( reading = utils.validPath(minerResponse, ["0", readingCode]) ) && ( new RegExp(alertValues.join("|")).test(alertFieldData) ) && ( minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) ) {
 
       var dialogueParams = {};
       dialogueParams.ALERT_READING = reading;
@@ -264,9 +264,9 @@ router.put('/:id', function(req, res, next) {
 
             if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-              sendAlert(response, patientID.replace("Patient/", ""), 2, "res.sbp", ["Amber", "Red Flag"], "c271649006", function(sbpStatus) {
+              sendAlert(response, patientID.replace("Patient/", ""), 2, "res.c271649006", ["Amber", "Red"], "c271649006", function(sbpStatus) {
 
-                sendAlert(response, patientID.replace("Patient/", ""), 2, "res.dbp", ["Amber", "Red Flag"], "c271650006", function(dbpStatus) {
+                sendAlert(response, patientID.replace("Patient/", ""), 2, "res.c271650006", ["Amber", "Red"], "c271650006", function(dbpStatus) {
 
                   res.sendStatus(Math.min(sbpStatus, dbpStatus));
 

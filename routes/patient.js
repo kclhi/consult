@@ -108,6 +108,16 @@ function addUser(username, password, callback) {
 
 }
 
+/**
+ * @api {get} /register/:id/:token Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.
+ * @apiName GetPassword
+ * @apiGroup Register
+ *
+ * @apiParam {String} id System ID supplied in exachange for first token supplied upon prvovision of NHS number.
+ * @apiParam {String} token Token supplied upon issue of system ID.
+ *
+ * @apiSuccess {String} Confirmation of ID and newly generated password.
+ */
 router.get('/register/:id/:token', function(req, res, next) {
 
   if ( config.get('user_registration.ENABLED') ) {
