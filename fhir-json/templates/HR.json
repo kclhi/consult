@@ -65,7 +65,7 @@
         "text": "Heart rate --resting"
       },
       "valueQuantity": {
-        "value": "[restingHeartRateInBeatsPerMinute]",
+        "value": "[c40443h4]",
         "unit": "beats/minute",
         "system": "http://unitsofmeasure.org",
         "code": "/min"
@@ -83,7 +83,7 @@
         "text": "Heart rate"
       },
       "valueQuantity": {
-        "value": "[maxHeartRateInBeatsPerMinute]",
+        "value": "[c8867h4]",
         "unit": "beats/minute",
         "system": "http://unitsofmeasure.org",
         "code": "/min"
@@ -101,7 +101,7 @@
         "text": ""
       },
       "valueQuantity": {
-        "value": "[intensityDurationPercentage]",
+        "value": "[c82290h8]",
         "unit": "second",
         "system": "http://unitsofmeasure.org",
         "code": "second"

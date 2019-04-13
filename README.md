@@ -105,7 +105,7 @@ npm consume
 
 Deployment is via [Docker](https://docs.docker.com/compose/install/), and includes containers for this application, a proxy and an optional message queue.
 
-Specify the address of the FHIR server in [docker-compose](docker-compose.yml). If a hostname, reference its corresponding certificate. Also specify the address of the hostname if unlikely to be present in the DNS.
+Specify the address of the FHIR server and credentials in [docker-compose](docker-compose.yml). If a hostname, reference its corresponding certificate. Also specify the address of the hostname if unlikely to be present in the DNS.
 
 Build these containers:
 
@@ -124,6 +124,8 @@ docker-compose up
 ```
 docker-compose up --scale webapp-queue=0 rabbit=0
 ```
+
+Different docker-compose files exist to accomodate different service configurations.
 
 ### Custom certs
 
