@@ -8,6 +8,9 @@ method-annotations.txt
 proxy/certs/*
 !proxy/certs/gen-domain-cert.sh
 data/
+data/*
+data/*/
+data/*/*/
 static/images/*
 !static/images/sample/
 
