@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/git,linux,python,dropbox
 # Edit at https://www.gitignore.io/?templates=git,linux,python,dropbox
 
@@ -6,6 +5,11 @@
 examples/
 method-annotations.txt
 *.pptx
+proxy/certs/*
+!proxy/certs/gen-domain-cert.sh
+data/
+static/images/*
+!static/images/sample/
 
 ### Dropbox ###
 # Dropbox settings and caches

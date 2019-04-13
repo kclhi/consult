@@ -1,0 +1,12 @@
+location / {
+
+  try_files $uri @app;
+
+}
+
+location @app {
+
+  include uwsgi_params;
+  uwsgi_pass argumentation-engine_webapp_1:5000;
+
+}

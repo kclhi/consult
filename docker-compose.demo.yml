@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "argumentation-engine_webapp_1:5000", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    depends_on:
+      - webapp
+    ports:
+      - '5000:443'
+
+  webapp:
+    build:
+      context: .
+
+volumes:
+  processing_data_volume:
+
+networks:
+  default:
+    #external:
+      name: processing_network
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.22.0.0/16

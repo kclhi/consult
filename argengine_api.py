@@ -75,15 +75,16 @@ class DataScience(Resource):
         patient_data = request.form['data']
         import json
         pdict = json.loads(patient_data)
+        pdict = pdict[0];
 
-        id = str(pdict['patient.id'])
+        id = str(pdict['pid']).replace("-", "")[:5];
         age = pdict['age']
-        eth = pdict['ethnicity']
-        bp = pdict['raised_bp']
+        eth = "black_african" #pdict['ethnicity']
+        bp = ( "Flag" in pdict["res.c271649006"] or "Flag" in pdict['res.c271650006'] );
 
         facts=''.join(['patient(', id ,').\n', 'age(', id, ',', str(age),').\n', 'ethnic_origin(', id, ',', eth,').\n'])
-        if bp:
-            facts = facts + 'side_effect(hbp).\n'
+        #if bp:
+            #facts = facts + 'side_effect(hbp).\n'
 
         #filename = "argengine/DEMO/"+id+"-facts.dl"
         #import os
@@ -127,17 +128,19 @@ class ChatBot(Resource):
         return {'hello':'world'}
 
     def post(self):
-        query_data = request.form['data']
-        import json
-        pdict = json.loads(query_data)
 
-        pid = str(pdict['pid'])
+        #print request.form['data']
+        #query_data = request.form['data']
+
+        import json
+        #pdict = json.loads(query_data)
+        pdict = request.get_json();
+
+        pid = str(pdict['pid']).replace("-", "")[:5];
         sid = str(pdict['sid'])
         keyname = pdict['keyname']
         value = pdict['value']
         pdata = pdict['pdata']
-
-        print pdata
 
         params = list()
 
@@ -203,7 +206,7 @@ class ChatBot(Resource):
         hostip = request.host
         result_json=parse_aspartix.run_aspartix_web(hostip,params)
 
-        return result_json
+        return result_json;
 
 # chatbot testing class
 class TestChatbot(Resource):
@@ -239,7 +242,7 @@ api.add_resource(DataScience, '/argengine/datascience')
 api.add_resource(TestChatbot, '/argengine/chatbot/<string:name>') # chatbot testing
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
 # pip install Flask
 # pip install flask-restful
