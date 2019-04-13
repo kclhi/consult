@@ -4,8 +4,12 @@ const router = express.Router();
 const async = require('async');
 const uuidv1 = require('uuid/v1');
 const logger = require('../config/winston');
+const parse = require('csv-parse');
+const fs = require('fs');
 
 const config = require('config');
+
+const utils = require('../lib/utils');
 
 module.exports = function(messageObject) {
 
@@ -19,52 +23,52 @@ module.exports = function(messageObject) {
 	 */
 	router.get('/incomingHR/:patientID/:practitionerID', function(req, res, next) {
 
-		simulatedHRValues = [[82,	92],
-												 [77,	87],
-												 [79,	89],
-												 [79,	89],
-												 [86,	96],
-												 [87,	97],
-												 [79,	89],
-												 [98,	108],
-												 [107,	117],
-												 [98,	108],
-												 [104,	114],
-												 [97,	107],
-												 [94,	104],
-												 [82,	92],
-												 [105,	115],
-												 [88,	98],
-												 [84,	94],
-												 [97,	107],
-												 [94,	104],
-												 [96,	106],
-												 [97,	107],
-												 [86,	96],
-												 [97,	107],
-												 [93, 103],
-												 [81,	91],
-												 [87,	97]];
+		const parser = parse({delimiter: ' '}, function (err, data) {
 
-		async.eachSeries(simulatedHRValues, function (value, next){
+			if ( data ) {
 
-			var json = {
-				"reading": "HR",
-				"id": uuidv1(),
-				"subjectReference": req.params.patientID,
-				"practitionerReference": req.params.practitionerID,
-				"restingHeartRateInBeatsPerMinute": value[0],
-				"maxHeartRateInBeatsPerMinute": value[1],
-				"intensityDurationPercentage": 0
-			};
+				dataArray = [];
 
-			messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", json).then(() => next());
+		    data.forEach(function(row) {
 
-		}, function(err) {
+					dataArray.push(row);
 
-			res.sendStatus(200);
+				});
+
+				headers = dataArray.shift();
+
+				async.eachSeries(dataArray, function (row, next){
+
+					var jsonRow = {};
+
+					jsonRow.reading = "HR";
+					jsonRow.id = uuidv1();
+					jsonRow.subjectReference = req.params.patientID;
+					jsonRow.practitionerReference = req.params.practitionerID;
+
+					row.forEach(function(entry) {
+
+						jsonRow[headers[row.indexOf(entry)]] = entry;
+
+					});
+
+					messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", jsonRow).then(() => next());
+
+				}, function(err) {
+
+					res.sendStatus(200);
+
+				});
+
+			} else {
+
+				console.error("Data not supplied in suitable format");
+
+			}
 
 		});
+
+		fs.createReadStream("routes/sample-data/hr.csv").pipe(parser);
 
 	});
 
