@@ -1,5 +1,5 @@
-wget http://localhost:3003/openapi.json
-spectacle openapi.json
+wget http://localhost:3006/swagger.json
+spectacle swagger.json
 rm -r docs
 mv public docs
-rm openapi.json
+rm swagger.json

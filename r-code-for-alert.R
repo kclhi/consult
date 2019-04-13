@@ -4,6 +4,56 @@
 
 library(ggplot2)
 library(DBI)
+library(RSQLite)
+library(RMySQL)
+
+if ( Sys.getenv("R_ENV") == "production" ) {
+
+  datadb<-dbConnect(MySQL(), user=Sys.getenv("MYSQL_USER"), password=Sys.getenv("MYSQL_PASSWORD"), dbname=Sys.getenv("MYSQL_DATABASE"), host=Sys.getenv("MYSQL_HOST"))
+
+} else {
+
+  datadb<-dbConnect(SQLite(), "data.sqlite")
+
+}
+
+bp.process<-function(pid, nn) {
+
+  # Get all data.
+  bp<-dbGetQuery(datadb, paste('SELECT * FROM bp WHERE pid="', pid, '"', "", sep=""));
+
+  # Processing logic
+  past<-head(bp, n=nn)
+  c271649006.mean.past<-mean(past$c271649006)
+  c271650006.mean.past<-mean(past$c271650006)
+  recent<-tail(bp, n=1)
+  c271649006.mean.recent<-mean(recent$c271649006)
+  c271650006.mean.recent<-mean(recent$c271650006)
+
+  if (c271649006.mean.recent>179){res.c271649006<-"Double Reg Flag"}
+  else if (c271649006.mean.recent<180 & c271649006.mean.recent>149) {res.c271649006<-"Red Flag"}
+  else if (c271649006.mean.recent<150 & c271649006.mean.recent>134) {res.c271649006<-"Amber Flag"}
+  else {res.c271649006<-"no alert"}
+  # c271649006.alert.status<-cat("Mean c271649006 is: ",c271649006.mean.recent, res.c271649006)
+  # return(c271649006.alert.status)
+
+  if (c271650006.mean.recent>109){res.c271650006<-"Double Reg Flag"}
+  else if (c271650006.mean.recent<110 & c271650006.mean.recent>94) {res.c271650006<-"Red Flag"}
+  else if (c271650006.mean.recent<95 & c271650006.mean.recent>84) {res.c271650006<-"Amber Flag"}
+  else {res.c271650006<-"no alert"}
+  #c271650006.alert.status<-cat(" Mean c271650006 is: ",c271650006.mean.recent, res.c271650006)
+  # return(c271650006.alert.status)
+
+  patient.facts<-tail(bp, n=1)
+  alert.content<-data.frame(res.c271649006, res.c271650006, patient.facts)
+
+  # Convert to json
+  library(jsonlite)
+  alertContent<-toJSON(alert.content)
+
+  return(alertContent)
+
+}
 
 #* @apiTitle Data miner (data-miner)
 #* @apiDescription Analyse patient sensor data.
@@ -14,47 +64,7 @@ library(DBI)
 #* @post /mine/get/bp
 bp.get<-function(pid, nn) {
 
-  datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
-
-  # Get all data.
-  bp<-dbGetQuery(datadb, paste('SELECT * FROM bp WHERE pid="', pid, '"', "", sep=""));
-
-  # Processing logic
-  bp$sbp<-bp$c271649006 # matches the code
-  bp$dbp<-bp$c271650006
-  bp$hr<-bp$c8867h4
-  past<-head(bp, n=nn)
-  sbp.mean.past<-mean(past$sbp)
-  dbp.mean.past<-mean(past$dbp)
-  recent<-tail(bp, n=1)
-  sbp.mean.recent<-mean(recent$sbp)
-  dbp.mean.recent<-mean(recent$dbp)
-
-  if (sbp.mean.recent>179){res.sbp<-"Double Reg Flag"}
-  else if (sbp.mean.recent<180 & sbp.mean.recent>149) {res.sbp<-"Red Flag"}
-  else if (sbp.mean.recent<150 & sbp.mean.recent>134) {res.sbp<-"Amber Flag"}
-  else {res.sbp<-"no alert"}
-  # sbp.alert.status<-cat("Mean SBP is: ",sbp.mean.recent, res.sbp)
-  # return(sbp.alert.status)
-
-  if (dbp.mean.recent>109){res.dbp<-"Double Reg Flag"}
-  else if (dbp.mean.recent<110 & dbp.mean.recent>94) {res.dbp<-"Red Flag"}
-  else if (dbp.mean.recent<95 & dbp.mean.recent>84) {res.dbp<-"Amber Flag"}
-  else {res.dbp<-"no alert"}
-  #dbp.alert.status<-cat(" Mean DBP is: ",dbp.mean.recent, res.dbp)
-  # return(dbp.alert.status)
-
-  patient.facts<-tail(bp, n=1)
-  alert.content<-data.frame(res.sbp, res.dbp, patient.facts)
-
-  # Convert to json
-  library(jsonlite)
-  alertContent<-toJSON(alert.content)
-
-  dbDisconnect(datadb)
-
-  print(alertContent)
-  return(alertContent)
+  return(bp.process(bp$pid, nn));
 
 }
 
@@ -75,12 +85,11 @@ bp.check<-function(bp, nn, ehr) {
   ehr<-read.csv(text=values.str)
 
   # Add latest values to DB.
-  datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
 
   # TODO: Delete from table if outside 'nn' length.
   dbWriteTable(datadb, "bp", merge(bp, ehr), append=TRUE);
 
-  return(bp.get(bp$pid, nn));
+  return(bp.process(bp$pid, nn));
 
   #future improvements:
   #Use dates, and check file is sorted by date before computing the means
@@ -102,8 +111,6 @@ hr.check<-function(hr, nn, ehr) {
   ehr<-read.csv(text=values.str)
 
   # Add latest values to DB.
-  datadb<-dbConnect(RSQLite::SQLite(), "data.sqlite")
-
   # TODO: Delete from table if outside 'nn' length.
   dbWriteTable(datadb, "hr", merge(hr, ehr), append=TRUE)
 
@@ -111,11 +118,6 @@ hr.check<-function(hr, nn, ehr) {
   hr<-dbGetQuery(datadb, paste('SELECT * FROM hr WHERE pid="', hr$pid, '"', "", sep=""))
 
   # Mining logic
-  hr$heart.rate.resting<-hr$c40443h4
-  hr$heart.rate<-hr$c8867h4
-  hr$exercise.freq<-hr$c82290h8
-
-  dbDisconnect(datadb)
 
   return("HR received.")
 

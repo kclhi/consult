@@ -1,7 +1,11 @@
 FROM trestletech/plumber
 
+RUN apt-get update && apt-get install -y \
+    libmariadbclient-dev
+
 # Install requirements
 RUN R -e "install.packages('RSQLite')"
+RUN R -e "install.packages('RMySQL')"
 RUN R -e "install.packages('ggplot2')"
 
 COPY . .

@@ -3,9 +3,11 @@
 proxy/certs/*
 !proxy/certs/gen-domain-cert.sh
 proxy/locations/*
+!proxy/locations/data-miner
 output/
 *.pdf
 *.sqlite
+db/encrypt/keys/
 
 # Created by https://www.gitignore.io/api/macos,linux,dropbox
 
