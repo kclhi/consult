@@ -1,7 +1,7 @@
 {
-  "name": "ehr-integration",
+  "name": "device-integration_vitalpatch",
   "version": "0.1.0",
-  "description": "",
-  "title": "ehr-integration",
-  "url" : "https://consult.hscr.kcl.ac.uk/ehr"
+  "description": "Middleware designed to interface with the Vitalpatch API.",
+  "title": "device-integration_vitalpatch",
+  "url" : "https://consult.hscr.kcl.ac.uk/vitalpatch"
 }
