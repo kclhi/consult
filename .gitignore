@@ -1,7 +1,6 @@
 ### Project specific ###
 
 proxy/certs/*
-!proxy/certs/gen-ca-cert.sh
 !proxy/certs/gen-domain-cert.sh
 
 # Created by https://www.gitignore.io/api/git,node,linux,dropbox,virtualenv

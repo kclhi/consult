@@ -7,7 +7,8 @@ module.exports = {
   },
 
   dialogue_manager: {
-  	URL: "http://localhost:3007/dialogue"
+  	URL: "http://localhost:3007/dialogue",
+    STATIC: true
   }
 
 };

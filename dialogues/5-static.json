@@ -1,0 +1,182 @@
+[
+	{
+		"Dialogue": "5",
+		"Step": "1",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Are you still experiencing back pain?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "101"
+			},
+			{
+				"msg": "No",
+				"n": "201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "101",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Are you taking the maximum dose of Ibuprofen?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "102"
+			},
+			{
+				"msg": "No",
+				"n": "104"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "102",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Consider changing your painkiller. You have two options: Paracetaol or codamol. Would like to have advice on those painkillers?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "201"
+			},
+			{
+				"msg": "No",
+				"n": "999"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "103",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/live-well/healthy-body/which-painkiller-to-use/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "104",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Consider taking the maximum dose of the painkiller.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "201",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Are you feeling anxious",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "202"
+			},
+			{
+				"msg": "No",
+				"n": "204"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "202",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Would you like me to provide some advice on how to handle your anxiety?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "203"
+			},
+			{
+				"msg": "No",
+				"n": "999"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "203",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.mind.org.uk/information-support/types-of-mental-health-problems/anxiety-and-panic-attacks/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "204",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Please book an appointment with your GP to check your blood pressure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "5",
+		"Step": "999",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Ok, you know where you can find me.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

@@ -8,6 +8,7 @@ module.exports = {
 
   dialogue_manager: {
   	URL: "https://" + process.env.DNC_ADDRESS + "/dialogue",
+    STATIC: true
   }
 
 };

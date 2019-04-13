@@ -2,10 +2,10 @@ const express = require('express');
 const request = require('request');
 const router = express.Router();
 const logger = require('../config/winston');
-const config = require('config');
 const fs = require('fs');
 const async = require('async');
 const Handlebars = require('handlebars');
+const config = require('config');
 
 const mattermost = require('../lib/mattermost');
 const utils = require('../lib/utils');
@@ -119,7 +119,9 @@ function findResponse(receivedMsg, chatContext, callback) {
   var dialArr = [];
 
   for ( var dialogue = 1; dialogue < 6; dialogue+=1 ) {
-    dialArr = dialArr.concat(JSON.parse(fs.readFileSync('dialogues/' + dialogue + '.json', 'utf8')));
+
+    dialArr = dialArr.concat(JSON.parse(fs.readFileSync('dialogues/' + dialogue + ( config.get('dialogue_manager.STATIC') ? "-static" : "" ) + '.json', 'utf8')));
+
   }
 
   if (receivedMsg.trim() == '/start')  { // hard-code specfic dialogue for demo
@@ -498,6 +500,7 @@ function externalURLResponse(msgRow, messageResponse, externalCallBody, callback
   });
 
 }
+
 router.post('/response', function(req, res, next) {
 
   // New chat session.

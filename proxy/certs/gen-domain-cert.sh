@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 org=consult-ca
-domain=danvers
+domain=maximoff
 
 openssl genpkey -algorithm RSA -out "$domain".key
 openssl req -new -key "$domain".key -out "$domain".csr \

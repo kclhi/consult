@@ -1,0 +1,74 @@
+[
+	{
+		"Dialogue": "2",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "This is triggered by an amber value for BP",
+		"Print": "Hi, it looks like your latest BP (84) reading was above the threshold. Have you been feeling stressed recently?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "101"
+			},
+			{
+				"msg": "No",
+				"n": "102"
+			},
+			{
+				"msg": "I am not sure",
+				"n": "103"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "101",
+		"BranchLevel": "1",
+		"Comment": "Triggered by app",
+		"Print": "This could explain this raised value of BP. These are some activities you can consider to help",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "102",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "If this raised level persists then we recommend that you consult your paharmacist, 111 or GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2",
+		"Step": "103",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

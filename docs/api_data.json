@@ -26,7 +26,72 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/index.js",
+    "filename": "./routes/dialogue.js",
     "groupTitle": "Dialogue"
+  },
+  {
+    "type": "post",
+    "url": "/create",
+    "title": "Create a Mattermost user.",
+    "name": "CreateUser",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>Create a user with this name.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "dialogueID",
+            "description": "<p>Create a user with this password.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "email",
+            "description": "<p>Create a user with this email address.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/user.js",
+    "groupTitle": "Users"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./docs/main.js",
+    "group": "_home_martin_Dropbox_University_Postdoctoral_Associate_2018_19_Research_CONSULT_Architecture_dev_dialogue_manager_docs_main_js",
+    "groupTitle": "_home_martin_Dropbox_University_Postdoctoral_Associate_2018_19_Research_CONSULT_Architecture_dev_dialogue_manager_docs_main_js",
+    "name": ""
   }
 ]
