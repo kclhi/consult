@@ -13,7 +13,7 @@ module.exports = {
   provenance_server: {
     // TODO: Add proxy entry to facilitate service discovery.
     URL: "http://message-passer_template-server_1:8080",
-    TRACK: true
+    TRACK: false
   },
 
   data_miner: {

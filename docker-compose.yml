@@ -52,9 +52,9 @@ services:
       - NODE_EXTRA_CA_CERTS=/consult.crt
     extra_hosts:
       # If server at IP rather than known host, name on server's certificate : server IP.
-      romanova: 192.168.99.101
-      danvers: 192.168.99.102
-      maximoff: 192.168.99.103
+      romanova: 10.0.1.196
+      danvers: 10.0.1.10
+      maximoff: 10.0.1.86
 
   template-server:
     image: big-kcl/template-server:latest
@@ -68,6 +68,10 @@ services:
     image: neo4j
     environment:
       - NEO4J_AUTH=neo4j/12345
+      # Minimise memory requirements:
+      - NEO4J_dbms_memory_pagecache_size=200M
+      - NEO4J_dbms_memory_heap_initial__size=200M
+      - NEO4J_dbms_memory_heap_max__size=200M
     volumes:
       - dnc_volume:/data
 
