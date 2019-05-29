@@ -19,12 +19,13 @@ services:
     environment:
       # Under single docker machine (i.e. single host) use allocated hostname of single proxy handling all routing (e.g. device-integration_nokia_proxy_1), otherwise use machine (host) addresses.
       - DNC_ADDRESS=danvers
-      - UI_ADDRESS=carter
+      # - UI_ADDRESS=carter
+      - UI_ADDRESS=consultproject.co.uk
       - NODE_EXTRA_CA_CERTS=/consult.crt
     extra_hosts:
       # If servers at IP rather than known host, name on server's certificate : server IP.
-      danvers: 192.168.99.102
-      carter: 192.168.99.105
+      danvers: 10.0.1.10
+      #carter: 10.0.0.18
 
 volumes:
   dnc_volume:

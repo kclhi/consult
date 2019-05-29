@@ -28,7 +28,7 @@
 		"Step": "101",
 		"BranchLevel": "1",
 		"Comment": "Triggered by app",
-		"Print": "This could explain this raised value of BP. These are some activities you can consider to help",
+		"Print": "This could explain this raised value of BP. These are some activities you can consider to help...",
 		"CondJmp": [
 			{
 				"msg": "END",
