@@ -4,7 +4,7 @@ module.exports = {
     username: "user",
     password: "password",
     database: "database",
-    host: "device-integration_vitalpatch_mysql_1",
+    host: "device-integration_vitalpatch_mariadb_1",
     dialect: "mysql"
   },
 

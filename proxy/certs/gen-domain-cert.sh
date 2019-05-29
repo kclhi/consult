@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 org=consult-ca
-domain=grey # Replace with host name
+domain=stacy # Replace with host name
 
 openssl genpkey -algorithm RSA -out "$domain".key
 openssl req -new -key "$domain".key -out "$domain".csr \

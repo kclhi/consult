@@ -2,8 +2,8 @@ FROM nginx
 
 RUN mkdir /etc/nginx/ssl
 # Replace with loaded secrets: https://docs.docker.com/engine/swarm/secrets/#use-secrets-in-compose
-COPY ./certs/grey.crt /etc/nginx/ssl/grey.crt
-COPY ./certs/grey.key /etc/nginx/ssl/grey.key
+COPY ./certs/stacy.crt /etc/nginx/ssl/stacy.crt
+COPY ./certs/stacy.key /etc/nginx/ssl/stacy.key
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY locations /etc/nginx/locations
