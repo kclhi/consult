@@ -30,128 +30,137 @@ module.exports = function(messageObject) {
             },
           }).then(function(user) {
 
-            authorisation = {
-              oauth_consumer_key: config.get('garmin.CONSUMER_KEY'),
-              oauth_token: userAccessToken,
-              oauth_nonce: require('crypto').randomBytes(16).toString('base64'),
-              oauth_timestamp: Math.floor(new Date() / 1000),
-              oauth_signature_method: 'HMAC-SHA1',
-              oauth_version: '1.0'
-            };
+            if ( user ) {
 
-            other = {
-              uploadStartTimeInSeconds: notificationContentBody.uploadStartTimeInSeconds,
-              uploadEndTimeInSeconds: notificationContentBody.uploadEndTimeInSeconds
-            };
+              authorisation = {
+                oauth_consumer_key: config.get('garmin.CONSUMER_KEY'),
+                oauth_token: userAccessToken,
+                oauth_nonce: require('crypto').randomBytes(16).toString('base64'),
+                oauth_timestamp: Math.floor(new Date() / 1000),
+                oauth_signature_method: 'HMAC-SHA1',
+                oauth_version: '1.0'
+              };
 
-            if ( callbackURL = notificationContentBody.callbackURL ) {
+              other = {
+                uploadStartTimeInSeconds: notificationContentBody.uploadStartTimeInSeconds,
+                uploadEndTimeInSeconds: notificationContentBody.uploadEndTimeInSeconds
+              };
 
-              authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.get('garmin.SECRET'), user.secret, { encodeSignature: false });
+              if ( callbackURL = notificationContentBody.callbackURL ) {
 
-              authorisation = 'OAuth ' + require('querystring').stringify(authorisation, '", ', '="') + '"';
+                authorisation["oauth_signature"] = oauthSignature.generate("GET", callbackURL.substring(0, callbackURL.indexOf('?')), { ...authorisation, ...other }, config.get('garmin.SECRET'), user.secret, { encodeSignature: false });
 
-              request({
-                url: callbackURL,
-                headers: {
-                  "Authorization": authorisation
+                authorisation = 'OAuth ' + require('querystring').stringify(authorisation, '", ', '="') + '"';
+
+                request({
+                  url: callbackURL,
+                  headers: {
+                    "Authorization": authorisation
+                  },
                 },
-              },
-              function (error, response, body) {
+                function (error, response, body) {
 
-                if ( firstNotificationKey == "dailies" ) {
+                  if ( firstNotificationKey == "dailies" ) {
 
-                  if ( ( parsedReadingBody = utils.JSONParseWrapper(body) ) && Array.isArray(parsedReadingBody) && parsedReadingBody.length == 1 && ( readingBody = parsedReadingBody[0] ) ) {
+                    if ( ( parsedReadingBody = utils.JSONParseWrapper(body) ) && Array.isArray(parsedReadingBody) && parsedReadingBody.length == 1 && ( readingBody = parsedReadingBody[0] ) ) {
 
-                    const summaryId = utils.replaceAll(readingBody.summaryId, "-", "");
-                    const restingHeartRateInBeatsPerMinute = readingBody.restingHeartRateInBeatsPerMinute;
-                    const maxHeartRateInBeatsPerMinute = readingBody.maxHeartRateInBeatsPerMinute;
-                    const moderateIntensityDurationInSeconds = readingBody.moderateIntensityDurationInSeconds;
-                    const vigorousIntensityDurationInSeconds = readingBody.vigorousIntensityDurationInSeconds;
-                    const startTimeInSeconds = readingBody.startTimeInSeconds;
+                      const summaryId = utils.replaceAll(readingBody.summaryId, "-", "");
+                      const restingHeartRateInBeatsPerMinute = readingBody.restingHeartRateInBeatsPerMinute;
+                      const maxHeartRateInBeatsPerMinute = readingBody.maxHeartRateInBeatsPerMinute;
+                      const moderateIntensityDurationInSeconds = readingBody.moderateIntensityDurationInSeconds;
+                      const vigorousIntensityDurationInSeconds = readingBody.vigorousIntensityDurationInSeconds;
+                      const startTimeInSeconds = readingBody.startTimeInSeconds;
 
-                    if ( summaryId && restingHeartRateInBeatsPerMinute && maxHeartRateInBeatsPerMinute ) {
+                      if ( summaryId && restingHeartRateInBeatsPerMinute && maxHeartRateInBeatsPerMinute ) {
 
-                      var heartRateExtract = {};
-                      heartRateExtract["reading"] = "HR";
-                      heartRateExtract["id"] = summaryId;
-                      heartRateExtract["subjectReference"] = user.id;
-                      heartRateExtract["practitionerReference"] = "da6da8b0-56e5-11e9-8d7b-95e10210fac3"; // TODO: determine which practitioner to reference.
-                      heartRateExtract["c40443h4"] = restingHeartRateInBeatsPerMinute;
-                      heartRateExtract["c8867h4"] = maxHeartRateInBeatsPerMinute;
+                        var heartRateExtract = {};
+                        heartRateExtract["reading"] = "HR";
+                        heartRateExtract["id"] = summaryId;
+                        heartRateExtract["subjectReference"] = user.id;
+                        heartRateExtract["practitionerReference"] = "da6da8b0-56e5-11e9-8d7b-95e10210fac3"; // TODO: determine which practitioner to reference.
+                        heartRateExtract["c40443h4"] = restingHeartRateInBeatsPerMinute;
+                        heartRateExtract["c8867h4"] = maxHeartRateInBeatsPerMinute;
 
-                      if ( moderateIntensityDurationInSeconds && vigorousIntensityDurationInSeconds && startTimeInSeconds ) {
+                        if ( moderateIntensityDurationInSeconds && vigorousIntensityDurationInSeconds && startTimeInSeconds ) {
 
-                        try {
+                          try {
 
-                          // startTimeInSeconds from API is missing trailing zeros.
-                          const totalActivitySeconds = parseInt(moderateIntensityDurationInSeconds) + parseInt(vigorousIntensityDurationInSeconds);
-                          const secondsInMeasurementRange = (Date.now() - parseInt(startTimeInSeconds + "000")) / 1000;
+                            // startTimeInSeconds from API is missing trailing zeros.
+                            const totalActivitySeconds = parseInt(moderateIntensityDurationInSeconds) + parseInt(vigorousIntensityDurationInSeconds);
+                            const secondsInMeasurementRange = (Date.now() - parseInt(startTimeInSeconds + "000")) / 1000;
 
-                          if ( totalActivitySeconds > 0 && secondsInMeasurementRange > 0 ) {
+                            if ( totalActivitySeconds > 0 && secondsInMeasurementRange > 0 ) {
 
-                            const intensityDurationPercentage = (totalActivitySeconds / secondsInMeasurementRange) * 100;
-                            heartRateExtract["c82290h8"] = Math.round(ntensityDurationPercentage * 100) / 100;
+                              const intensityDurationPercentage = (totalActivitySeconds / secondsInMeasurementRange) * 100;
+                              heartRateExtract["c82290h8"] = Math.round(ntensityDurationPercentage * 100) / 100;
 
-                          } else {
+                            } else {
 
-                            logger.error("Values not in correct range for activity calculation. totalActivitySeconds: " + totalActivitySeconds + " secondsInMeasurementRange: " + secondsInMeasurementRange);
+                              logger.error("Values not in correct range for activity calculation. totalActivitySeconds: " + totalActivitySeconds + " secondsInMeasurementRange: " + secondsInMeasurementRange);
+                              heartRateExtract["c82290h8"] = 0;
+
+                            }
+
+                          } catch(error) {
+
+                            logger.error("Error parsing data for activity calculation: " + error);
                             heartRateExtract["c82290h8"] = 0;
 
                           }
 
-                        } catch(error) {
+                        } else {
 
-                          logger.error("Error parsing data for activity calculation: " + error);
+                          logger.debug("No intensity information available for activity calculation\s, setting to zero.");
+                          if (!moderateIntensityDurationInSeconds) logger.info("moderateIntensityDurationInSeconds does not exist.");
+                          if (!vigorousIntensityDurationInSeconds) logger.info("vigorousIntensityDurationInSeconds does not exist.");
+                          if (!startTimeInSeconds) logger.error("startTimeInSeconds does not exist.");
                           heartRateExtract["c82290h8"] = 0;
 
                         }
 
+                        messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", heartRateExtract).then(function() {
+
+                          logger.info("Sent HR reading to sensor-fhir-mapper.");
+                          res.sendStatus(200);
+
+                        });
+
                       } else {
 
-                        logger.debug("No intensity information available for activity calculation\s, setting to zero.");
-                        if (!moderateIntensityDurationInSeconds) logger.info("moderateIntensityDurationInSeconds does not exist.");
-                        if (!vigorousIntensityDurationInSeconds) logger.info("vigorousIntensityDurationInSeconds does not exist.");
-                        if (!startTimeInSeconds) logger.error("startTimeInSeconds does not exist.");
-                        heartRateExtract["c82290h8"] = 0;
+                        if (!summaryId) logger.error("summaryId does not exist.");
+                        if (!restingHeartRateInBeatsPerMinute) logger.info("restingHeartRateInBeatsPerMinute does not exist.");
+                        if (!maxHeartRateInBeatsPerMinute) logger.info("maxHeartRateInBeatsPerMinute does not exist.");
+                        logger.error("Reading body: " + JSON.stringify(readingBody));
+                        res.sendStatus(200);
 
                       }
 
-                      messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", heartRateExtract).then(function() {
-
-                        logger.info("Sent HR reading to sensor-fhir-mapper.");
-                        res.sendStatus(200);
-
-                      });
-
                     } else {
 
-                      if (!summaryId) logger.error("summaryId does not exist.");
-                      if (!restingHeartRateInBeatsPerMinute) logger.info("restingHeartRateInBeatsPerMinute does not exist.");
-                      if (!maxHeartRateInBeatsPerMinute) logger.info("maxHeartRateInBeatsPerMinute does not exist.");
-                      logger.error("Reading body: " + JSON.stringify(readingBody));
+                      logger.error("Could not parse reading body: " + ( body && typeof body === "object" ? JSON.stringify(body) : body));
                       res.sendStatus(200);
 
                     }
 
                   } else {
 
-                    logger.error("Could not parse reading body: " + ( body && typeof body === "object" ? JSON.stringify(body) : body));
+                    logger.info("Received untracked notification of type: " + firstNotificationKey);
                     res.sendStatus(200);
 
                   }
 
-                } else {
+                });
 
-                  logger.info("Received untracked notification of type: " + firstNotificationKey);
-                  res.sendStatus(200);
+              } else {
 
-                }
+                logger.debug("Callback URL not found.");
+                res.sendStatus(200);
 
-              });
+              }
 
             } else {
 
-              logger.debug("Callback URL not found.");
+              logger.debug("No user found for this notification.");
               res.sendStatus(200);
 
             }
