@@ -20,7 +20,7 @@ services:
       R_ENV: production
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: database
+      MYSQL_DATABASE: dataHistory
       MYSQL_HOST: data-miner_mariadb_1
     depends_on:
       - mariadb
@@ -29,7 +29,7 @@ services:
     build: db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: database
+      MYSQL_DATABASE: dataHistory
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     volumes:

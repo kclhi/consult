@@ -7,17 +7,17 @@ library(DBI)
 library(RSQLite)
 library(RMySQL)
 
-if ( Sys.getenv("R_ENV") == "production" ) {
-
-  datadb<-dbConnect(MySQL(), user=Sys.getenv("MYSQL_USER"), password=Sys.getenv("MYSQL_PASSWORD"), dbname=Sys.getenv("MYSQL_DATABASE"), host=Sys.getenv("MYSQL_HOST"))
-
-} else {
-
-  datadb<-dbConnect(SQLite(), "data.sqlite")
-
-}
-
 bp.process<-function(pid, nn) {
+
+  if ( Sys.getenv("R_ENV") == "production" ) {
+
+    datadb<-dbConnect(MySQL(), user=Sys.getenv("MYSQL_USER"), password=Sys.getenv("MYSQL_PASSWORD"), dbname=Sys.getenv("MYSQL_DATABASE"), host=Sys.getenv("MYSQL_HOST"))
+
+  } else {
+
+    datadb<-dbConnect(SQLite(), "data.sqlite")
+
+  }
 
   # Get all data.
   bp<-dbGetQuery(datadb, paste('SELECT * FROM bp WHERE pid="', pid, '"', "", sep=""));
@@ -51,6 +51,8 @@ bp.process<-function(pid, nn) {
   library(jsonlite)
   alertContent<-toJSON(alert.content)
 
+  dbDisconnect(datadb)
+
   return(alertContent)
 
 }
@@ -78,6 +80,16 @@ bp.get<-function(pid, nn) {
 #* @post /mine/check/bp
 bp.check<-function(bp, nn, ehr) {
 
+  if ( Sys.getenv("R_ENV") == "production" ) {
+
+    datadb<-dbConnect(MySQL(), user=Sys.getenv("MYSQL_USER"), password=Sys.getenv("MYSQL_PASSWORD"), dbname=Sys.getenv("MYSQL_DATABASE"), host=Sys.getenv("MYSQL_HOST"))
+
+  } else {
+
+    datadb<-dbConnect(SQLite(), "data.sqlite")
+
+  }
+
   # Get CSV formatted input.
   values.str = gsub("\\n","\n",bp,fixed=T)
   bp<-read.csv(text=values.str)
@@ -88,6 +100,8 @@ bp.check<-function(bp, nn, ehr) {
 
   # TODO: Delete from table if outside 'nn' length.
   dbWriteTable(datadb, "bp", merge(bp, ehr), append=TRUE);
+
+  dbDisconnect(datadb);
 
   return(bp.process(bp$pid, nn));
 
@@ -104,6 +118,16 @@ bp.check<-function(bp, nn, ehr) {
 #* @post /mine/check/hr
 hr.check<-function(hr, nn, ehr) {
 
+  if ( Sys.getenv("R_ENV") == "production" ) {
+
+    datadb<-dbConnect(MySQL(), user=Sys.getenv("MYSQL_USER"), password=Sys.getenv("MYSQL_PASSWORD"), dbname=Sys.getenv("MYSQL_DATABASE"), host=Sys.getenv("MYSQL_HOST"))
+
+  } else {
+
+    datadb<-dbConnect(SQLite(), "data.sqlite")
+
+  }
+
   # Get CSV formatted input.
   values.str = gsub("\\n","\n",hr,fixed=T)
   hr<-read.csv(text=values.str)
@@ -119,6 +143,8 @@ hr.check<-function(hr, nn, ehr) {
 
   # Mining logic
 
+  dbDisconnect(datadb)
+  
   return("HR received.")
 
 }
