@@ -7,7 +7,6 @@ import os
 
 def parse_extension(text):
     # all IN arguments in the graph
-    # m = re.findall(r"(in\()([\(A-Za-z0-9_\),]+)", text)
     m = text.split()
     intext = set()
     for el in m:
@@ -24,11 +23,9 @@ def parse_extension(text):
     print "IN Arguments are:\n"+str(ins)+"\n"
 
     # all arguments in the argument graph
-    # a = re.findall(r"(arg\()([\(A-Za-z0-9_\),]+)", text)
     totalargs = text.split()
     alltext = set()
     for el in totalargs:
-        #if "arg(" in el:
         if el.startswith("arg("):
             alltext.add(el)
 
@@ -48,11 +45,9 @@ def parse_extension(text):
                 args.add(pred[:-1])
 
     # all attacks in the graph
-    # r = re.findall(r"(att\()([\(A-Za-z0-9_\),]+)", text)
     r = text.split()
     att_text = set()
     for el in r:
-        #if "att(" in el:
         if el.startswith("att("):
             att_text.add(el)
 
@@ -63,8 +58,6 @@ def parse_extension(text):
             pred = pred[:-2]
         else:
             pred = pred[:-1]
-        #S = pred[:-1].split('),')
-        #att.add((S[0]+')',S[1]))
 
         lpc = 0 # left paranthesis count
         rpc = 0 # left paranthesis count
@@ -94,9 +87,6 @@ def export_graph(args,inargs,att,export_json=0):
     if export_json:
         from networkx.readwrite import json_graph
         data = json_graph.node_link_data(G)
-        #import json
-        #json_data = json.dumps(data)
-        #print json_data
 
     return [G,data]
 
@@ -107,7 +97,6 @@ def export_graph_to_file(params,args,inargs,att,id=0,path="./",export_json=0):
 	A=nx.nx_agraph.to_agraph(G)
 	A.node_attr['shape']='box'
 
-	#A.write("file.dot")
 	A.layout(prog='dot')
 	# Write the PNG file to the directory where the example is
 	A.draw(path+params[-1].split('.')[0]+'_'+str(id)+'.png')
@@ -121,14 +110,12 @@ def export_graph_to_url(params,hostip,args,inargs,att,id=0,export_json=0):
     A=nx.nx_agraph.to_agraph(G)
     A.node_attr['shape']='box'
 
-    #A.write("file.dot")
     A.layout(prog='dot')
     # Write the PNG file to the directory to the static/images folder
     A.draw('./static/images/'+params[-1].split('/')[-1].split('.')[0]+'_'+str(id)+'.png')
 
     # prepare the result object
     # image generation will be removed later
-    #result["AF_url"] = host+hostip+'/static/images/'+params[-1].split('.')[0].split('/')[1]+'_'+str(id)+'.png'
     result["AF_url"] = host+hostip+'/static/images/'+params[-1].split('/')[-1].split('.')[0]+'_'+str(id)+'.png'
     result["AF_json"] = G_json
 

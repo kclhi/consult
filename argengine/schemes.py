@@ -98,11 +98,3 @@ def dred(s):
         explanation+= "The diastolic measurement of the patient {} is {}. This value is more than 109; therefore, a double red flag is raised.".format(bindings["P"],bindings["D"])
 
     return bindings,explanation
-
-### testing explanations
-#print("Explanation for aspt.")
-#print aspt("aspt([goal(rp),action(paracetamol),promotes(paracetamol,rp)],action(paracetamol))")
-#print("\n")
-#print("Explanation for amber flag.")
-#print amber("amber([systolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,142),\"<150\",\">134\"],flag(amber))")
-#print amber("amber([diastolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,90),\"<95\",\">84\"],flag(amber))")

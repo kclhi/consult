@@ -4,13 +4,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% an argument x defeats an argument y if x attacks y
-defeat(X,Y) :- att(X,Y),
-               not vaf. %% added by nadin.
+defeat(X,Y) :- att(X,Y).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For the remaining part we need to put an order on the domain.
-% Therefore, we define a successor-relation with infinum and supremum 
-% as follows 
+% Therefore, we define a successor-relation with infinum and supremum
+% as follows
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 lt(X,Y) :- arg(X),arg(Y), X<Y, not input_error.

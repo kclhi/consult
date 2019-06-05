@@ -68,10 +68,8 @@ class ChatBot(Resource):
     def post(self):
 
         import json
-        #pdict = json.loads(query_data)
         pdict = request.get_json();
 
-        #pid = str(pdict['pid']).replace("-", "")[:5];
         pid = "p"+pdict['pid'].replace("-","_") #TODO
         sid = str(pdict['sid'])
         keyname = pdict['keyname']

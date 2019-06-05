@@ -1,16 +1,11 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% preferences for PAF and VAF
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-vaf.
-
-
+% https://www.dbai.tuwien.ac.at/proj/argumentation/systempage/vaf.html
 %% valpref preference relation; transitiv
 valpref(X,Y) :- valpref(X,Z), valpref(Z,Y).
 
 %% pref computes preference of arguments depending on the preference relation valpref
 pref(X,Y) :- valpref(U,V),
-	     val(X,U),
-	     val(Y,V).
+				     val(X,U),
+				     val(Y,V).
 
 %% transitivity of pref
 pref(X,Y) :- pref(X,Z), pref(Z,Y).
