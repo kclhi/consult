@@ -9,68 +9,7 @@ import schemes # explanation schemes
 app = Flask(__name__)
 api = Api(app)
 
-'''
-    invoke argumentation engine by example name for the demo
-    name is one of the followings:
-    bob-d1
-    bittorrent-vaf
-    eric-eaf
-    firewall-paf
-    gp-eaf
-    jane
-    jane-datascience
-    jane-ti
-    metalevel-avaf with semantic=prefex option
-    metalevel-paf
-    metalevel-weather-eaf
-'''
-class InvokeEngine(Resource):
-    def get(self,name):
-
-        # we use the grounded semantics first
-        sem = request.args.get('semantic','ground')
-        #sem = request.args.get('semantic','prefex')
-
-        params = list()
-        params.append(sem+'.dl')
-        params.append('metalevel.dl') # by default metalevel semantics are used.
-
-        if name == 'jane-datascience':
-            import requests
-            import json
-
-            patient = json.dumps({'patient.id':'jane','raised_bp':'1','last.sys':142,'last.dia':86,'pid':'jane','age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'})
-
-            resp = requests.post('http://0.0.0.0:5000/argengine/datascience', data={'data': patient})
-
-            resp.json = json.loads(resp.text)
-
-            # read the generated facts file
-            params.append('DEMO/'+resp.json['patient.id']+'-facts.dl')
-
-        if name == 'bob-d1':
-            import requests
-            import json
-
-            patient = json.dumps({'patient.id':'bob','raised_bp':'1','last.sys':142,'last.dia':86,'pid':'bob','age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'})
-
-            resp = requests.post('http://0.0.0.0:5000/argengine/datascience', data={'data': patient})
-
-            resp.json = json.loads(resp.text)
-
-            # read the generated facts file
-            params.append('DEMO/'+resp.json['patient.id']+'-facts.dl')
-
-        params.append('DEMO/'+name+'.dl')
-
-        hostip = request.host
-        result_json=parse_aspartix.run_aspartix_web(hostip,params)
-
-        return result_json
-
 class DataScience(Resource):
-    def get(self):
-         return {'hello': 'world'}
 
     def post(self):
         patient_data = request.form['data']
@@ -80,8 +19,7 @@ class DataScience(Resource):
 
         id = "p"+pdict['pid'].replace("-","_")
         age = pdict['age']
-        eth = "black_african" #pdict['ethnicity']
-        print("!" + str(eth))
+        eth = pdict['ethnicity'].lower()
 
         last_sys = pdict['c271649006']
         last_dia = pdict['c271650006']
@@ -99,20 +37,9 @@ class DataScience(Resource):
         if (res_sbp in flags) or (res_dbp in flags):
             facts = facts + 'side_effect(hbp).\n'
 
-        #filename = 'argengine/DEMO/'+id+'-facts.dl'
-        #import os
-        #if os.path.exists(filename):
-        #    os.remove(filename)
-
-        #f= open(filename,'w+')
-        #f.write(facts)
-        #f.close()
+        print "Patient facts: " + str(facts);
 
         return {'patient.facts': facts}
-
-class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
 
 class ChatBot(Resource):
 
@@ -153,8 +80,6 @@ class ChatBot(Resource):
 
         expl = pdict['expl'] if "expl" in pdict.keys() else 0  # if 1 will call the Explanation Manager
 
-        #print pdata
-
         params = list()
 
         ####### get the static reasoning files
@@ -167,9 +92,14 @@ class ChatBot(Resource):
         if str(keyname) == 'symptom':
             if str(value) == 'backpain':
                 query = 'suffers_from('+pid+',backpain).\n'
-        if str(keyname) == 'preference':
+        elif str(keyname) == 'preference':
             v1,v2 = str(value).split(',')
             query = 'arg(preferred('+v1+','+v2+')).\n'
+        elif str(keyname) == 'selfcheck':
+            # we do nothing extra, used for engine initiated dialogues
+            query=''
+        else:
+            return 'Unknown keyname: '+ str(keyname)
 
         import os
         if not os.path.exists('data/'+pid): # new patient
@@ -186,12 +116,13 @@ class ChatBot(Resource):
             f.close()
 
         else:
-            ####### append to existing query file
-            f= open('data/'+pid+'/'+sid+'/'+'queries.dl','a')
-            # write the new query to it
-            f.write(query)
-            # close the file
-            f.close()
+            if query != '':
+                ####### append to existing query file
+                f= open('data/'+pid+'/'+sid+'/'+'queries.dl','a')
+                # write the new query to it
+                f.write(query)
+                # close the file
+                f.close()
 
         ####### add the query file to the engine parameters
         params.append('../data/'+pid+'/'+sid+'/'+'queries.dl')
@@ -212,8 +143,6 @@ class ChatBot(Resource):
 
         # add the patient facts to the params
         params.append('../data/'+pid+'/'+sid+'/'+pid+'.dl')
-
-        #print params
 
         ####### run the reasoning engine
         hostip = request.host
@@ -238,15 +167,23 @@ class ExplanationManager(Resource):
         AF_graph = json_graph.node_link_graph(pdict["ext0"]["AF_json"])
         AF_graph_expl = AF_graph
 
+        # prepare a set of winning arguments
+        i=1
+        winning = {}
+
         for n in AF_graph.nodes:
             atts = AF_graph.node[n].keys()
             if 'color' in atts:
                 if AF_graph.node[n]['color'] == "green" and "justified" in n: # find justified arguments
                     arg = n[10:-1] # get the name of the justified argument
                     sname = arg.split("(")[0]
-                    AF_graph_expl.node[n]['expl'] = getattr(schemes, sname)(arg)
+                    binds,exp = getattr(schemes, sname)(arg)
+                    AF_graph_expl.node[n]['expl'] = exp
+                    winning['arg'+str(i)]= {'name': arg, 'expl': exp, 'bindings': binds}
+                    i+=1
 
         pdict["ext0"]["AF_json"] = json_graph.node_link_data(AF_graph_expl) # get the updated graph with explanations
+        pdict["ext0"]["winning"] = winning
         return pdict
 
 # chatbot testing class
@@ -256,45 +193,49 @@ class TestChatbot(Resource):
         import json
             # TODO data format check @martin, message passing security (https?)
         if name == 's1':
-            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'no alert','res.dbp':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1}
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
 
-            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
 
 
         if name == 's2-1':
-            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'Amber Flag','res.dbp':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1}
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname':'symptom','value':'backpain','pdata':[{'res.c271649006':'Amber Flag','res.c271650006':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
 
-            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
 
         if name == 's2-2':
-            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname': 'preference', 'value':'paracetamol,codeine','pdata':{'res.sbp':'Amber Flag','res.dbp':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1}
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname': 'preference', 'value':'paracetamol,codeine','pdata':[{'res.c271649006':'Amber Flag','res.c271650006':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
 
-            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
 
         if name == 's3-1':
-            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'no alert','res.dbp':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':150,'c271650006':95,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1}
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':150,'c271650006':95,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
 
-            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
 
         if name == 's3-2':
-            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'no alert','res.dbp':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':180,'c271650006':110,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1}
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':180,'c271650006':110,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
 
-            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', data={'data': json.dumps(query)})
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
+
+        if name == 's4': # selfcheck example
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'selfcheck','value':'','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':180,'c271650006':110,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
+
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
+
+        if name == 's5': # unknown keyname example
+            query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'dummy','value':'','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':180,'c271650006':110,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1}
+
+            resp = requests.post('http://0.0.0.0:5000/argengine/chatbot', json=query)
 
         return json.loads(resp.text)
 
 
 # routing
-api.add_resource(HelloWorld, '/')
 api.add_resource(ChatBot, '/argengine/chatbot')
-api.add_resource(InvokeEngine, '/argengine/<string:name>') # by example name
 api.add_resource(DataScience, '/argengine/datascience')
 api.add_resource(ExplanationManager, '/argengine/explanation')
-
 api.add_resource(TestChatbot, '/argengine/chatbot/<string:name>') # chatbot testing
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# pip install Flask
-# pip install flask-restful

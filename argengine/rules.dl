@@ -20,8 +20,8 @@ alter(codeine,ibuprofen).
 alter(paracetamol,codeine).
 
 % general rule
-alternative(X,Y) :- alter(X,Y). 
-alternative(X,Y) :- alter(Y,X). 
+alternative(X,Y) :- alter(X,Y).
+alternative(X,Y) :- alter(Y,X).
 
 % attacks between alternative arguments
 r(a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))),
@@ -41,9 +41,24 @@ ask(q1([side_effect(S), action(A), may_cause(A,S)]), aspt([goal(G), action(A), p
 a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))) :- ask(q1([side_effect(S), action(A1), may_cause(A,S)]), aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), alternative(A1,A2).
 
 % preference input effect on the metalevel
-att(preferred(A2,A1), defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), aspt([goal(G), action(A2), promotes(A2,G)],action(A2)))) 
-:- arg(preferred(A2,A1)), 
-   arg(defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), 
+att(preferred(A2,A1), defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), aspt([goal(G), action(A2), promotes(A2,G)],action(A2))))
+:- arg(preferred(A2,A1)),
+   arg(defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)),
               aspt([goal(G), action(A2), promotes(A2,G)],action(A2))
              )
       ).
+
+
+% alert schemes
+
+% amber alert scheme
+a(amber([systolic(P,S),"<150", ">134"],flag(amber))) :- systolic(P,S), S<150, S>134.
+a(amber([diastolic(P,D),"<95", ">84"],flag(amber))) :- diastolic(P,D), D<95, D>84.
+
+% red alert scheme
+a(red([systolic(P,S), "<180", ">149"],flag(red))) :- systolic(P,S), S<180, S>149.
+a(red([diastolic(P,D), "<110", ">94"],flag(red))) :- diastolic(P,D), D<110, D>94.
+
+% double red alert scheme
+a(dred([systolic(P,S), ">179"],flag(doublered))) :- systolic(P,S), S>179.
+a(dred([diastolic(P,D), ">109"],flag(doublered))) :- diastolic(P,D), D>109.

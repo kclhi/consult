@@ -39,7 +39,7 @@ def aspt(s):
 
     explanation = "Treatment '{}' should be considered as it promotes goal '{}', given patient facts.".format(bindings["A"],bindings["G"])
 
-    return explanation
+    return bindings,explanation
 
 """
     s: an argument string to parse.
@@ -48,6 +48,7 @@ def aspt(s):
 """
 def amber(s):
     explanation = ""
+    bindings = {}
     if "systolic" in s:
         pred_dict= {"systolic":["P","S"]}
         bindings = string_parser(pred_dict,s)
@@ -60,11 +61,12 @@ def amber(s):
 
         explanation+= "The diastolic measurement of the patient {} is {}. This value is less than 95 and more than 84; therefore, an amber flag is raised.".format(bindings["P"],bindings["D"])
 
-    return explanation
+    return bindings,explanation
 
 
 def red(s):
     explanation = ""
+    bindings = {}
     if "systolic" in s:
         pred_dict= {"systolic":["P","S"]}
         bindings = string_parser(pred_dict,s)
@@ -77,11 +79,12 @@ def red(s):
 
         explanation+= "The diastolic measurement of the patient {} is {}. This value is less than 110 and more than 94; therefore, a red flag is raised.".format(bindings["P"],bindings["D"])
 
-    return explanation
+    return bindings,explanation
 
 
 def dred(s):
     explanation = ""
+    bindings = {}
     if "systolic" in s:
         pred_dict= {"systolic":["P","S"]}
         bindings = string_parser(pred_dict,s)
@@ -94,7 +97,7 @@ def dred(s):
 
         explanation+= "The diastolic measurement of the patient {} is {}. This value is more than 109; therefore, a double red flag is raised.".format(bindings["P"],bindings["D"])
 
-    return explanation
+    return bindings,explanation
 
 ### testing explanations
 #print("Explanation for aspt.")
