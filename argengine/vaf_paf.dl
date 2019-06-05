@@ -1,4 +1,5 @@
 % https://www.dbai.tuwien.ac.at/proj/argumentation/systempage/vaf.html
+% https://www.dbai.tuwien.ac.at/proj/argumentation/systempage/paf.html
 %% valpref preference relation; transitiv
 valpref(X,Y) :- valpref(X,Z), valpref(Z,Y).
 
