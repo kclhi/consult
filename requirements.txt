@@ -17,3 +17,4 @@ config
 winston
 ldapjs
 password-generator
+fs

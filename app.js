@@ -26,6 +26,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const { patient, updateLDAPClient } = require('./routes/patient');
 const observation = require('./routes/observation');
+const questionnaireResponse = require('./routes/questionnaire-response');
+const clinicalImpression = require('./routes/clinical-impression');
 
 // Route setup involving async
 function init(callback) {
@@ -64,6 +66,8 @@ init(function() {
 
   app.use('/Patient', patient);
   app.use('/Observation', observation);
+  app.use('/QuestionnaireResponse', questionnaireResponse);
+  app.use('/ClinicalImpression', clinicalImpression);
 
   // Add errors routes after async routes added.
 

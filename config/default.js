@@ -27,7 +27,8 @@ module.exports = {
   terminology: {
     HR_CODE: "8867-4",
   	BP_CODE: "85354-9",
-    ECG_CODE: "131328"
+    ECG_CODE: "131328",
+    MOOD_CODE: "106131003"
   },
 
   companies: {

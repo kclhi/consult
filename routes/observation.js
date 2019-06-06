@@ -10,6 +10,7 @@ const logger = require('../config/winston');
 const provenance = require('../lib/provenance');
 const patient = require('../lib/patient');
 const utils = require('../lib/utils');
+const fhir = require('../lib/fhir');
 
 let lastAlert = 0;
 
@@ -27,7 +28,7 @@ function populateProvenanceTemplate(type, pid, code, value, callback) {
 
 function callFHIRServer(query, params, callback) {
 
-  utils.callFHIRServer(query, params, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
+  utils.callFHIRServer(config.get('fhir_server.URL') + config.get('fhir_server.REST_ENDPOINT') + query + "?_format=json&" + params, "GET", "", callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
 }
 
@@ -302,6 +303,11 @@ router.put('/:id', function(req, res, next) {
   } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.ECG_CODE') ) {
 
     // Process ECG.
+    res.sendStatus(200);
+
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.MOOD_CODE') ) {
+
+    res.sendStatus(200);
 
   } else {
 
@@ -417,6 +423,28 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
     res.sendStatus(400);
 
   }
+
+});
+
+function createObservationResource(template, data, callback) {
+
+  fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), template, data, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
+
+}
+
+/**
+ * @api {post} /Observation/add
+ * @apiName Add
+ * @apiGroup Observations
+ *
+ * @apiParam {String}
+ * @apiParam {String}
+ *
+ * @apiSuccess {String}
+ */
+router.post('/add', function(req, res, next) {
+
+  createObservationResource("mood", req.body, function(status) { res.sendStatus(status); });
 
 });
 
