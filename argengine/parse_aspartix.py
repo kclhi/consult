@@ -166,7 +166,3 @@ def run_aspartix_console():
         text = '{'+a+'}'
         res = parse_extension(text)
         export_graph_to_file(params,res[0],res[1],res[2],id=i+1)
-
-# pip install networkx
-# sudo apt-get install python-dev graphviz libgraphviz-dev pkg-config
-# pip install pygraphviz

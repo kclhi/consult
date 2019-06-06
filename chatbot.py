@@ -50,12 +50,12 @@ class ChatBot(Resource):
 
         params = list()
 
-        ####### get the static reasoning files
+        # get the static reasoning files
         params.append('ground.dl')
         params.append('metalevel.dl') # by default metalevel semantics are used.
         params.append('rules.dl') # rules that will be used for reasoning.
 
-        ####### get the query TODO
+        # get the query TODO
         query=''
         if str(keyname) == 'symptom':
             if str(value) == 'backpain':
@@ -75,7 +75,7 @@ class ChatBot(Resource):
         if not os.path.exists('data/'+pid+'/'+sid): # new session
             os.makedirs('data/'+pid+'/'+sid)
 
-            ####### create a new query file
+            # create a new query file
             f= open('data/'+pid+'/'+sid+'/'+'queries.dl','w+')
             if query != '':
                 # write the new query to it
@@ -85,21 +85,21 @@ class ChatBot(Resource):
 
         else:
             if query != '':
-                ####### append to existing query file
+                # append to existing query file
                 f= open('data/'+pid+'/'+sid+'/'+'queries.dl','a')
                 # write the new query to it
                 f.write(query)
                 # close the file
                 f.close()
 
-        ####### add the query file to the engine parameters
+        # add the query file to the engine parameters
         params.append('../data/'+pid+'/'+sid+'/'+'queries.dl')
 
-        ####### get the facts about the patient
+        # get the facts about the patient
         # get the patient facts
         pfacts = DataScience.getPatientFacts(pdata);
 
-        ####### create a new query file
+        # create a new query file
         f= open('data/'+pid+'/'+sid+'/'+pid+'.dl','w+')
         # write the patient facts to it
         f.write(pfacts)
@@ -109,7 +109,7 @@ class ChatBot(Resource):
         # add the patient facts to the params
         params.append('../data/'+pid+'/'+sid+'/'+pid+'.dl')
 
-        ####### run the reasoning engine
+        # run the reasoning engine
         hostip = request.host
         result_json=parse_aspartix.run_aspartix_web(hostip,params)
 
