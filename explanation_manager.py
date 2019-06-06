@@ -3,9 +3,17 @@ import schemes
 class ExplanationManager():
 
     @staticmethod
-    def getExplanation(query_data):
+    def getExplanation(query_data, filter_words=None):
 
         pdict = query_data
+
+        filter_array = []
+
+        if filter_words:
+            if ',' in filter_words:
+                filter_array = filter_words.split(',')
+            else:
+                filter_array = [filter_words]
 
         # get the graph for the first extension ext0
         from networkx.readwrite import json_graph
@@ -23,8 +31,15 @@ class ExplanationManager():
                     arg = n[10:-1] # get the name of the justified argument
                     sname = arg.split("(")[0]
                     binds,exp = getattr(schemes, sname)(arg)
+                    binds,exp = getattr(schemes, sname)(arg)
                     AF_graph_expl.node[n]['expl'] = exp
-                    winning['arg'+str(i)]= {'name': arg, 'expl': exp, 'bindings': binds}
+                    if 'filter_array' in locals() and len(filter_array) != 0: # we want to filter results according to scheme names
+                        for sname in filter_array:
+                            if sname in arg:
+                                winning['arg'+str(i)]= {'name': arg, 'expl': exp, 'bindings': binds}
+                    else:
+                        # all the winning arguments will be returned
+                        winning['arg'+str(i)]= {'name': arg, 'expl': exp, 'bindings': binds}
                     i+=1
 
         pdict["ext0"]["AF_json"] = json_graph.node_link_data(AF_graph_expl) # get the updated graph with explanations
