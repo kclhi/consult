@@ -26,13 +26,13 @@ function populateProvenanceTemplate(type, pid, code, value, callback) {
 
 }
 
-function callFHIRServer(query, params, callback) {
+function getFHIRServer(query, params, callback) {
 
-  utils.callFHIRServer(config.get('fhir_server.URL') + config.get('fhir_server.REST_ENDPOINT') + query + "?_format=json&" + params, "GET", "", callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
+  utils.getFHIRServer(query, params, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
 }
 
-function sendAlert(response, patientID, dialogueID, alertField, alertValues, readingCode, callback) {
+function sendAlert(response, patientID, dialogueID, alertField, alertValue, readingCode, callback) {
 
   var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
 
@@ -41,7 +41,7 @@ function sendAlert(response, patientID, dialogueID, alertField, alertValues, rea
   // TODO: Miner response is oddly nested.
   if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
 
-    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && ( reading = utils.validPath(minerResponse, ["0", readingCode]) ) && ( new RegExp(alertValues.join("|")).test(alertFieldData) ) && ( minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) ) {
+    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && ( reading = utils.validPath(minerResponse, ["0", readingCode]) ) && ( alertFieldData == alertValue ) && ( minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) ) {
 
       var dialogueParams = {};
       dialogueParams.ALERT_READING = reading;
@@ -69,7 +69,7 @@ function sendAlert(response, patientID, dialogueID, alertField, alertValues, rea
 
         if (!error && ( response && response.statusCode == 200 ) ) {
 
-          logger.info("Message passer instructed dialogue manager to initiate alert with user.")
+          logger.info("Message passer instructed dialogue manager to initiate alert (dialogue: " + dialogueID + ") with user.")
           lastAlert = new Date();
           callback(200);
 
@@ -84,7 +84,7 @@ function sendAlert(response, patientID, dialogueID, alertField, alertValues, rea
 
     } else {
 
-      logger.info("Did not alert on miner response. Alert field: " + alertField + ". Data in alert field: " + alertFieldData + ". Alert value: " + alertValues + ". Minutes since last alert: " + minutesSinceLastAlert + ". Max alert period: " + config.get('dialogue_manager.MAX_ALERT_PERIOD') + ". Reading: " + reading);
+      logger.info("Did not alert on miner response. Alert field: " + alertField + ". Data in alert field: " + alertFieldData + ". Alert value: " + alertValue + ". Minutes since last alert: " + minutesSinceLastAlert + ". Max alert period: " + config.get('dialogue_manager.MAX_ALERT_PERIOD') + ". Reading: " + reading);
       callback(200);
 
     }
@@ -265,11 +265,27 @@ router.put('/:id', function(req, res, next) {
 
             if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-              sendAlert(response, patientID.replace("Patient/", ""), 2, "res.c271649006", ["Amber", "Red"], "c271649006", function(sbpStatus) {
+              sendAlert(response, patientID.replace("Patient/", ""), "2-1", "res.c271649006", ["Amber Flag"], "c271649006", function(sbpStatus) {
 
-                sendAlert(response, patientID.replace("Patient/", ""), 2, "res.c271650006", ["Amber", "Red"], "c271650006", function(dbpStatus) {
+                sendAlert(response, patientID.replace("Patient/", ""), "2-1", "res.c271650006", ["Amber Flag"], "c271650006", function(dbpStatus) {
 
-                  res.sendStatus(Math.min(sbpStatus, dbpStatus));
+                  sendAlert(response, patientID.replace("Patient/", ""), "2-2", "res.c271649006", ["Red Flag"], "c271649006", function(sbpStatus) {
+
+                    sendAlert(response, patientID.replace("Patient/", ""), "2-2", "res.c271650006", ["Red Flag"], "c271650006", function(dbpStatus) {
+
+                      sendAlert(response, patientID.replace("Patient/", ""), "2-3", "res.c271649006", ["Double Red Flag"], "c271649006", function(sbpStatus) {
+
+                        sendAlert(response, patientID.replace("Patient/", ""), "2-3", "res.c271650006", ["Double Red Flag"], "c271650006", function(dbpStatus) {
+
+                          res.sendStatus(Math.min(sbpStatus, dbpStatus));
+
+                        });
+
+                      });
+
+                    });
+
+                  });
 
                 });
 
@@ -395,7 +411,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
           } else {
 
-            logger.error("Could not parse resource." + (typeof  resource.resource === "object" ? JSON.stringify(resource.resource).substring(0, 300) : resource.resource));
+            logger.error("Could not parse resource." + ( ( resource.resource && typeof resource.resource === "object" ) ? JSON.stringify(resource.resource).substring(0, 300) : resource.resource));
 
           }
 
