@@ -47,7 +47,7 @@ att(rejected(Z),ddefeat(Z,X,Y)) :- arg(rejected(Z)),arg(ddefeat(Z,X,Y)).
 % transitivity -- uncomment if wanted
 %arg(preferred(X,Y)) :- arg(preferred(X,Z)), arg(preferred(Z,Y)).
 
-% use this (instead of the three lines above) 
+% use this (instead of the three lines above)
 % if you don't want to see ddefeat metaarguments in the graph
 % the justified arguments will be the same.
 %att(justified(Z), defeat(X,Y)) :- d(a(Z),a(X),a(Y)).

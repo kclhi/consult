@@ -111,6 +111,9 @@ def export_graph_to_url(params,hostip,args,inargs,att,id=0,export_json=0):
     A.node_attr['shape']='box'
 
     A.layout(prog='dot')
+
+    if not os.path.exists("./static/images/"): os.makedirs("./static/images/")
+
     # Write the PNG file to the directory to the static/images folder
     A.draw('./static/images/'+params[-1].split('/')[-1].split('.')[0]+'_'+str(id)+'.png')
 

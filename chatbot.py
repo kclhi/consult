@@ -35,7 +35,7 @@ class ChatBot(Resource):
 
         pdict = request.get_json();
         print "Received raw data: " + str(pdict);
-        return getArgumenationResponse(pdict);
+        return ChatBot.getArgumenationResponse(pdict);
 
     @staticmethod
     def getArgumenationResponse(pdict):
