@@ -66,7 +66,7 @@ bp.process<-function(pid, nn) {
 #* @post /mine/get/bp
 bp.get<-function(pid, nn) {
 
-  return(bp.process(bp$pid, nn));
+  return(bp.process(pid, nn));
 
 }
 
@@ -144,7 +144,7 @@ hr.check<-function(hr, nn, ehr) {
   # Mining logic
 
   dbDisconnect(datadb)
-  
+
   return("HR received.")
 
 }
