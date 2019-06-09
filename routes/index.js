@@ -12,6 +12,7 @@ function createObservationResource(template, data, callback) {
   fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), template, data, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
 }
+
 /**
  * @api {post} /create/hr Populate a FHIR heart rate template with the supplied values
  * @apiName CreateHR

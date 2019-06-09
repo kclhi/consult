@@ -22,25 +22,6 @@ services:
     volumes:
       - data_volume:/var/lib/rabbitmq
 
-  proxy:
-    image: "consult-kcl/sensor-fhir-mapper_proxy"
-    build:
-      context: ./proxy
-    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_webapp-api_1:3002", "--", "nginx", "-g", "daemon off;"]
-    tty: true
-    ports:
-      - '443:443'
-      - '80:80'
-    depends_on:
-      - webapp-api
-
-  webapp-api:
-    image: "consult-kcl/sensor-fhir-mapper_api"
-    build:
-      context: .
-    environment:
-      - FHIR_SERVER_ADDRESS=10.0.1.196
-
 volumes:
   data_volume:
 
