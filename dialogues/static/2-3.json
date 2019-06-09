@@ -1,0 +1,54 @@
+[
+	{
+		"Dialogue": "2-3",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Hi, it looks like your latest blood pressure reading is a bit higher than expected. The most helpful way to respond to a slightly high blood pressure is to repeat the readings over one or more weeks. If the slightly high readings persist please contact 111, head to your pharmacy or discuss with your GP. Decisions about changing treatments are usually based on readings taken over several weeks. Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-3",
+		"Step": "1011",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "The diastolic measurement of the patient {} is {}. This value is less than 110 and more than 94; therefore, a red flag is raised.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-3",
+		"Step": "1012",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Ok, if you have any concerns contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

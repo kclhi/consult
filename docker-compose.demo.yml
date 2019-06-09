@@ -22,6 +22,7 @@ services:
     extra_hosts:
       danvers: 172.21.0.1
       carter: 172.23.0.1
+      maximoff: 172.0.0.0
 
 volumes:
   dnc_volume:

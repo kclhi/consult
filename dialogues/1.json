@@ -91,10 +91,17 @@
 							}
 						]
 					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
 				}
 			]
 		},
-		"Print": "It is recommended that you take: [drug_name], would you like more details?",
+		"Print": "It is recommended that you take: [ext0.winning.arg1.expl], would you like more details?",
 		"CondJmp": [
 			{
 				"msg": "Accept",

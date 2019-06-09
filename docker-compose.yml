@@ -26,6 +26,7 @@ services:
       # If servers at IP rather than known host, name on server's certificate : server IP.
       danvers: 10.0.1.10
       #carter: 10.0.0.18
+      maximoff: 10.0.1.86
 
 volumes:
   dnc_volume:

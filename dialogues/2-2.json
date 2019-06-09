@@ -1,0 +1,119 @@
+[
+	{
+		"Dialogue": "2-2",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Hi, it looks like your latest blood pressure reading is a bit higher than expected. The most helpful way to respond to a slightly high blood pressure is to repeat the readings over one or more weeks. If the slightly high readings persist please contact 111, head to your pharmacy or discuss with your GP. Decisions about changing treatments are usually based on readings taken over several weeks. Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-2",
+		"Step": "1011",
+		"BranchLevel": "2",
+		"Comment": "",
+		"External": {
+			"URL": "https://maximoff/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "backpain"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"URL": "https://maximoff/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				}
+			]
+		},
+		"Print": "[[ext0.winning.arg1.expl]] [[ext0.winning.arg2.expl]] <add something to refer to pharmacy if concerned>",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-2",
+		"Step": "1012",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Ok, if you have any concerns contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]
