@@ -16,7 +16,6 @@ action(mefenamic_acid) :- goal(rp).
 action(etoricoxib) :- goal(rp).
 action(indomethacin) :- goal(rp).
 action(highdose_aspirin) :- goal(rp).
-%action(paracetamol) :- goal(rp).
 
 % goal definition
 promotes(ibuprofen,rp).
@@ -27,23 +26,6 @@ promotes(mefenamic_acid,rp).
 promotes(etoricoxib,rp).
 promotes(indomethacin,rp).
 promotes(highdose_aspirin,rp).
-%promotes(paracetamol,rp).
-
-% comes from NHS guideline
-%alter(paracetamol,ibuprofen).
-%alter(codeine,ibuprofen).
-%alter(paracetamol,codeine).
-
-% general rule
-%alternative(X,Y) :- alter(X,Y).
-%alternative(X,Y) :- alter(Y,X).
-
-% attacks between alternative arguments
-%r(a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))),
-%a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2)))) :- alternative(A1,A2), a(aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))).
-
-%%% side-effect information
-%may_cause(ibuprofen,hbp).
 
 % question semantics
 arg(Q) :- ask(Q,X).
