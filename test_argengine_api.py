@@ -29,23 +29,6 @@ def clean_dir():
     import shutil
     shutil.rmtree("data/p07209f10_58a4_11e9_994c_cd7260ae2b18")
 
-@pytest.mark.order1
-def test_chatbot_s1_backpain_noalert():
-    clean_dir()
-    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'no alert','res.dbp':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':''}
-
-    winning = make_call(query)
-
-    results = []
-    res_arg1={"bindings": {"A": "ibuprofen", "G": "rp"},
-            "expl": "Treatment 'ibuprofen' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(ibuprofen),promotes(ibuprofen,rp)],action(ibuprofen))"
-            }
-
-    results.append(res_arg1)
-
-    assert_results(winning,results)
-
 def test_chatbot_s1_backpain_noalert_filter():
     clean_dir()
     query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'no alert','res.dbp':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':'aspt'}
@@ -57,87 +40,42 @@ def test_chatbot_s1_backpain_noalert_filter():
             "expl": "Treatment 'ibuprofen' should be considered as it promotes goal 'rp', given patient facts.",
             "name": "aspt([goal(rp),action(ibuprofen),promotes(ibuprofen,rp)],action(ibuprofen))"
             }
-
-    results.append(res_arg1)
-
-    assert_results(winning,results)
-
-@pytest.mark.order2
-def test_chatbot_s2_1_backpain_amberalert():
-    clean_dir()
-    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'Amber Flag','res.dbp':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':''}
-
-    winning = make_call(query)
-
-    results = []
-    res_arg1 = {"bindings": {"P": "p07209f10_58a4_11e9_994c_cd7260ae2b18", "S": "142"},
-            "expl": "The systolic measurement of the patient p07209f10_58a4_11e9_994c_cd7260ae2b18 is 142. This value is less than 150 and more than 134; therefore, an amber flag is raised.",
-            "name": "amber([systolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,142),\"<150\",\">134\"],flag(amber))"
+    res_arg2={"bindings": {"A": "naproxen", "G": "rp"},
+            "expl": "Treatment 'naproxen' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(naproxen),promotes(naproxen,rp)],action(naproxen))"
             }
-
-    res_arg2 = {"bindings": {"P": "p07209f10_58a4_11e9_994c_cd7260ae2b18", "D": "86"},
-            "expl": "The diastolic measurement of the patient p07209f10_58a4_11e9_994c_cd7260ae2b18 is 86. This value is less than 95 and more than 84; therefore, an amber flag is raised.",
-            "name": "amber([diastolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,86),\"<95\",\">84\"],flag(amber))"
+    res_arg3={"bindings": {"A": "diclofenac", "G": "rp"},
+            "expl": "Treatment 'diclofenac' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(diclofenac),promotes(diclofenac,rp)],action(diclofenac))"
             }
-
-    results.append(res_arg1)
-    results.append(res_arg2)
-
-    assert_results(winning,results)
-
-@pytest.mark.order3
-def test_chatbot_s2_2_preference_amberalert():
-    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname': 'preference', 'value':'paracetamol,codeine','pdata':{'res.sbp':'Amber Flag','res.dbp':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':''}
-
-    winning = make_call(query)
-
-    results = []
-    res_arg1 = {"bindings": {"P": "p07209f10_58a4_11e9_994c_cd7260ae2b18", "S": "142"},
-            "expl": "The systolic measurement of the patient p07209f10_58a4_11e9_994c_cd7260ae2b18 is 142. This value is less than 150 and more than 134; therefore, an amber flag is raised.",
-            "name": "amber([systolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,142),\"<150\",\">134\"],flag(amber))"
+    res_arg4={"bindings": {"A": "celecoxib", "G": "rp"},
+            "expl": "Treatment 'celecoxib' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(celecoxib),promotes(celecoxib,rp)],action(celecoxib))"
             }
-
-    res_arg2 = {"bindings": {"P": "p07209f10_58a4_11e9_994c_cd7260ae2b18", "D": "86"},
-            "expl": "The diastolic measurement of the patient p07209f10_58a4_11e9_994c_cd7260ae2b18 is 86. This value is less than 95 and more than 84; therefore, an amber flag is raised.",
-            "name": "amber([diastolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,86),\"<95\",\">84\"],flag(amber))"
+    res_arg5={"bindings": {"A": "mefenamic_acid", "G": "rp"},
+            "expl": "Treatment 'mefenamic_acid' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(mefenamic_acid),promotes(mefenamic_acid,rp)],action(mefenamic_acid))"
             }
-
-    res_arg3 = {"bindings": {"A": "paracetamol", "G": "rp"},
-            "expl": "Treatment 'paracetamol' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(paracetamol),promotes(paracetamol,rp)],action(paracetamol))"
+    res_arg6={"bindings": {"A": "etoricoxib", "G": "rp"},
+            "expl": "Treatment 'etoricoxib' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(etoricoxib),promotes(etoricoxib,rp)],action(etoricoxib))"
             }
-
+    res_arg7={"bindings": {"A": "indomethacin", "G": "rp"},
+            "expl": "Treatment 'indomethacin' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(indomethacin),promotes(indomethacin,rp)],action(indomethacin))"
+            }
+    res_arg8={"bindings": {"A": "highdose_aspirin", "G": "rp"},
+            "expl": "Treatment 'highdose_aspirin' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(highdose_aspirin),promotes(highdose_aspirin,rp)],action(highdose_aspirin))"
+            }
     results.append(res_arg1)
     results.append(res_arg2)
     results.append(res_arg3)
-
-    assert_results(winning,results)
-
-@pytest.mark.order4
-def test_chatbot_s2_1_backpain_alert_filter():
-    clean_dir()
-    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname':'symptom','value':'backpain','pdata':{'res.sbp':'Amber Flag','res.dbp':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':'aspt'}
-
-    winning = make_call(query)
-
-    results = []
-
-    assert_results(winning,results)
-
-@pytest.mark.order5
-def test_chatbot_s2_2_preference_alert_filter():
-    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname': 'preference', 'value':'paracetamol,codeine','pdata':{'res.sbp':'Amber Flag','res.dbp':'Amber Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':86,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':'aspt'}
-
-    winning = make_call(query)
-
-    results = []
-
-    res_arg3 = {"bindings": {"A": "paracetamol", "G": "rp"},
-            "expl": "Treatment 'paracetamol' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(paracetamol),promotes(paracetamol,rp)],action(paracetamol))"
-            }
-
-    results.append(res_arg3)
+    results.append(res_arg4)
+    results.append(res_arg5)
+    results.append(res_arg6)
+    results.append(res_arg7)
+    results.append(res_arg8)
 
     assert_results(winning,results)
 
@@ -197,7 +135,7 @@ def test_chatbot_s4_selfcheck_service_alive():
 
 def test_chatbot_s5_unknown_query():
     query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'dummy','value':'','pdata':{'res.sbp':'Double Red Flag','res.dbp':'Double Red Flag','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':180,'c271650006':110,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}, 'expl':1, 'filter':''}
-
+    
     response = requests.post(
         'http://0.0.0.0:5000/argengine/chatbot',
         data={'data': json.dumps(query)}

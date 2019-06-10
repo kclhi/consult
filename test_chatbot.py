@@ -18,14 +18,6 @@ class TestChatbot(Resource):
             params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain', 'expl':1 }
             query = { key: value for (key, value) in (params.items() + pdata_82_noalert.items()) }
 
-        if name == 's2-1':
-            params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname':'symptom','value':'backpain', 'expl':1 }
-            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
-
-        if name == 's2-2':
-            params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'2','keyname': 'preference', 'value':'paracetamol,codeine', 'expl':1 }
-            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
-
         if name == 's3-1':
             params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain', 'expl':1 }
             query = { key: value for (key, value) in (params.items() + pdata_150_red.items()) }
