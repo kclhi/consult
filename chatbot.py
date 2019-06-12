@@ -5,7 +5,7 @@ from flask import request
 sys.path.insert(0, './argengine')
 from data_science import DataScience
 from explanation_manager import ExplanationManager
-import parse_aspartix, schemes # explanation schemes
+import parse_aspartix
 
 class ChatBot(Resource):
 

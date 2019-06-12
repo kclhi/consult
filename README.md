@@ -99,4 +99,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* -
+* Based on ASPARTIX - Answer Set Programming Argumentation Reasoning Tool.
+
+https://www.dbai.tuwien.ac.at/proj/argumentation/systempage/archive/2/#download
+https://www.dbai.tuwien.ac.at/research/argumentation/aspartix/archive/1/

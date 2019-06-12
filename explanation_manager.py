@@ -1,4 +1,4 @@
-import schemes
+import schemes # explanation schemes
 
 class ExplanationManager():
 
