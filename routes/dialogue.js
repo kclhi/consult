@@ -261,18 +261,18 @@ function findResponse(receivedMsg, chatContext, callback) {
 
       if ( idx >= 0 ) { // Kai: entry found
 
-        msgRow = dialArr[idx] //
+        msgRow = dialArr[idx]
         var condjmpArr = msgRow.CondJmp // Kai: If undefined ...
 
         if ( !multi ) { // Only add response and answers if not using a dynamically create multiple choice elicitation response.
 
-          response.Print   = msgRow.Print; // Kai: Compile tags in msg
+          response.Print = msgRow.Print; // Kai: Compile tags in msg
           response.Answers = condjmpArr.map(a => a.msg); // Kai: Array of available answers
 
         }
 
-        response.Media   = msgRow.Media;
-        response.Action  = msgRow.Action;
+        response.Media = msgRow.Media;
+        response.Action = msgRow.Action;
 
       } else { // Kai: Jump to unknown dialogue step. Terminate.
 
@@ -552,17 +552,35 @@ function externalURLResponse(msgRow, messageResponse, externalCallBody, callback
 
       if ( parsedBody = utils.JSONParseWrapper(body) ) {
 
-        utils.keyify(parsedBody).forEach(function(key) {
+        if ( templateItems = messageResponse.Print.match(new RegExp(config.get("dialogue_manager.TEMPLATE_REGEX"), 'g')) ) {
 
-          logger.debug("Replacing [" + key + "] with " + utils.resolve(key, parsedBody));
-          // Double brackets are optionals. Replace these first.
-          messageResponse.Print = messageResponse.Print.replace("[[" + key + "]]", utils.resolve(key, parsedBody));
-          messageResponse.Print = messageResponse.Print.replace("[" + key + "]", utils.resolve(key, parsedBody));
+          templateItems.forEach(function(templateItem) {
 
-        });
+            logger.debug("Regex extracted from dialogue template: " + templateItem);
 
-        // Any optionals left are removed.
-        messageResponse.Print = utils.replaceAll(messageResponse.Print, "\\[\\[.*\\]\\]", "");
+            var replacementString = "";
+
+            utils.keyify(parsedBody).forEach(function(key) {
+
+              if ( key.match(new RegExp(templateItem.substring(1, templateItem.length - 1), 'g')) ) {
+
+                logger.debug(templateItem + " matches with " + key + " which resolves to " + utils.resolve(key, parsedBody) + ". Storing this to be used as part of the response.")
+                replacementString += ( utils.resolve(key, parsedBody) + " " );
+
+              }
+
+            });
+
+            logger.debug("Replacing " + templateItem + " with " + replacementString.substring(0, replacementString.length - 1));
+            messageResponse.Print = messageResponse.Print.replace(templateItem, replacementString.substring(0, replacementString.length - 1));
+
+          });
+
+        } else {
+
+          logger.error("No template items found for this response, despite external call.")
+
+        }
 
       }
 

@@ -96,7 +96,7 @@
 				}
 			]
 		},
-		"Print": "[[ext0.winning.arg1.expl]] [[ext0.winning.arg2.expl]] <add something to refer to pharmacy if concerned>",
+		"Print": "[ext0.winning.*.expl] <add something to refer to pharmacy if concerned>",
 		"CondJmp": [
 			{
 				"msg": "END",

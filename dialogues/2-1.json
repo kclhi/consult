@@ -160,7 +160,7 @@
 				}
 			]
 		},
-		"Print": "[[ext0.winning.arg1.expl]] [[ext0.winning.arg2.expl]]",
+		"Print": "[ext0.winning.*.expl]",
 		"CondJmp": [
 			{
 				"msg": "END",
