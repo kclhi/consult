@@ -8,7 +8,6 @@ request
 dotenv
 debug
 express-session
-handlebars
 config
 winston
 async

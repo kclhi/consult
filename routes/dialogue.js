@@ -4,30 +4,11 @@ const router = express.Router();
 const logger = require('../config/winston');
 const fs = require('fs');
 const async = require('async');
-const Handlebars = require('handlebars');
 const config = require('config');
 
 const mattermost = require('../lib/mattermost');
 const utils = require('../lib/utils');
-
 const connieAvatar = "connie.jpg"
-
-Handlebars.registerHelper('p1u1stepsHome', function() { return '23095'; });
-Handlebars.registerHelper('p1u1stepsPercTotal', function() { return '65'; });
-Handlebars.registerHelper('p1u2stepsPercTotal', function() { return '80'; });
-Handlebars.registerHelper('p1u3stepsPercTotal', function() { return '93'; });
-Handlebars.registerHelper('p1u4stepsHome', function() { return '22828'; });
-Handlebars.registerHelper('p1u4stepsPercTotalA', function() { return '65'; });
-Handlebars.registerHelper('p1u4stepsPercTotalB', function() { return '80'; });
-Handlebars.registerHelper('p1s1stepsPercTotal', function() { return '93'; });
-Handlebars.registerHelper('p1saTemp', function() { return '1.1'; });
-Handlebars.registerHelper('p1sbStepsPercTotal12', function() { return '93'; });
-Handlebars.registerHelper('p1sbStepsPercTotal8', function() { return '64'; });
-Handlebars.registerHelper('p1sbTemp', function() { return '0.9'; });
-
-function tmplRpl(s) { // Replace template placeholders
-    return Handlebars.compile(s)();
-}
 
 let webhook = config.get('mattermost.WEBHOOK');
 
@@ -95,7 +76,7 @@ function getWebhook(callback) {
 
 function findResponse(receivedMsg, chatContext, callback) {
 
-  var newDialNo  // = msg.payload.newDialNo // Triggered by upstream node if new dialogue
+  var newDialNo // Triggered by upstream node if new dialogue
   // ?? How does this overwrite if there is an old dialogue going on? Delete old dialogue, let it finish? Extra button to cancel it?
   var response = {}; // Response object
   var answerButtonsArr = [];
@@ -111,8 +92,10 @@ function findResponse(receivedMsg, chatContext, callback) {
   ctx.chatId        = chatContext.chatId
 
   // Delete old session (> 10 min = 600 s)
-  if (Math.round(+new Date()/1000) - ctx.lastMsgTs > 600) {
+  if ( Math.round( +new Date() / 1000 ) - ctx.lastMsgTs > 600 ) {
+
     chat = {};
+
   }
 
   // Load scripted dialoges as array of JSON objects
@@ -139,181 +122,225 @@ function findResponse(receivedMsg, chatContext, callback) {
 
     logger.info("Loaded " + dialArr.length + " responses.");
 
-    if (receivedMsg.trim() == '/start')  { // hard-code specfic dialogue for demo
+    if ( receivedMsg.trim() == '/start' )  { // hard-code specfic dialogue for demo
+
         // receivedMsg = '/1';
+
     }
 
-    if (receivedMsg.trim().startsWith("/") ) { // is command
+    if ( receivedMsg.trim().startsWith("/") ) { // is command
+
       var cmd = receivedMsg.trim();
       var dialIds = Array.from(new Set( dialArr.map(a => a.Dialogue) )).sort() // get unique set of Dialogue IDs
 
-      switch (cmd) {
-      case '/start': // Hard-coded menu
-      case '/starttest':
-        // send keyboard with all options
-        response.Print = "How can I help you? Please select from the buttons below to start.";
+      switch ( cmd ) {
 
-        for (const answer of dialIds) {
-          if ( answer ) {
-            answerButtonsArr.push({
-              "name": "/" + answer,
-              "integration": {
-                "url": config.get('dialogue_manager.URL') + "/response",
-                "context": {
-                  "command": "/" + answer,
-                  "chatContext": chatContext
+        case '/start': // Hard-coded menu
+        case '/starttest':
+
+          // send keyboard with all options
+          response.Print = "How can I help you? Please select from the buttons below to start.";
+
+          for ( const answer of dialIds ) {
+
+            if ( answer ) {
+
+              answerButtonsArr.push({
+                "name": "/" + answer,
+                "integration": {
+                  "url": config.get('dialogue_manager.URL') + "/response",
+                  "context": {
+                    "command": "/" + answer,
+                    "chatContext": chatContext
+                  }
                 }
-              }
-            });
+              });
+
+            }
+
           }
-        }
-        processUserMessage = false;
-        break;
 
-      case '/help': // Send short summary
-        response.Print = "Show menu with /start command."
-        processUserMessage = false;
-        break;
-
-      default:
-        const id = cmd.replace('/','') ;
-        if ( dialIds.indexOf(id) >= 0 ) // keyboard command is valid dialogue ID
-        {
-          newDialNo = id; // Start new dialogue with this id
-        }
-        else { // an unknown command
-          response.Print = "Sorry, I don't know this command. Please use /start to begin a conversation."
           processUserMessage = false;
-        }
+          break;
+
+        case '/help': // Send short summary
+
+          response.Print = "Show menu with /start command."
+          processUserMessage = false;
+          break;
+
+        default:
+
+          const id = cmd.replace('/','');
+
+          if ( dialIds.indexOf(id) >= 0 ) { // keyboard command is valid dialogue ID
+
+            newDialNo = id; // Start new dialogue with this id
+
+          } else { // an unknown command
+
+            response.Print = "Sorry, I don't know this command. Please use /start to begin a conversation."
+            processUserMessage = false;
+
+          }
+
       }
+
+    } else { // Msg is not a command
+
+      // Just continue and treat as normal dialogue (??)
+
     }
-    else { // Msg is not a command
-        // Just continue and treat as normal dialogue (??)
-    }
 
-    if (processUserMessage) { // user input is processed (not if it was command)
+    if ( processUserMessage ) { // user input is processed (not if it was command)
 
-        var msgRow;
-        // if ( ctx.lastMsgDialNo ) // ## This was checked in RULES node. Need to check here??
-        dialNo = ctx.lastMsgDialNo; // if undefined ...??
-        stepNo = ctx.lastMsgStepNo; // if undefined ...??
-        multi = false;
+      var msgRow;
+      // ctx.lastMsgDialNo - This was checked in RULES node. Need to check here??
+      dialNo = ctx.lastMsgDialNo; // if undefined ...??
+      stepNo = ctx.lastMsgStepNo; // if undefined ...??
+      multi = false;
 
-        // Filter steps for selected dialogue ID
-        dialArr = dialArr.filter(i => i.Dialogue === (newDialNo ? newDialNo : dialNo ))
+      // Filter steps for selected dialogue ID
+      dialArr = dialArr.filter(i => i.Dialogue === (newDialNo ? newDialNo : dialNo))
 
-        if (newDialNo) { // Is this a brand new dialogue?
-            dialNo = newDialNo;     // Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
-            stepNo = 1; // Start at the beginning
-        }
-        else { // Handle user response to previous message. Find previous script step
-          var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
-          if (idx >= 0 ) { // this was the previous step
-            var condjmpArr = dialArr[idx].CondJmp // If undefined ...
-            idx = condjmpArr.findIndex(i => ( tmplRpl(i.msg) == receivedMsg ) );
-            if (idx >= 0 ) {
-              if ( condjmpArr[idx].multi ) { // The selected option is potentially selected along with other options.
-                multi = true; // Flag this for later
-                if (!chatContext.dialogueParams) chatContext.dialogueParams = {};
-                if (!chatContext.dialogueParams["responses"]) chatContext.dialogueParams.responses = [];
-                chatContext.dialogueParams.responses.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
-                var options;
-                if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams["responses"].includes(a.msg)).map(a => tmplRpl(a.msg)) ) && options.length > 0 ) {
-                  response.Print = "Thank you. Do any of the other options apply?" // Next ouput should ask the user if they wish to select anything else
-                  response.Answers = options// Options to show are the remaining multiple choice options
-                  response.Answers.push("None of them"); // Add the same option 'No' option as in the original multiple choice question to the request for other multiple choice responses, as if no more responses remain this is logically equivalent to say no in the first place.
-                } else {
-                  multi = false;
-                  stepNo = condjmpArr[idx].n // Process next step // If undefined .
-                }
-              } else {
-                stepNo = condjmpArr[idx].n // Process next step // If undefined ...
-              }
-            } // else stepNo is unchanged. Will repeat previous message automatically.
-          }
-          else {
-              response.Print = "Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!";
-              error = 1; // END
-          }
-        }
+      if ( newDialNo ) { // Is this a brand new dialogue?
 
-        // Find response to message
+          dialNo = newDialNo; // Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
+          stepNo = 1; // Start at the beginning
+
+      } else { // Handle user response to previous message. Find previous script step
+
         var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
 
-        if (idx >= 0 ) { //  entry found
-            msgRow       = dialArr[idx] //
-            var condjmpArr   = msgRow.CondJmp // If undefined ...
+        if (idx >= 0 ) { // this was the previous step
 
-            if ( !multi ) {
-              // response.Print   = Handlebars.compile(msgRow.Print)(); // Compile tags in msg
-              response.Print   = tmplRpl(msgRow.Print); // Compile tags in msg
-              response.Answers = condjmpArr.map(a => tmplRpl(a.msg)); // Array of available answers
-            }
-            response.Media   = msgRow.Media;
-            response.Action  = msgRow.Action;
+          var condjmpArr = dialArr[idx].CondJmp // If undefined ...
+          idx = condjmpArr.findIndex(i => ( i.msg == receivedMsg ));
 
-        }
-        else { // Jump to unknown dialogue step. Terminate.
-            response.Print = "Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!";
-            error = 1; // END
-        }
+          if (idx >= 0 ) {
 
-        // Last response of dialogue?
-        if (error === 1 || (condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi) ) {
-            chat = {}    // Delete chat context, end of dialogue.
-        }
-        else { // Prepare next step of dialogue flow
-            // Update chat Context
-            chat.lastMsgDialNo = dialNo
-            chat.lastMsgStepNo = stepNo
-            chat.lastMsgTs = Math.round(+new Date()/1000) // Timestamp
+            if ( condjmpArr[idx].multi ) { // The selected option is potentially selected along with other options.
 
-            for (const answer of response.Answers) {
+              multi = true; // Flag this for later
 
-                answerButtonsArr.push(
-                    {
-                        "name": answer,
-                        "integration": {
-                            "url": config.get('dialogue_manager.URL') + "/response",
-                            "context": {
-                                "command": answer,
-                                "chatContext": chatContext
-                            }
-                        }
-                    },
-                );
+              if (!chatContext.dialogueParams) chatContext.dialogueParams = {};
+
+              if (!chatContext.dialogueParams.responses) chatContext.dialogueParams.responses = [];
+
+              chatContext.dialogueParams.responses.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
+              var options;
+
+              if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams.responses.includes(a.msg)).map(a => a.msg) ) && options.length > 0 ) {
+
+                response.Print = "Thank you. Do any of the other options apply?" // Next ouput should ask the user if they wish to select anything else
+                response.Answers = options// Options to show are the remaining multiple choice options
+                response.Answers.push("None of them"); // Add the same option 'No' option as in the original multiple choice question to the request for other multiple choice responses, as if no more responses remain this is logically equivalent to say no in the first place.
+
+              } else {
+
+                multi = false;
+                stepNo = condjmpArr[idx].n // Process next step // If undefined .
+
+              }
+
+            } else {
+
+              stepNo = condjmpArr[idx].n // Process next step // If undefined ...
 
             }
 
+          } // else stepNo is unchanged. Will repeat previous message automatically.
+
+        } else {
+
+          response.Print = "Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!";
+          error = 1; // END
+
         }
 
-        // Dynamic chat response logic.
+      }
 
-        if ( chatContext.dialogueParams ) console.log(chatContext.dialogueParams);
+      // Find response to message
+      var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
 
-        // Replace content of chat response with content in dialogueParams context variable (e.g. alert readings).
-        if ( chatContext.dialogueParams ) {
+      if ( idx >= 0 ) { //  entry found
 
-          Object.keys(chatContext.dialogueParams).forEach(function(key) {
+        msgRow = dialArr[idx] //
+        var condjmpArr = msgRow.CondJmp // If undefined ...
 
-            response.Print = response.Print.replace("[" + key + "]", chatContext.dialogueParams[key]);
+        if ( !multi ) {
 
+          response.Print   = msgRow.Print; // Compile tags in msg
+          response.Answers = condjmpArr.map(a => a.msg); // Array of available answers
+
+        }
+
+        response.Media   = msgRow.Media;
+        response.Action  = msgRow.Action;
+
+      } else { // Jump to unknown dialogue step. Terminate.
+
+        response.Print = "Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!";
+        error = 1; // END
+
+      }
+
+      // Last response of dialogue?
+      if ( error === 1 || ( condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi ) ) {
+
+        chat = {} // Delete chat context, end of dialogue.
+
+      } else { // Prepare next step of dialogue flow
+
+        // Update chat Context
+        chat.lastMsgDialNo = dialNo
+        chat.lastMsgStepNo = stepNo
+        chat.lastMsgTs = Math.round(+new Date()/1000) // Timestamp
+
+        for ( const answer of response.Answers ) {
+
+          answerButtonsArr.push({
+            "name": answer,
+            "integration": {
+              "url": config.get('dialogue_manager.URL') + "/response",
+              "context": {
+                "command": answer,
+                "chatContext": chatContext
+              }
+            }
           });
 
         }
 
-        // Does our print response require information from an external source?
-        if ( msgRow && msgRow.External ) {
+      }
 
-          logger.debug("Response is external");
-          externalResponse(msgRow, chatContext, response, answerButtonsArr, callback)
+      // Dynamic chat response logic.
 
-        } else {
+      if ( chatContext.dialogueParams ) console.log(chatContext.dialogueParams);
 
-          // Return printed response unchanged.
-          callback(response, answerButtonsArr);
+      // Replace content of chat response with content in dialogueParams context variable (e.g. alert readings).
+      if ( chatContext.dialogueParams ) {
 
-        }
+        Object.keys(chatContext.dialogueParams).forEach(function(key) {
+
+          response.Print = response.Print.replace("[" + key + "]", chatContext.dialogueParams[key]);
+
+        });
+
+      }
+
+      // Does our print response require information from an external source?
+      if ( msgRow && msgRow.External ) {
+
+        logger.debug("Response is external");
+        externalResponse(msgRow, chatContext, response, answerButtonsArr, callback)
+
+      } else {
+
+        // Return printed response unchanged.
+        callback(response, answerButtonsArr);
+
+      }
 
     } else {
 
