@@ -8,7 +8,8 @@ const config = require('config');
 
 const mattermost = require('../lib/mattermost');
 const utils = require('../lib/utils');
-const connieAvatar = "connie.jpg"
+const CONNIE_AVATAR = "connie.jpg"
+const ERROR_TEXT = "Sorry, we aren't able to process a response for you right now."
 
 let webhook = config.get('mattermost.WEBHOOK');
 
@@ -122,12 +123,6 @@ function findResponse(receivedMsg, chatContext, callback) {
 
     logger.info("Loaded " + dialArr.length + " responses.");
 
-    if ( receivedMsg.trim() == '/start' )  { // hard-code specfic dialogue for demo
-
-        // receivedMsg = '/1';
-
-    }
-
     if ( receivedMsg.trim().startsWith("/") ) { // is command
 
       var cmd = receivedMsg.trim();
@@ -212,10 +207,10 @@ function findResponse(receivedMsg, chatContext, callback) {
 
         var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
 
-        if (idx >= 0 ) { // this was the previous step
+        if ( idx >= 0 ) { // this was the previous step
 
           var condjmpArr = dialArr[idx].CondJmp // If undefined ...
-          idx = condjmpArr.findIndex(i => ( i.msg == receivedMsg ));
+          idx = condjmpArr.findIndex(i => (i.msg == receivedMsg));
 
           if (idx >= 0 ) {
 
@@ -253,7 +248,8 @@ function findResponse(receivedMsg, chatContext, callback) {
 
         } else {
 
-          response.Print = "Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!";
+          logger.error("Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!");
+          response.Print = ERROR_TEXT;
           error = 1; // END
 
         }
@@ -280,7 +276,8 @@ function findResponse(receivedMsg, chatContext, callback) {
 
       } else { // Jump to unknown dialogue step. Terminate.
 
-        response.Print = "Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!";
+        logger.error("Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!");
+        response.Print = ERROR_TEXT;
         error = 1; // END
 
       }
@@ -295,7 +292,7 @@ function findResponse(receivedMsg, chatContext, callback) {
         // Update chat Context
         chat.lastMsgDialNo = dialNo
         chat.lastMsgStepNo = stepNo
-        chat.lastMsgTs = Math.round(+new Date()/1000) // Timestamp
+        chat.lastMsgTs = Math.round( +new Date() / 1000 ) // Timestamp
 
         for ( const answer of response.Answers ) {
 
@@ -614,8 +611,9 @@ router.post('/response', function(req, res, next) {
     if ( !response || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
 
       response = {};
-      response.Print = "Sorry, we aren't able to process a response for you right now.";
+      response.Print = ERROR_TEXT;
       answerButtonsArr = [];
+      logger.debug("Template left in text being sent to user.");
 
     }
 
@@ -627,7 +625,7 @@ router.post('/response', function(req, res, next) {
           "response_type": "in_channel",
           "username": "connie",
           "channel": "@" + chatContext.user,
-          "icon_url": config.get('dialogue_manager.URL') + "/" + connieAvatar,
+          "icon_url": config.get('dialogue_manager.URL') + "/" + CONNIE_AVATAR,
           "attachments": [
             {
               "pretext": "",
@@ -693,7 +691,7 @@ router.post('/initiate', function(req, res, next) {
               "response_type": "in_channel",
               "username": "connie",
               "channel": "@" + req.body.username,
-              "icon_url": config.get('dialogue_manager.URL') + "/" + connieAvatar,
+              "icon_url": config.get('dialogue_manager.URL') + "/" + CONNIE_AVATAR,
               "attachments": [
                 {
                   "image_url": config.get('dialogue_manager.URL') + "/warning.jpg",
