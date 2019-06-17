@@ -25,7 +25,7 @@
 		"BranchLevel": "2",
 		"Comment": "",
 		"External": {
-			"URL": "https://maximoff/argengine/chatbot",
+			"URL": "http://localhost:5000/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -60,7 +60,7 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "https://maximoff/mine/get/bp",
+						"URL": "http://localhost:3006/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -85,6 +85,13 @@
 					"Value": {
 						"Type": "literal",
 						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "amber,red,dred"
 					}
 				}
 			]

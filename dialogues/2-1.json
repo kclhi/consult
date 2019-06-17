@@ -28,7 +28,7 @@
 		"Step": "101",
 		"BranchLevel": "1",
 		"Comment": "Triggered by app",
-		"Print": "This could explain the latest reading. If you think that stress is making your blood pressure readings a bit higher than expected have you considered some stress reduction tactics or techniques? (point to NHS Choices for stress reduction https://stress-anxiety-depression/understanding-stress/). Would you like to know more about this alert?",
+		"Print": "This could explain the latest reading. If you think that stress is making your blood pressure readings a bit higher than expected have you considered some stress reduction tactics or techniques? (point to NHS Choices for stress reduction http://stress-anxiety-depression/understanding-stress/). Would you like to know more about this alert?",
 		"CondJmp": [
 			{
 				"msg": "Yes",
@@ -89,7 +89,7 @@
 		"BranchLevel": "2",
 		"Comment": "",
 		"External": {
-			"URL": "https://maximoff/argengine/chatbot",
+			"URL": "http://localhost:5000/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -124,7 +124,7 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "https://maximoff/mine/get/bp",
+						"URL": "http://localhost:3006/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -149,6 +149,13 @@
 					"Value": {
 						"Type": "literal",
 						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "amber,red,dred"
 					}
 				}
 			]

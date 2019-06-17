@@ -197,6 +197,7 @@ function findResponse(receivedMsg, chatContext, callback) {
         // if ( ctx.lastMsgDialNo ) // ## This was checked in RULES node. Need to check here??
         dialNo = ctx.lastMsgDialNo; // if undefined ...??
         stepNo = ctx.lastMsgStepNo; // if undefined ...??
+        multi = false;
 
         // Filter steps for selected dialogue ID
         dialArr = dialArr.filter(i => i.Dialogue === (newDialNo ? newDialNo : dialNo ))
@@ -211,7 +212,23 @@ function findResponse(receivedMsg, chatContext, callback) {
             var condjmpArr = dialArr[idx].CondJmp // If undefined ...
             idx = condjmpArr.findIndex(i => ( tmplRpl(i.msg) == receivedMsg ) );
             if (idx >= 0 ) {
-              stepNo = condjmpArr[idx].n // Process next step // If undefined ...
+              if ( condjmpArr[idx].multi ) { // The selected option is potentially selected along with other options.
+                multi = true; // Flag this for later
+                if (!chatContext.dialogueParams) chatContext.dialogueParams = {};
+                if (!chatContext.dialogueParams["responses"]) chatContext.dialogueParams.responses = [];
+                chatContext.dialogueParams.responses.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
+                var options;
+                if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams["responses"].includes(a.msg)).map(a => tmplRpl(a.msg)) ) && options.length > 0 ) {
+                  response.Print = "Thank you. Do any of the other options apply?" // Next ouput should ask the user if they wish to select anything else
+                  response.Answers = options// Options to show are the remaining multiple choice options
+                  response.Answers.push("None of them"); // Add the same option 'No' option as in the original multiple choice question to the request for other multiple choice responses, as if no more responses remain this is logically equivalent to say no in the first place.
+                } else {
+                  multi = false;
+                  stepNo = condjmpArr[idx].n // Process next step // If undefined .
+                }
+              } else {
+                stepNo = condjmpArr[idx].n // Process next step // If undefined ...
+              }
             } // else stepNo is unchanged. Will repeat previous message automatically.
           }
           else {
@@ -226,9 +243,12 @@ function findResponse(receivedMsg, chatContext, callback) {
         if (idx >= 0 ) { //  entry found
             msgRow       = dialArr[idx] //
             var condjmpArr   = msgRow.CondJmp // If undefined ...
-            response.Answers = condjmpArr.map(a => tmplRpl(a.msg) ); // Array of available answers
-            // response.Print   = Handlebars.compile(msgRow.Print)(); // Compile tags in msg
-            response.Print   = tmplRpl(msgRow.Print); // Compile tags in msg
+
+            if ( !multi ) {
+              // response.Print   = Handlebars.compile(msgRow.Print)(); // Compile tags in msg
+              response.Print   = tmplRpl(msgRow.Print); // Compile tags in msg
+              response.Answers = condjmpArr.map(a => tmplRpl(a.msg)); // Array of available answers
+            }
             response.Media   = msgRow.Media;
             response.Action  = msgRow.Action;
 
@@ -239,7 +259,7 @@ function findResponse(receivedMsg, chatContext, callback) {
         }
 
         // Last response of dialogue?
-        if (error === 1 || (condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0) ) {
+        if (error === 1 || (condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi) ) {
             chat = {}    // Delete chat context, end of dialogue.
         }
         else { // Prepare next step of dialogue flow
@@ -269,12 +289,14 @@ function findResponse(receivedMsg, chatContext, callback) {
 
         // Dynamic chat response logic.
 
-        // Replace content of chat response with content in dialogueParams context variable.
-        if ( chat.dialogueParams ) {
+        if ( chatContext.dialogueParams ) console.log(chatContext.dialogueParams);
 
-          Object.keys(chat.dialogueParams).forEach(function(key) {
+        // Replace content of chat response with content in dialogueParams context variable (e.g. alert readings).
+        if ( chatContext.dialogueParams ) {
 
-            response.Print = response.Print.replace("[" + key + "]", chat.dialogueParams[key]);
+          Object.keys(chatContext.dialogueParams).forEach(function(key) {
+
+            response.Print = response.Print.replace("[" + key + "]", chatContext.dialogueParams[key]);
 
           });
 
@@ -284,183 +306,7 @@ function findResponse(receivedMsg, chatContext, callback) {
         if ( msgRow && msgRow.External ) {
 
           logger.debug("Response is external");
-
-          // Do we need to create anything for the body of this external call?
-          if ( msgRow.External.Body ) {
-
-            logger.debug("Response requires body components. Gathering...");
-            externalCallBody = {};
-
-            // Look at each item specified for the body of this external call.
-            async.eachSeries(Object.keys(msgRow.External.Body), function(item, next) {
-
-              item = msgRow.External.Body[item];
-
-              // Get value for body from chat context
-              if ( item.Value.Type == "context" ) {
-
-                logger.debug("Context body item: " + JSON.stringify(item));
-
-                if ( chatContext[item.Value.Key] ) {
-
-                  externalCallBody[item.Key] = chatContext[item.Value.Key];
-                  logger.debug("Added externalCallBody entry for " +  item.Key);
-
-                } else {
-
-                  logger.error("Could not find requested chat context item: " + item.Value.Key);
-                  callback(null, null);
-
-                }
-
-                next();
-
-              // Get value for body from another external call
-              } else if ( item.Value.Type == "external" ) {
-
-                logger.debug("External body item: " + JSON.stringify(item));
-
-                var URL = item.Value.URL;
-
-                // Do we need to add anything to the URL of this nested external call, required to populate the body.
-                if ( item.Value.Path ) {
-
-                  logger.debug("Adding to URL...");
-
-                  Object.keys(item.Value.Path).forEach(function(pathItem) {
-
-                    pathItem = item.Value.Path[pathItem];
-
-                    // If the item to add to the path of the nested external call comes from the chat context, add it.
-                    if ( pathItem.Type == "context" ) {
-
-                      logger.debug("Trying to resolve context item: " + pathItem.Key);
-
-                      if ( chatContext[pathItem.Key] ) {
-
-                        logger.debug("Adding to the path of nested external call to populate body.");
-                        URL += "/" + chatContext[pathItem.Key];
-
-                      } else {
-
-                        logger.error("Could not find requested chat context item: " + pathItem.Key);
-                        callback(null, null);
-
-                      }
-
-                    }
-
-                  });
-
-                }
-
-                externalCallNestedRequestBody = {};
-
-                // Do we need to add anything to the request body of this nested external call, required to populate the body.
-                // ~MDC some repetition here, so recursion may be viable.
-                if ( item.Value.Body ) {
-
-                  // Look at each item specified for the body of this nested external call.
-                  Object.keys(item.Value.Body).forEach(function(bodyItem) {
-
-                    bodyItem = item.Value.Body[bodyItem];
-                    logger.debug("Nested external call body item: " + JSON.stringify(bodyItem));
-
-                    // If the item to add to the request body of the nested external call comes from the chat context, add it.
-                    if ( bodyItem.Value.Type == "context" ) {
-
-                      logger.debug("Trying to resolve context item: " + bodyItem.Value.Key);
-
-                      if ( chatContext[bodyItem.Value.Key] ) {
-
-                        externalCallNestedRequestBody[bodyItem.Key] = chatContext[bodyItem.Value.Key];
-                        logger.debug("Added externalCallNestedRequestBody entry for " + bodyItem.Key);
-
-                      } else {
-
-                        logger.error("Could not find requested chat context item: " + pathItem.Value.Key);
-                        callback(null, null);
-
-                      }
-
-                    } else if ( bodyItem.Value.Type == "literal" ) {
-
-                      externalCallNestedRequestBody[bodyItem.Key] = bodyItem.Value.Value;
-                      logger.debug("Added externalCallNestedRequestBody entry for " + bodyItem.Key);
-
-                    }
-
-                  });
-
-                }
-
-                // Make external call to populate body item.
-                request({
-
-                  url: URL,
-                  method: item.Value.Method,
-                  json: externalCallNestedRequestBody
-
-                }, function (error, response, body) {
-
-                  if ( error || (response && response.statusCode >= 400) || !body ) {
-
-                    logger.error("Failed to populate body item with external call: " + ( error ? error : "" ) + " Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ));
-                    callback(null, null);
-
-                  } else {
-
-                    if ( parsedBody = utils.JSONParseWrapper(body) ) {
-
-                      externalCallBody[item.Key] = parsedBody;
-
-                    } else {
-
-                      externalCallBody[item.Key] = body;
-
-                    }
-
-                    logger.debug("Added externalCallBody entry for " + item.Key);
-                    next();
-
-                  }
-
-                });
-
-              // Item to add to body is a simple literal
-              } else if ( item.Value.Type = "literal" ) {
-
-                logger.debug("Literal body item: " + JSON.stringify(item));
-
-                externalCallBody[item.Key] = item.Value.Value;
-                logger.debug("Added externalCallBody entry for " + item.Key);
-                next();
-
-              }
-
-            }, function(bodyConstructionError) {
-
-              logger.debug("Full body for external call ready.");
-
-              // Make external call and replace printed response with returned value after external call body populated.
-              externalURLResponse(msgRow, response, externalCallBody, function(response) {
-
-                callback(response, answerButtonsArr);
-
-              });
-
-            });
-
-          } else {
-
-            // Make external call and replace printed response with returned value without call body.
-            externalURLResponse(msgRow, response, {}, function(response) {
-
-              callback(response, answerButtonsArr);
-
-            });
-
-          }
+          externalResponse(msgRow, chatContext, response, answerButtonsArr, callback)
 
         } else {
 
@@ -476,6 +322,187 @@ function findResponse(receivedMsg, chatContext, callback) {
     }
 
   });
+
+}
+
+function externalResponse(row, chatContext, response, answerButtonsArr, callback) {
+
+  // Do we need to create anything for the body of this external call?
+  if ( row.External.Body ) {
+
+    logger.debug("Response requires body components. Gathering...");
+    externalCallBody = {};
+
+    // Look at each item specified for the body of this external call.
+    async.eachSeries(Object.keys(row.External.Body), function(item, next) {
+
+      item = row.External.Body[item];
+
+      // Get value for body from chat context
+      if ( item.Value.Type == "context" ) {
+
+        logger.debug("Context body item: " + JSON.stringify(item));
+
+        if ( chatContext[item.Value.Key] ) {
+
+          externalCallBody[item.Key] = chatContext[item.Value.Key];
+          logger.debug("Added externalCallBody entry for " +  item.Key);
+
+        } else {
+
+          logger.error("Could not find requested chat context item: " + item.Value.Key);
+          callback(null, null);
+
+        }
+
+        next();
+
+      // Get value for body from another external call
+      } else if ( item.Value.Type == "external" ) {
+
+        logger.debug("External body item: " + JSON.stringify(item));
+
+        var URL = item.Value.URL;
+
+        // Do we need to add anything to the URL of this nested external call, required to populate the body.
+        if ( item.Value.Path ) {
+
+          logger.debug("Adding to URL...");
+
+          Object.keys(item.Value.Path).forEach(function(pathItem) {
+
+            pathItem = item.Value.Path[pathItem];
+
+            // If the item to add to the path of the nested external call comes from the chat context, add it.
+            if ( pathItem.Type == "context" ) {
+
+              logger.debug("Trying to resolve context item: " + pathItem.Key);
+
+              if ( chatContext[pathItem.Key] ) {
+
+                logger.debug("Adding to the path of nested external call to populate body.");
+                URL += "/" + chatContext[pathItem.Key];
+
+              } else {
+
+                logger.error("Could not find requested chat context item: " + pathItem.Key);
+                callback(null, null);
+
+              }
+
+            }
+
+          });
+
+        }
+
+        externalCallNestedRequestBody = {};
+
+        // Do we need to add anything to the request body of this nested external call, required to populate the body.
+        // ~MDC some repetition here, so recursion may be viable.
+        if ( item.Value.Body ) {
+
+          // Look at each item specified for the body of this nested external call.
+          Object.keys(item.Value.Body).forEach(function(bodyItem) {
+
+            bodyItem = item.Value.Body[bodyItem];
+            logger.debug("Nested external call body item: " + JSON.stringify(bodyItem));
+
+            // If the item to add to the request body of the nested external call comes from the chat context, add it.
+            if ( bodyItem.Value.Type == "context" ) {
+
+              logger.debug("Trying to resolve context item: " + bodyItem.Value.Key);
+
+              if ( chatContext[bodyItem.Value.Key] ) {
+
+                externalCallNestedRequestBody[bodyItem.Key] = chatContext[bodyItem.Value.Key];
+                logger.debug("Added externalCallNestedRequestBody entry for " + bodyItem.Key);
+
+              } else {
+
+                logger.error("Could not find requested chat context item: " + pathItem.Value.Key);
+                callback(null, null);
+
+              }
+
+            } else if ( bodyItem.Value.Type == "literal" ) {
+
+              externalCallNestedRequestBody[bodyItem.Key] = bodyItem.Value.Value;
+              logger.debug("Added externalCallNestedRequestBody entry for " + bodyItem.Key);
+
+            }
+
+          });
+
+        }
+
+        // Make external call to populate body item.
+        request({
+
+          url: URL,
+          method: item.Value.Method,
+          json: externalCallNestedRequestBody
+
+        }, function (error, response, body) {
+
+          if ( error || (response && response.statusCode >= 400) || !body ) {
+
+            logger.error("Failed to populate body item with external call: " + ( error ? error : "" ) + " Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ));
+            callback(null, null);
+
+          } else {
+
+            if ( parsedBody = utils.JSONParseWrapper(body) ) {
+
+              externalCallBody[item.Key] = parsedBody;
+
+            } else {
+
+              externalCallBody[item.Key] = body;
+
+            }
+
+            logger.debug("Added externalCallBody entry for " + item.Key);
+            next();
+
+          }
+
+        });
+
+      // Item to add to body is a simple literal
+      } else if ( item.Value.Type = "literal" ) {
+
+        logger.debug("Literal body item: " + JSON.stringify(item));
+
+        externalCallBody[item.Key] = item.Value.Value;
+        logger.debug("Added externalCallBody entry for " + item.Key);
+        next();
+
+      }
+
+    }, function(bodyConstructionError) {
+
+      logger.debug("Full body for external call ready.");
+
+      // Make external call and replace printed response with returned value after external call body populated.
+      externalURLResponse(row, response, externalCallBody, function(response) {
+
+        callback(response, answerButtonsArr);
+
+      });
+
+    });
+
+  } else {
+
+    // Make external call and replace printed response with returned value without call body.
+    externalURLResponse(msgRow, response, {}, function(response) {
+
+      callback(response, answerButtonsArr);
+
+    });
+
+  }
 
 }
 
