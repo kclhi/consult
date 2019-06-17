@@ -77,22 +77,22 @@ function getWebhook(callback) {
 
 function findResponse(receivedMsg, chatContext, callback) {
 
-  var newDialNo // Triggered by upstream node if new dialogue
-  // ?? How does this overwrite if there is an old dialogue going on? Delete old dialogue, let it finish? Extra button to cancel it?
-  var response = {}; // Response object
+  var newDialNo // Kai: Triggered by upstream node if new dialogue
+  // Kai: ?? How does this overwrite if there is an old dialogue going on? Delete old dialogue, let it finish? Extra button to cancel it?
+  var response = {}; // Kai: Response object
   var answerButtonsArr = [];
   var error = 0;
   var processUserMessage = true;
 
-  // Read context from possible previous conversation
-  var ctx = {} // Message parameter for Chat Context
-  var chat = chatContext // RedBot chat context
+  // Kai: Read context from possible previous conversation
+  var ctx = {} // Kai: Message parameter for Chat Context
+  var chat = chatContext // Kai: RedBot chat context
   ctx.lastMsgDialNo = chatContext.lastMsgDialNo
   ctx.lastMsgStepNo = chatContext.lastMsgStepNo
-  ctx.lastMsgTs     = chatContext.lastMsgTs // To delete old chat session later
+  ctx.lastMsgTs     = chatContext.lastMsgTs // Kai: To delete old chat session later
   ctx.chatId        = chatContext.chatId
 
-  // Delete old session (> 10 min = 600 s)
+  // Kai: Delete old session (> 10 min = 600 s)
   if ( Math.round( +new Date() / 1000 ) - ctx.lastMsgTs > 600 ) {
 
     chat = {};
@@ -123,17 +123,17 @@ function findResponse(receivedMsg, chatContext, callback) {
 
     logger.info("Loaded " + dialArr.length + " responses.");
 
-    if ( receivedMsg.trim().startsWith("/") ) { // is command
+    if ( receivedMsg.trim().startsWith("/") ) { // Kai: is command
 
       var cmd = receivedMsg.trim();
-      var dialIds = Array.from(new Set( dialArr.map(a => a.Dialogue) )).sort() // get unique set of Dialogue IDs
+      var dialIds = Array.from(new Set( dialArr.map(a => a.Dialogue) )).sort() // Kai: get unique set of Dialogue IDs
 
       switch ( cmd ) {
 
-        case '/start': // Hard-coded menu
+        case '/start': // Kai: Hard-coded menu
         case '/starttest':
 
-          // send keyboard with all options
+          // Kai: send keyboard with all options
           response.Print = "How can I help you? Please select from the buttons below to start.";
 
           for ( const answer of dialIds ) {
@@ -158,7 +158,7 @@ function findResponse(receivedMsg, chatContext, callback) {
           processUserMessage = false;
           break;
 
-        case '/help': // Send short summary
+        case '/help': // Kai: Send short summary
 
           response.Print = "Show menu with /start command."
           processUserMessage = false;
@@ -168,11 +168,11 @@ function findResponse(receivedMsg, chatContext, callback) {
 
           const id = cmd.replace('/','');
 
-          if ( dialIds.indexOf(id) >= 0 ) { // keyboard command is valid dialogue ID
+          if ( dialIds.indexOf(id) >= 0 ) { // Kai: keyboard command is valid dialogue ID
 
-            newDialNo = id; // Start new dialogue with this id
+            newDialNo = id; // Kai: Start new dialogue with this id
 
-          } else { // an unknown command
+          } else { // Kai: an unknown command
 
             response.Print = "Sorry, I don't know this command. Please use /start to begin a conversation."
             processUserMessage = false;
@@ -181,35 +181,35 @@ function findResponse(receivedMsg, chatContext, callback) {
 
       }
 
-    } else { // Msg is not a command
+    } else { // Kai: Msg is not a command
 
-      // Just continue and treat as normal dialogue (??)
+      // Kai: Just continue and treat as normal dialogue (??)
 
     }
 
-    if ( processUserMessage ) { // user input is processed (not if it was command)
+    if ( processUserMessage ) { // Kai: user input is processed (not if it was command)
 
       var msgRow;
-      // ctx.lastMsgDialNo - This was checked in RULES node. Need to check here??
-      dialNo = ctx.lastMsgDialNo; // if undefined ...??
-      stepNo = ctx.lastMsgStepNo; // if undefined ...??
+      // Kai: ctx.lastMsgDialNo - This was checked in RULES node. Need to check here??
+      dialNo = ctx.lastMsgDialNo; // Kai: if undefined ...??
+      stepNo = ctx.lastMsgStepNo; // Kai: if undefined ...??
       multi = false;
 
-      // Filter steps for selected dialogue ID
+      // Kai: Filter steps for selected dialogue ID
       dialArr = dialArr.filter(i => i.Dialogue === (newDialNo ? newDialNo : dialNo))
 
-      if ( newDialNo ) { // Is this a brand new dialogue?
+      if ( newDialNo ) { // Kai: Is this a brand new dialogue?
 
-          dialNo = newDialNo; // Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
-          stepNo = 1; // Start at the beginning
+          dialNo = newDialNo; // Kai: Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
+          stepNo = 1; // Kai: Start at the beginning
 
-      } else { // Handle user response to previous message. Find previous script step
+      } else { // Kai: Handle user response to previous message. Find previous script step
 
-        var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
+        var idx = dialArr.findIndex(i => i.Step == stepNo); // Kai: If undefined ...
 
-        if ( idx >= 0 ) { // this was the previous step
+        if ( idx >= 0 ) { // Kai: this was the previous step
 
-          var condjmpArr = dialArr[idx].CondJmp // If undefined ...
+          var condjmpArr = dialArr[idx].CondJmp // Kai: If undefined ...
           idx = condjmpArr.findIndex(i => (i.msg == receivedMsg));
 
           if (idx >= 0 ) {
@@ -234,65 +234,65 @@ function findResponse(receivedMsg, chatContext, callback) {
               } else {
 
                 multi = false;
-                stepNo = condjmpArr[idx].n // Process next step // If undefined .
+                stepNo = condjmpArr[idx].n // Kai: Process next step // If undefined .
 
               }
 
             } else {
 
-              stepNo = condjmpArr[idx].n // Process next step // If undefined ...
+              stepNo = condjmpArr[idx].n
 
             }
 
-          } // else stepNo is unchanged. Will repeat previous message automatically.
+          } // Kai: else stepNo is unchanged. Will repeat previous message automatically.
 
         } else {
 
           logger.error("Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!");
           response.Print = ERROR_TEXT;
-          error = 1; // END
+          error = 1; // Kai: END
 
         }
 
       }
 
-      // Find response to message
-      var idx = dialArr.findIndex(i => i.Step == stepNo); // If undefined ...
+      // Kai: Find response to message
+      var idx = dialArr.findIndex(i => i.Step == stepNo); // Kai: If undefined ...
 
-      if ( idx >= 0 ) { //  entry found
+      if ( idx >= 0 ) { // Kai: entry found
 
         msgRow = dialArr[idx] //
-        var condjmpArr = msgRow.CondJmp // If undefined ...
+        var condjmpArr = msgRow.CondJmp // Kai: If undefined ...
 
-        if ( !multi ) {
+        if ( !multi ) { // Only add response and answers if not using a dynamically create multiple choice elicitation response.
 
-          response.Print   = msgRow.Print; // Compile tags in msg
-          response.Answers = condjmpArr.map(a => a.msg); // Array of available answers
+          response.Print   = msgRow.Print; // Kai: Compile tags in msg
+          response.Answers = condjmpArr.map(a => a.msg); // Kai: Array of available answers
 
         }
 
         response.Media   = msgRow.Media;
         response.Action  = msgRow.Action;
 
-      } else { // Jump to unknown dialogue step. Terminate.
+      } else { // Kai: Jump to unknown dialogue step. Terminate.
 
         logger.error("Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!");
         response.Print = ERROR_TEXT;
-        error = 1; // END
+        error = 1; // Kai: END
 
       }
 
-      // Last response of dialogue?
+      // Kai: Last response of dialogue?
       if ( error === 1 || ( condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi ) ) {
 
-        chat = {} // Delete chat context, end of dialogue.
+        chat = {} // Kai: Delete chat context, end of dialogue.
 
-      } else { // Prepare next step of dialogue flow
+      } else { // Kai: Prepare next step of dialogue flow
 
-        // Update chat Context
+        // Kai: Update chat Context
         chat.lastMsgDialNo = dialNo
         chat.lastMsgStepNo = stepNo
-        chat.lastMsgTs = Math.round( +new Date() / 1000 ) // Timestamp
+        chat.lastMsgTs = Math.round( +new Date() / 1000 ) // Kai: Timestamp
 
         for ( const answer of response.Answers ) {
 
