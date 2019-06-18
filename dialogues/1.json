@@ -119,19 +119,81 @@
 		"Print": "Looking at the guidelines we have found the following information: \"Extract from NHS choices\": the following drugs should be considered as they reduce pain: [ext0.winning.*.bindings.A]. Do you know if you are allergic to or have had side effects from taking any of these?",
 		"CondJmp": [
 			{
-				"msg": "t_1",
 				"multi": "true",
-				"n": "1201"
-			},
-			{
-				"msg": "t_2",
-				"multi": "true",
-				"n": "1201"
-			},
-			{
-				"msg": "t_3",
-				"multi": "true",
-				"n": "1201"
+				"n": "1201",
+				"substitution": "[ext0.winning.*.bindings.A]",
+				"External": {
+					"URL": "http://localhost:5000/argengine/chatbot",
+					"Method": "POST",
+					"Body": [
+						{
+							"Key": "pid",
+							"Value": {
+								"Type": "context",
+								"Key": "user"
+							}
+						},
+						{
+							"Key": "sid",
+							"Value": {
+								"Type": "literal",
+								"Value": "1"
+							}
+						},
+						{
+							"Key": "keyname",
+							"Value": {
+								"Type": "literal",
+								"Value": "symptom"
+							}
+						},
+						{
+							"Key": "value",
+							"Value": {
+								"Type": "literal",
+								"Value": "backpain"
+							}
+						},
+						{
+							"Key": "pdata",
+							"Value": {
+								"Type": "external",
+								"URL": "http://localhost:3006/mine/get/bp",
+								"Method": "POST",
+								"Body": [
+									{
+										"Key": "pid",
+										"Value": {
+											"Type": "context",
+											"Key": "user"
+										}
+									},
+									{
+										"Key": "nn",
+										"Value": {
+											"Type": "literal",
+											"Value": 7
+										}
+									}
+								]
+							}
+						},
+						{
+							"Key": "expl",
+							"Value": {
+								"Type": "literal",
+								"Value": "1"
+							}
+						},
+						{
+							"Key": "filter",
+							"Value": {
+								"Type": "literal",
+								"Value": "aspt"
+							}
+						}
+					]
+				}
 			},
 			{
 				"msg": "None of them",
@@ -151,7 +213,7 @@
 		"Step": "1201",
 		"BranchLevel": "",
 		"Comment": "",
-		"Print": "Can we check your health record?",
+		"Print": "Can we check your health record? [responses]",
 		"CondJmp": [
 			{
 				"msg": "Yes",
