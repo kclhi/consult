@@ -19,7 +19,7 @@ class TestChatbot(Resource):
             query = { key: value for (key, value) in (params.items() + pdata_82_noalert.items()) }
 
         if name == 's3-1':
-            params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain', 'expl':1 }
+            params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain', 'expl':1, 'filter':'aspt' }
             query = { key: value for (key, value) in (params.items() + pdata_150_red.items()) }
 
         if name == 's3-2':

@@ -29,14 +29,20 @@ cd argumentation-engine
 (Optional) Initialise a virtual environment, and activate:
 
 ```
-virtualenv .venv
-. .venv/bin/activate
+virtualenv env
+. env/bin/activate
 ```
 
-Install dependencies:
+Install Python dependencies:
 
 ```
 pip install -r requirements.txt
+```
+
+Install OS dependencies:
+
+```
+sudo apt-get install python-dev graphviz libgraphviz-dev pkg-config
 ```
 
 ## Usage
@@ -85,7 +91,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/martinchapman/nokia-health/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/martinchapman/argumentation-engine/tags).
 
 ## Authors
 

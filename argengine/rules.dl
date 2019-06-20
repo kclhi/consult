@@ -10,7 +10,7 @@ goal(rhp) :- suffers_from(Patient,headache).
 % NHS recommendations
 % source: https://www.nhs.uk/conditions/nsaids/
 
-% we only keep the specific ones for backpain 
+% we only keep the specific ones for backpain
 action(ibuprofen) :- patient(Patient), goal(rp), not not_recommend(Patient,ibuprofen).
 action(naproxen) :- patient(Patient), goal(rp), not not_recommend(Patient,naproxen).
 %action(diclofenac) :- goal(rp).
@@ -20,7 +20,7 @@ action(naproxen) :- patient(Patient), goal(rp), not not_recommend(Patient,naprox
 %action(indomethacin) :- goal(rp).
 %action(highdose_aspirin) :- goal(rp).
 
-% we only keep the specific ones for headache 
+% we only keep the specific ones for headache
 action(paracetamol) :- patient(Patient), goal(rhp), not not_recommend(Patient,paracetamol).
 action(ibuprofen) :- patient(Patient), goal(rhp), not not_recommend(Patient,ibuprofen).
 
