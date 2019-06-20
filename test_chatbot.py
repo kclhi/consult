@@ -40,6 +40,14 @@ class TestChatbot(Resource):
         
         if name == 's7': # symptom headache
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'3','keyname':'symptom','value':'headache', 'expl':1, 'filter':'aspt'}
-            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }            
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }     
+
+        if name == 's8': # as a follow up to s1, remove ibuprofen from the results
+            params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'ibuprofen', 'expl':1, 'filter':'aspt'}
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }          
+
+        if name == 's9': # as a follow up to s1, remove ibuprofen and naproxen from the results
+            params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'ibuprofen,naproxen', 'expl':1, 'filter':'aspt'}
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }          
 
         return ChatBot.getArgumenationResponse(query);

@@ -11,8 +11,8 @@ goal(rhp) :- suffers_from(Patient,headache).
 % source: https://www.nhs.uk/conditions/nsaids/
 
 % we only keep the specific ones for backpain 
-action(ibuprofen) :- goal(rp).
-action(naproxen) :- goal(rp).
+action(ibuprofen) :- patient(Patient), goal(rp), not not_recommend(Patient,ibuprofen).
+action(naproxen) :- patient(Patient), goal(rp), not not_recommend(Patient,naproxen).
 %action(diclofenac) :- goal(rp).
 %action(celecoxib) :- goal(rp).
 %action(mefenamic_acid) :- goal(rp).
@@ -21,8 +21,8 @@ action(naproxen) :- goal(rp).
 %action(highdose_aspirin) :- goal(rp).
 
 % we only keep the specific ones for headache 
-action(paracetamol) :- goal(rhp).
-action(ibuprofen) :- goal(rhp).
+action(paracetamol) :- patient(Patient), goal(rhp), not not_recommend(Patient,paracetamol).
+action(ibuprofen) :- patient(Patient), goal(rhp), not not_recommend(Patient,ibuprofen).
 
 % goal definition backpain
 promotes(ibuprofen,rp).
