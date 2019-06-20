@@ -73,8 +73,8 @@ touch .env
 Add the following information to this environment file using a text editor:
 
 ```
-USERNAME=[FHIRServerUsername]
-PASSWORD=[FHIRServerPassword]
+FHIR_USERNAME=[FHIRServerUsername]
+FHIR_PASSWORD=[FHIRServerPassword]
 ```
 
 Where [FHIRServerUsername] and [FHIRServerPassword] are replaced with their real values.
@@ -85,15 +85,44 @@ Run server:
 npm start
 ```
 
-The server runs by default on port 3002. Visit localhost:3002/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
-
-## Running the tests
-
--
+The server runs by default on port 3005. Visit localhost:3005/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
 
 ## Deployment
 
-Running the software on a server is the same as running it locally: clone and run the project on a remote machine. One can make local changes, push them and then pull them on the remote server.
+Deployment is via [Docker](https://docs.docker.com/compose/install/), and includes containers for this application, a production SQL database and an optional reverse proxy. If using the reverse proxy, fill in the appropriate [configuration](proxy/nginx.conf).
+
+Build these containers:
+
+```
+docker-compose build
+```
+
+Run these containers:
+
+```
+docker-compose up
+```
+
+(Optional) Run without proxy:
+
+```
+docker-compose up --scale proxy=0
+```
+
+Different docker-compose files exist to accomodate different service configurations.
+
+### Custom certs
+
+To use custom certificates for communication with this service's proxy, reference them in the proxy's [Dockerfile](proxy/Dockerfile). The [gen-domain-cert](proxy/certs/gen-domain-cert.sh) script can be used to generate custom certs (e.g. 'danvers.crt') using a CA root cert (e.g. 'consult.crt') and accompanying keys. If distributing an image outside of an organisation, edit [Dockerfile](proxy/Dockerfile) and [docker-compose](docker-compose.yml) to mount a volume on the host containing the certs instead, so that images are not transferred with the certs inside then.
+
+## Running the tests
+
+Tests are run via Docker:
+
+```
+docker-compose -f docker-compose.test.yml build
+docker-compose -f docker-compose.test.yml up
+```
 
 ## Built With
 

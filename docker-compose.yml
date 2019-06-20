@@ -1,0 +1,114 @@
+version: "3.7"
+
+services:
+
+  # Uncomment for service discovery:
+
+  #consul-service:
+    #image: gliderlabs/consul-server
+    #command: "--bootstrap"
+    #ports:
+      #- 8500:8500
+    #restart: "no"
+
+  #registrator:
+    #image: gliderlabs/registrator
+    #command: "consul://consul-service:8500"
+    #volumes:
+      #- /var/run/docker.sock:/tmp/docker.sock
+    #links:
+      #- consul-service
+    #depends_on:
+      #- consul-service
+    #restart: "no"
+
+  proxy:
+    build:
+      context: ./proxy
+    depends_on:
+      - webapp
+      - openldap
+    # Note: A 'wait for it' for the webapp makes extra sure the message-passer is available for reference from the message-passer location, but this results in a circular dependency between proxy and webapp, so omitted for now, and rely on upstream variable reference hack in message-passer location definition.
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '443:443'
+      - '80:80'
+      - '389:389'
+      - '636:636'
+
+  webapp:
+    build:
+      context: .
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_template-server_1:8080", "--", "./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "npm", "start"]
+    depends_on:
+      - template-server
+    environment:
+      # Under single docker machine (i.e. single host) use allocated hostname of single proxy handling all routing (e.g. device-integration_nokia_proxy_1), otherwise use machine (host) addresses.
+      - FHIR_SERVER_ADDRESS=romanova
+      - LDAP_ADDRESS=danvers
+      - DNC_ADDRESS=danvers
+      - PROCESSING_ADDRESS=maximoff
+      - NODE_EXTRA_CA_CERTS=/consult.crt
+    extra_hosts:
+      # If server at IP rather than known host, name on server's certificate : server IP.
+      romanova: 10.0.1.196
+      danvers: 10.0.1.10
+      maximoff: 10.0.1.86
+
+  template-server:
+    image: big-kcl/template-server:latest
+    #ports:
+      #- 8080:8080
+    depends_on:
+      #- consul-service
+      - neo4j
+
+  neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+      # Minimise memory requirements:
+      - NEO4J_dbms_memory_pagecache_size=200M
+      - NEO4J_dbms_memory_heap_initial__size=200M
+      - NEO4J_dbms_memory_heap_max__size=200M
+    volumes:
+      - dnc_volume:/data
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    depends_on:
+      - openldap
+    container_name: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_SERVER_PATH=/users
+      - PHPLDAPADMIN_HTTPS=false
+      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+
+  openldap:
+    build:
+      context: ldap
+    image: consult-kcl/openldap:latest
+    command: --loglevel debug
+    environment:
+      - LDAP_TLS_CRT_FILENAME=danvers.crt
+      - LDAP_TLS_KEY_FILENAME=danvers.key
+      - LDAP_TLS_CA_CRT_FILENAME=consult.crt
+      - LDAP_ORGANISATION=consult
+      - LDAP_DOMAIN=consult.kcl.ac.uk
+      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
+      - LDAP_ADMIN_PASSWORD=root
+      - LDAP_TLS_CIPHER_SUITE=NORMAL
+      - LDAP_TLS_VERIFY_CLIENT=allow
+    volumes:
+      - ldap_volume:/var/lib/ldap
+      - ldap_volume:/etc/ldap/slapd.d
+
+volumes:
+  dnc_volume:
+  ldap_volume:
+
+networks:
+  default:
+    external:
+      name: dnc_network

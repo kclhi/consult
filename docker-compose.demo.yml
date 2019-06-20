@@ -1,0 +1,89 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    depends_on:
+      - webapp
+      - openldap
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '3005:443'
+      - '389:389'
+      - '636:636'
+
+  webapp:
+    build:
+      context: .
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_template-server_1:8080", "--", "./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "npm", "start"]
+    depends_on:
+      - template-server
+    environment:
+      - FHIR_SERVER_ADDRESS=romanova:8080
+      - LDAP_ADDRESS=danvers
+      - DNC_ADDRESS=danvers:3005
+      - PROCESSING_ADDRESS=maximoff:3006
+      - NODE_EXTRA_CA_CERTS=/consult.crt
+    extra_hosts:
+      romanova: 172.20.0.1
+      danvers: 172.21.0.1
+      maximoff: 172.22.0.1
+
+  template-server:
+    image: big-kcl/template-server:latest
+    depends_on:
+      - neo4j
+
+  neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+    volumes:
+      - dnc_volume:/data
+    ports:
+      - 7474:7474
+      - 7687:7687
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    depends_on:
+      - openldap
+    container_name: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_SERVER_PATH=/users
+      - PHPLDAPADMIN_HTTPS=false
+      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+    ports:
+      - 8082:80
+      - 8083:443
+      
+  openldap:
+    build:
+      context: ldap
+    image: consult-kcl/openldap:latest
+    command: --loglevel debug
+    environment:
+      - LDAP_TLS_CRT_FILENAME=danvers.crt
+      - LDAP_TLS_KEY_FILENAME=danvers.key
+      - LDAP_TLS_CA_CRT_FILENAME=consult.crt
+      - LDAP_ORGANISATION=consult
+      - LDAP_DOMAIN=consult.kcl.ac.uk
+      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
+      - LDAP_ADMIN_PASSWORD=root
+      - LDAP_TLS_CIPHER_SUITE=NORMAL
+      - LDAP_TLS_VERIFY_CLIENT=allow
+    volumes:
+      - ldap_volume:/var/lib/ldap
+      - ldap_volume:/etc/ldap/slapd.d
+
+volumes:
+  dnc_volume:
+  ldap_volume:
+
+networks:
+  default:
+    external:
+      name: dnc_network

@@ -9,3 +9,12 @@ dotenv
 async
 json
 apidoc
+mocha
+chai
+chai-http
+uuid
+config
+winston
+ldapjs
+password-generator
+fs

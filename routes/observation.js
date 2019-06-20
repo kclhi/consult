@@ -3,241 +3,340 @@ const router = express.Router();
 const request = require('request');
 const async = require('async');
 const fs = require('fs');
+const uuidv1 = require('uuid/v1');
+const config = require('config');
+const logger = require('../config/winston');
 
 const provenance = require('../lib/provenance');
-const config = require('../lib/config');
+const patient = require('../lib/patient');
 const utils = require('../lib/utils');
+const fhir = require('../lib/fhir');
 
-var lastAlert;
+let lastAlert = 0;
 
-function populateProvenanceTemplateBP(pid, code, value, callback) {
+function populateProvenanceTemplate(type, pid, code, value, callback) {
 
-  var fragment = fs.readFileSync('provenance-templates/template-bp-fragment.json', 'utf8');
-  fragment = fragment.replace("[pid]", pid);
-  fragment = fragment.replace("[company]", "Nokia");
-  fragment = fragment.replace("[code]", code);
-  fragment = fragment.replace("[value]", value);
+  var document = fs.readFileSync('provenance-templates/template-sensor-fragment.json', 'utf8');
+  document = document.replace("[pid]", pid);
+  document = document.replace("[company]", config.get('companies.' + type));
+  document = document.replace("[code]", code);
+  document = document.replace("[value]", value);
 
-  const ID = pid + "Nokia" + code + value + Date.now();
-  provenance.add(ID, fragment, "temp-0", "provenance-templates/template-bp.json", function(response) { callback(response); });
+  provenance.add(uuidv1(), document, "template-sensor", "provenance-templates/template-sensor.json", function(response) { callback(response); });
 
 }
 
-function getPatientStats(patientID, callback) {
+function getFHIRServer(query, params, callback) {
 
-  patientHeaders = [];
-  patientRow = [];
+  utils.getFHIRServer(query, params, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
-  utils.callFHIRServer("Patient/" + patientID, "", function(patientData) {
+}
+
+function sendAlert(response, patientID, dialogueID, alertField, alertValue, readingCode, callback) {
+
+  var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
+
+  if ( lastAlert ) minutesSinceLastAlert = Math.floor(((new Date().getTime() - lastAlert.getTime()) / 1000) / 60);
+
+  // TODO: Miner response is oddly nested.
+  if ( response.body && response.body[0] && ( minerResponse = utils.JSONParseWrapper(response.body[0]) ) ) {
+
+    if ( ( alertFieldData = utils.validPath(minerResponse, ["0", alertField]) ) && ( reading = utils.validPath(minerResponse, ["0", readingCode]) ) && ( alertFieldData == alertValue ) && ( minutesSinceLastAlert > config.get('dialogue_manager.MAX_ALERT_PERIOD') ) ) {
+
+      var dialogueParams = {};
+      dialogueParams.ALERT_READING = reading;
+
+      request({
+
+        method: "POST",
+        url: config.get('dialogue_manager.URL') + "/initiate",
+        headers: {
+
+         "Authorization": "Basic " + new Buffer(config.get('credentials.USERNAME') + ":" + config.get('credentials.PASSWORD')).toString("base64")
+
+        },
+        json: {
+
+         "dialogueID": dialogueID,
+         "dialogueParams": dialogueParams,
+         "username": patientID,
+
+        },
+        requestCert: true
+
+      },
+      function (error, response, body) {
+
+        if (!error && ( response && response.statusCode == 200 ) ) {
+
+          logger.info("Message passer instructed dialogue manager to initiate alert (dialogue: " + dialogueID + ") with user.")
+          lastAlert = new Date();
+          callback(200);
+
+        } else {
+
+          logger.error("Could not contact the dialogue manager. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
+          callback(400);
+
+        }
+
+      });
+
+    } else {
+
+      logger.info("Did not alert on miner response. Alert field: " + alertField + ". Data in alert field: " + alertFieldData + ". Alert value: " + alertValue + ". Minutes since last alert: " + minutesSinceLastAlert + ". Max alert period: " + config.get('dialogue_manager.MAX_ALERT_PERIOD') + ". Reading: " + reading);
+      callback(200);
+
+    }
+
+  } else {
+
+    logger.error("Could not parse response from data miner.");
+    callback(400);
 
     patientHeaders.push("birthDate");
     patientRow.push(JSON.parse(patientData).birthDate);
 
-    patientHeaders.push("ethnicity");
-    patientRow.push(JSON.parse(patientData).extension[0].extension[0].valueCoding.display);
+}
 
-    utils.callFHIRServer("MedicationDispense", "subject=" + patientID, function(medicationDispenseData) {
+function addDateRows(resource, row) {
 
-      // TODO: Remove async.
-      async.each(JSON.parse(medicationDispenseData).entry, function(medicationDispense, callback) {
-
-        var medication = 1;
-
-        utils.callFHIRServer(medicationDispense.resource.medicationReference.reference, "", function(medicationData) {
-
-          patientHeaders.push("medication" + medication)
-          patientRow.push(JSON.parse(medicationData)['code']['coding'][0].display);
-          medication += 1;
-          callback();
-
-        });
-
-      }, function(medicationDispenseDataError) {
-
-        utils.callFHIRServer("Condition", "subject=" + patientID, function(conditionData) {
-
-          var problem = 1;
-
-          JSON.parse(conditionData).entry.forEach(function(condition) {
-
-            patientHeaders.push("problem" + problem)
-            problem += 1;
-            patientRow.push(condition.resource.code.coding[0].display);
-
-          });
-
-          callback(patientHeaders, patientRow);
-
-        });
-
-      });
-
-    });
-
-  });
+  resourceTime = new Date(resource.effectiveDateTime);
+  row.push(resourceTime.toISOString().split('T')[0]);
+  row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
+  row.push(resourceTime.toISOString().split('T')[1].substring(0, resourceTime.toISOString().split('T')[1].indexOf(".")));
+  row.push("\"" + utils.dayOfWeekAsString(resourceTime.getDay()) + "\"");
+  return row;
 
 }
 
-function sendAlert(response, alertField, alertValue, callback) {
-
-  var minutesSinceLastAlert = Number.MAX_SAFE_INTEGER;
-
-  if ( lastAlert ) {
-
-    minutesSinceLastAlert = Math.floor(((new Date().getTime() - lastAlert.getTime()) / 1000) / 60);
-
-  }
-
-  // TODO: Miner response is oddly nested.
-  minerResponse = JSON.parse(response.body[0]);
-
-  // TODO: Generic term that indicates the issue, and potentially indicates which dialogue to start.
-  if ( response.body && minerResponse[0][alertField].indexOf(alertValue) > -1 && minutesSinceLastAlert > config.MAX_ALERT_PERIOD) {
-
-    request({
-      method: "POST",
-      url: config.DIALOGUE_MANAGER_URL + "/dialogue/initiate",
-      headers: {
-       "Authorization": "Basic " + new Buffer(config.USERNAME + ":" + config.PASSWORD).toString("base64")
-      },
-      json: {
-       // TODO: Something from the data miner response that indicates which dialogue to initiate.
-       "dialogueID": "2",
-       // TODO: Assume username on chat is the same as Patient ID in FHIR or query a service storing a mapping between the two.
-       "username": "user",
-      }
-     },
-     function (error, response, body) {
-
-       console.log("Dialogue manager: " + response.statusCode);
-
-       if (!error && response.statusCode == 200) {
-
-          console.log(response.statusCode);
-          lastAlert = new Date();
-          callback(200);
-
-       } else {
-
-          console.log(error);
-          callback(400);
-
-       }
-
-     });
-
-   } else {
-
-     callback(200);
-
-   }
-
-}
-
-function processObservation(req, res, callback) {
+function processObservation(req, res, type, callback) {
 
   observationHeaders = [];
   observationRow = [];
 
-  const patientID = req.body.subject.reference.replace("Patient/", "");
+  if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-  // Get patient stats
-  observationHeaders.push("pid");
-  observationRow.push(patientID);
+    patientID = patientID.replace("Patient/", "");
 
-  getPatientStats(patientID, function(patientHeaders, patientRow) {
+    // Get patient stats
+    observationHeaders.push("pid");
+    observationRow.push(patientID);
 
-    // Get observation stats
-    req.body.component.forEach(function(measure) {
+    patient.getPatientStats(patientID, function(patientHeaders, patientRow) {
 
-      // 'c' added (code) as in R colum name references cannot be numerical (bad practice too).
-      const code = "c" + measure["code"].coding[0].code;
-      const value = measure["valueQuantity"].value;
-      observationHeaders.push(code);
-      observationRow.push(value);
-      populateProvenanceTemplateBP(patientID, code, value, function(response) {});
+      if ( patientHeaders.length > 0 && patientRow.length > 0 ) {
+
+        if ( measures = utils.validPath(req, ["body", "component"]) ) {
+
+          // Get observation stats
+          async.eachSeries(measures, function(measure, done) {
+
+            // 'c' prefix added (code) as in R colum name references cannot be numerical (bad practice too). Any hypens also removed.
+            const code = "c" + measure["code"].coding[0].code.replace("-", "h");
+            const value = measure["valueQuantity"].value;
+            observationHeaders.push(code);
+            observationRow.push(value);
+
+            if ( config.get('provenance_server.TRACK') ) {
+
+              populateProvenanceTemplate(type, patientID, code, value, function(body) {
+
+                logger.info("Added provenance entry.");
+                done();
+
+        });
+
+            } else {
+
+              logger.warn("Not tracking provenance.");
+              done();
+
+            }
+
+          }, function(provenanceError) {
+
+            observationHeaders.push("datem");
+            observationHeaders.push("date.month");
+            observationHeaders.push("time");
+            observationHeaders.push("weekday");
+            observationRow = addDateRows(req.body, observationRow);
+            callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+          });
+
+        } else {
+
+          utils.noParse("measures.", ["body", "component"], req);
+          callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+        }
+
+      } else {
+
+        logger.error("Did not receive patient information.");
+        callback(observationHeaders, observationRow, patientHeaders, patientRow);
+
+      }
 
     });
 
+  } else {
+
+    utils.noParse("patient ID", ["body", "subject", "reference"], req);
     callback(observationHeaders, observationRow, patientHeaders, patientRow);
 
-  });
+  }
 
 }
 
 router.put('/:id', function(req, res, next) {
 
   // Use code to determine type of observation.
-  if ( req.body.code.coding[0].code == config.HR_CODE ) {
+  if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.HR_CODE') ) {
 
-    processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
+    logger.info("Received HR value.");
 
-      request.post(config.DATA_MINER_URL + "/check/hr", {
-        json: {
-          "hr": observationHeaders.toString() + "\n" + observationRow.toString(),
-          "nn": "7",
-          "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+    processObservation(req, res, "HR", function(observationHeaders, observationRow, patientHeaders, patientRow) {
+
+      if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
+
+        request.post(config.get('data_miner.URL') + "/check/hr", {
+
+          json: {
+
+            "hr": observationHeaders.toString() + "\n" + observationRow.toString(),
+            "nn": "7",
+            "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+
+          },
+          requestCert: true
+
         },
-      },
-      function (error, response, body) {
+        function (error, response, body) {
 
-        console.log("Data miner: " + response.statusCode);
+          if ( !error && ( response && response.statusCode == 200 ) ) {
 
-        if (!error && response.statusCode == 200) {
+            logger.info("Contacted data miner for analysis of heart rate.");
+            res.sendStatus(200);
 
-          console.log(response);
+          } else {
 
-        } else {
+            logger.error("Could not contact the data miner: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            res.sendStatus(400);
 
-          console.log(error);
-          res.sendStatus(400);
+          }
 
-        }
+        });
 
-      });
+      } else {
+
+        logger.error("Missing observation or patient headers.")
+        res.sendStatus(400);
+
+      }
 
     });
 
-  } else if (req.body.code.coding[0].code == config.BP_CODE) {
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.BP_CODE') ) {
 
-    processObservation(req, res, function(observationHeaders, observationRow, patientHeaders, patientRow) {
+    logger.info("Received BP value.");
 
-      request.post(config.DATA_MINER_URL + "/check/bp", {
-        json: {
-          "bp": observationHeaders.toString() + "\n" + observationRow.toString(),
-          "nn": "7",
-          "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+    processObservation(req, res, "BP", function(observationHeaders, observationRow, patientHeaders, patientRow) {
+
+      if ( observationHeaders.length > 0 && observationRow.length > 0 && patientHeaders.length > 0 && patientRow.length > 0 ) {
+
+        request.post(config.get('data_miner.URL') + "/check/bp", {
+
+          json: {
+
+            "bp": observationHeaders.toString() + "\n" + observationRow.toString(),
+            "nn": "7",
+            "ehr": patientHeaders.toString() + "\n" + patientRow.toString()
+
+          },
+          requestCert: true
+
         },
-      },
-      function (error, response, body) {
+        function (error, response, body) {
 
-        console.log("Data miner: " + response.statusCode);
+          if ( !error && ( response && response.statusCode < 400 ) ) {
 
-        if (!error && response.statusCode == 200) {
+            logger.info("Contacted data miner for analysis of blood pressure.");
 
-          sendAlert(response, "bp.trend", "Raised", function(status) {
+            if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-            res.sendStatus(status);
+              sendAlert(response, patientID.replace("Patient/", ""), "2-1", "res.c271649006", ["Amber Flag"], "c271649006", function(sbpStatus) {
 
-          });
+                sendAlert(response, patientID.replace("Patient/", ""), "2-1", "res.c271650006", ["Amber Flag"], "c271650006", function(dbpStatus) {
 
-        } else {
+                  sendAlert(response, patientID.replace("Patient/", ""), "2-2", "res.c271649006", ["Red Flag"], "c271649006", function(sbpStatus) {
 
-          console.log(error);
-          res.sendStatus(400);
+                    sendAlert(response, patientID.replace("Patient/", ""), "2-2", "res.c271650006", ["Red Flag"], "c271650006", function(dbpStatus) {
 
-        }
+                      sendAlert(response, patientID.replace("Patient/", ""), "2-3", "res.c271649006", ["Double Red Flag"], "c271649006", function(sbpStatus) {
 
-      });
+                        sendAlert(response, patientID.replace("Patient/", ""), "2-3", "res.c271650006", ["Double Red Flag"], "c271650006", function(dbpStatus) {
+
+                          res.sendStatus(Math.min(sbpStatus, dbpStatus));
+
+                        });
+
+                      });
+
+                    });
+
+router.put('/:id', function(req, res, next) {
+
+                });
+
+              });
+
+            } else {
+
+              utils.noParse("patient ID", ["body", "subject", "reference"], req);
+              res.sendStatus(400);
+
+            }
+
+          } else {
+
+            logger.error("Could not contact data miner: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ));
+            res.sendStatus(400);
+
+          }
+
+        });
+
+      } else {
+
+        logger.error("Missing observation or patient headers.")
+        res.sendStatus(400);
+
+      }
 
     });
+
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.ECG_CODE') ) {
+
+    // Process ECG.
+    res.sendStatus(200);
+
+  } else if ( utils.validPath(req, ["body", "code", "coding", "0", "code"]) === config.get('terminology.MOOD_CODE') ) {
+
+    res.sendStatus(200);
+
+  } else {
+
+    utils.noParse("observation type", ["body", "code", "coding", "0", "code"], req);
+    res.sendStatus(400);
 
   }
 
 });
 
 /**
- * @api {get} /:patientID/:code/:start/:end Request User information
+ * @api {get} /:patientID/:code/:start/:end Request patient vitals (Observation) information
  * @apiName GetObservations
  * @apiGroup Observations
  *
@@ -250,63 +349,121 @@ router.put('/:id', function(req, res, next) {
  */
 router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
-  utils.callFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
+  if ( req.params && req.params.patientID && req.params.code && req.params.start && req.params.end ) {
 
-    header = [];
-    rows = "";
+    // TODO: Ensure highest count.
+    getFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
 
-    if ( data && JSON.parse(data).entry ) {
+      header = [];
+      rows = "";
 
-      JSON.parse(data).entry.forEach(function(resource) {
+      if ( data && ( parsedData = utils.JSONParseWrapper(data) ) && parsedData.entry ) {
 
-        components = [];
+        parsedData.entry.forEach(function(resource) {
 
-        if ( resource.resource.component ) {
+          components = [];
 
-          components = resource.resource.component;
+          // Handle single vs. multiple responses.
+          if ( utils.validPath(resource, ["resource", "component"]) ) {
 
-        } else if ( resource.resource.valueQuantity ) {
+            components = resource.resource.component;
 
-          components.push(resource.resource);
+          } else if ( utils.validPath(resource, ["resource", "valueQuantity"]) || utils.validPath(resource, ["resource", "valueSampledData"]) ) {
 
-        }
+            components.push(resource.resource);
 
-        resourceTime = new Date(resource.resource.effectiveDateTime);
+          }
 
-        row = [];
+          row = [];
 
-        components.forEach(function(component) {
+          components.forEach(function(component) {
 
-          var code = component.code.coding[0].code;
-          var formattedCode = "\"c" + code.replace("-", "_") + "\"";
-          var value = component.valueQuantity.value;
+            var code, valueQuantity, valueSampledData;
 
-          if ( !header.includes(formattedCode) ) header.push(formattedCode);
+            if ( code = utils.validPath(component, ["code", "coding", "0", "code"]) ) {
 
-          row.push(value);
+              // Because if quantity if 0, will be matched as false without strict equality.
+              if ( ( ( valueQuantity = utils.validPath(component, ["valueQuantity", "value"]) ) !== false ) || ( ( valueSampledData = utils.validPath(component, ["valueSampledData", "data"]) ) !== false ) ) {
+
+                var formattedCode = "\"c" + code.replace("-", "h") + "\"";
+
+                if ( !header.includes(formattedCode) ) header.push(formattedCode);
+
+                row.push("\"" + ( ( valueQuantity && valueQuantity !== false ) ? valueQuantity : valueSampledData ) + "\"");
+
+              } else {
+
+                if (!valueQuantity) utils.noParse("sensor code (input " + req.params.code + ")", ["valueQuantity", "value"], component);
+                if (!valueSampledData) utils.noParse("sensor code (input " + req.params.code + ")", ["valueSampledData", "data"], component);
+
+              }
+
+            } else {
+
+              utils.noParse("sensor value (input " + req.params.code + ")", ["code", "coding", "0", "code"], component);
+
+            }
+
+          });
+
+          if ( resource.resource ) {
+
+            row = addDateRows(resource.resource, row);
+
+          } else {
+
+            logger.error("Could not parse resource." + ( ( resource.resource && typeof resource.resource === "object" ) ? JSON.stringify(resource.resource).substring(0, 300) : resource.resource));
+
+          }
+
+          rows += row + "\n";
 
         });
 
-        row.push(resourceTime.toISOString().split('T')[0]);
-        row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
-        row.push("\"" + utils.dayOfWeekAsString(resourceTime.getDay()) + "\"");
-        rows += row + "\n";
+        header.push("\"datem\"");
+        header.push("\"date.month\"");
+        header.push("\"time\"");
+        header.push("\"weekday\"\n");
+        res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
 
-      });
+      } else {
 
-      header.push("\"datem\"");
-      header.push("\"date.month\"");
-      header.push("\"weekday\"\n");
+        logger.error("Could not parse FHIR server response: " + ( data ? data : ""));
+        res.sendStatus(400);
+
+      }
 
       res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
 
     } else {
 
-      res.sendStatus(404);
+  } else {
 
-    }
+    res.sendStatus(400);
 
-  });
+  }
+
+});
+
+function createObservationResource(template, data, callback) {
+
+  fhir.createObservationResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), template, data, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
+
+}
+
+/**
+ * @api {post} /Observation/add
+ * @apiName Add
+ * @apiGroup Observations
+ *
+ * @apiParam {String}
+ * @apiParam {String}
+ *
+ * @apiSuccess {String}
+ */
+router.post('/add', function(req, res, next) {
+
+  createObservationResource("mood", req.body, function(status) { res.sendStatus(status); });
 
 });
 
