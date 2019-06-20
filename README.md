@@ -73,8 +73,8 @@ touch .env
 Add the following information to this environment file using a text editor:
 
 ```
-USERNAME=[FHIRServerUsername]
-PASSWORD=[FHIRServerPassword]
+FHIR_USERNAME=[FHIRServerUsername]
+FHIR_PASSWORD=[FHIRServerPassword]
 ```
 
 Where [FHIRServerUsername] and [FHIRServerPassword] are replaced with their real values.
