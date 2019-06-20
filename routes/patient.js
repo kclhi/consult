@@ -113,7 +113,7 @@ function addUser(username, password, callback) {
  * @apiName GetPassword
  * @apiGroup Register
  *
- * @apiParam {String} id System ID supplied in exachange for first token supplied upon prvovision of NHS number.
+ * @apiParam {String} id System ID supplied in exachange for first token supplied upon provision of NHS number.
  * @apiParam {String} token Token supplied upon issue of system ID.
  *
  * @apiSuccess {String} Confirmation of ID and newly generated password.

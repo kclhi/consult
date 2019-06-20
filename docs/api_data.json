@@ -1,5 +1,77 @@
 [
   {
+    "type": "post",
+    "url": "/ClinicalImpression/add",
+    "title": "Add new ClinicalImpression resource (e.g. GP notes).",
+    "name": "Add",
+    "group": "ClinicalImpressions",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Body",
+            "description": "<p>ClinicalImpression resource.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Confirmation",
+            "description": "<p>Resource added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/clinical-impression.js",
+    "groupTitle": "ClinicalImpressions"
+  },
+  {
+    "type": "post",
+    "url": "/Observation/add",
+    "title": "Add new Observation resource (e.g. patient mood).",
+    "name": "Add",
+    "group": "Observations",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Observation",
+            "description": "<p>resource.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Resource",
+            "description": "<p>added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/observation.js",
+    "groupTitle": "Observations"
+  },
+  {
     "type": "get",
     "url": "/:patientID/:code/:start/:end",
     "title": "Request patient vitals (Observation) information",
@@ -80,6 +152,42 @@
     "groupTitle": "Patient"
   },
   {
+    "type": "post",
+    "url": "/QuestionnaireResponse/add",
+    "title": "Add new QuestionnaireResponse resource (e.g. PHQ9 depression screening responses).",
+    "name": "Add",
+    "group": "QuestionnaireResponses",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Body",
+            "description": "<p>QuestionnaireResponse resource.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Confirmation",
+            "description": "<p>Resource added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/questionnaire-response.js",
+    "groupTitle": "QuestionnaireResponses"
+  },
+  {
     "type": "get",
     "url": "/register/:id/:token",
     "title": "Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.",
@@ -93,7 +201,7 @@
             "type": "String",
             "optional": false,
             "field": "id",
-            "description": "<p>System ID supplied in exachange for first token supplied upon prvovision of NHS number.</p>"
+            "description": "<p>System ID supplied in exachange for first token supplied upon provision of NHS number.</p>"
           },
           {
             "group": "Parameter",

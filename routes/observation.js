@@ -452,14 +452,13 @@ function createObservationResource(template, data, callback) {
 }
 
 /**
- * @api {post} /Observation/add
+ * @api {post} /Observation/add Add new Observation resource (e.g. patient mood).
  * @apiName Add
  * @apiGroup Observations
  *
- * @apiParam {String}
- * @apiParam {String}
+ * @apiParam {String} Observation resource.
  *
- * @apiSuccess {String}
+ * @apiSuccess {String} Resource added.
  */
 router.post('/add', function(req, res, next) {
 

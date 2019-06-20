@@ -12,14 +12,13 @@ function createQuestionnaireResponseResource(template, data, callback) {
 }
 
 /**
- * @api {post} /QuestionnaireResponse/add
+ * @api {post} /QuestionnaireResponse/add Add new QuestionnaireResponse resource (e.g. PHQ9 depression screening responses).
  * @apiName Add
  * @apiGroup QuestionnaireResponses
  *
- * @apiParam {String}
- * @apiParam {String}
+ * @apiParam {String} Body QuestionnaireResponse resource.
  *
- * @apiSuccess {String}
+ * @apiSuccess {String} Confirmation Resource added.
  */
 router.post('/add', function(req, res, next) {
 

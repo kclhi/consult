@@ -12,14 +12,13 @@ function createClinicalImpression(template, data, callback) {
 }
 
 /**
- * @api {post} /ClinicalImpression/add
+ * @api {post} /ClinicalImpression/add Add new ClinicalImpression resource (e.g. GP notes).
  * @apiName Add
  * @apiGroup ClinicalImpressions
  *
- * @apiParam {String}
- * @apiParam {String}
+ * @apiParam {String} Body ClinicalImpression resource.
  *
- * @apiSuccess {String}
+ * @apiSuccess {String} Confirmation Resource added.
  */
 router.post('/add', function(req, res, next) {
 
