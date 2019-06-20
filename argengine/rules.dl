@@ -5,6 +5,7 @@ a(aspt([goal(G), action(A), promotes(A,G)],action(A))) :- goal(G), action(A), pr
 
 % nhs painkillers guideline
 goal(rp) :- suffers_from(Patient,backpain).
+goal(rhp) :- suffers_from(Patient,headache).
 
 % NHS recommendations
 % source: https://www.nhs.uk/conditions/nsaids/
@@ -19,7 +20,11 @@ action(naproxen) :- goal(rp).
 %action(indomethacin) :- goal(rp).
 %action(highdose_aspirin) :- goal(rp).
 
-% goal definition
+% we only keep the specific ones for headache 
+action(paracetamol) :- goal(rhp).
+action(ibuprofen) :- goal(rhp).
+
+% goal definition backpain
 promotes(ibuprofen,rp).
 promotes(naproxen,rp).
 %promotes(diclofenac,rp).
@@ -28,6 +33,10 @@ promotes(naproxen,rp).
 %promotes(etoricoxib,rp).
 %promotes(indomethacin,rp).
 %promotes(highdose_aspirin,rp).
+
+% goal definition headache
+promotes(paracetamol,rhp).
+promotes(ibuprofen,rhp).
 
 % question semantics
 arg(Q) :- ask(Q,X).
