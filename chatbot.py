@@ -60,6 +60,8 @@ class ChatBot(Resource):
         if str(keyname) == 'symptom':
             if str(value) == 'backpain':
                 query = 'suffers_from('+pid+',backpain).\n'
+            if str(value) == 'headache':
+                query = 'suffers_from('+pid+',headache).\n'
         elif str(keyname) == 'preference':
             v1,v2 = str(value).split(',')
             query = 'arg(preferred('+v1+','+v2+')).\n'
