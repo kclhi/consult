@@ -8,24 +8,26 @@ goal(rp) :- suffers_from(Patient,backpain).
 
 % NHS recommendations
 % source: https://www.nhs.uk/conditions/nsaids/
+
+% we only keep the specific ones for backpain 
 action(ibuprofen) :- goal(rp).
 action(naproxen) :- goal(rp).
-action(diclofenac) :- goal(rp).
-action(celecoxib) :- goal(rp).
-action(mefenamic_acid) :- goal(rp).
-action(etoricoxib) :- goal(rp).
-action(indomethacin) :- goal(rp).
-action(highdose_aspirin) :- goal(rp).
+%action(diclofenac) :- goal(rp).
+%action(celecoxib) :- goal(rp).
+%action(mefenamic_acid) :- goal(rp).
+%action(etoricoxib) :- goal(rp).
+%action(indomethacin) :- goal(rp).
+%action(highdose_aspirin) :- goal(rp).
 
 % goal definition
 promotes(ibuprofen,rp).
 promotes(naproxen,rp).
-promotes(diclofenac,rp).
-promotes(celecoxib,rp).
-promotes(mefenamic_acid,rp).
-promotes(etoricoxib,rp).
-promotes(indomethacin,rp).
-promotes(highdose_aspirin,rp).
+%promotes(diclofenac,rp).
+%promotes(celecoxib,rp).
+%promotes(mefenamic_acid,rp).
+%promotes(etoricoxib,rp).
+%promotes(indomethacin,rp).
+%promotes(highdose_aspirin,rp).
 
 % question semantics
 arg(Q) :- ask(Q,X).
