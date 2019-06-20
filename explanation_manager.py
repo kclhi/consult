@@ -41,7 +41,10 @@ class ExplanationManager():
                         # all the winning arguments will be returned
                         winning['arg'+str(i)]= {'name': arg, 'expl': exp, 'bindings': binds}
                     i+=1
-
+        
+        if not bool(winning):
+            winning = "No winning arguments."    
+            
         pdict["ext0"]["AF_json"] = json_graph.node_link_data(AF_graph_expl) # get the updated graph with explanations
         pdict["ext0"]["winning"] = winning
         return pdict
