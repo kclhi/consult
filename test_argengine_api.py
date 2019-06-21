@@ -44,38 +44,38 @@ def test_chatbot_s1_backpain_noalert_filter():
             "expl": "Treatment 'naproxen' should be considered as it promotes goal 'rp', given patient facts.",
             "name": "aspt([goal(rp),action(naproxen),promotes(naproxen,rp)],action(naproxen))"
             }
-    res_arg3={"bindings": {"A": "diclofenac", "G": "rp"},
-            "expl": "Treatment 'diclofenac' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(diclofenac),promotes(diclofenac,rp)],action(diclofenac))"
-            }
-    res_arg4={"bindings": {"A": "celecoxib", "G": "rp"},
-            "expl": "Treatment 'celecoxib' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(celecoxib),promotes(celecoxib,rp)],action(celecoxib))"
-            }
-    res_arg5={"bindings": {"A": "mefenamic_acid", "G": "rp"},
-            "expl": "Treatment 'mefenamic_acid' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(mefenamic_acid),promotes(mefenamic_acid,rp)],action(mefenamic_acid))"
-            }
-    res_arg6={"bindings": {"A": "etoricoxib", "G": "rp"},
-            "expl": "Treatment 'etoricoxib' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(etoricoxib),promotes(etoricoxib,rp)],action(etoricoxib))"
-            }
-    res_arg7={"bindings": {"A": "indomethacin", "G": "rp"},
-            "expl": "Treatment 'indomethacin' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(indomethacin),promotes(indomethacin,rp)],action(indomethacin))"
-            }
-    res_arg8={"bindings": {"A": "highdose_aspirin", "G": "rp"},
-            "expl": "Treatment 'highdose_aspirin' should be considered as it promotes goal 'rp', given patient facts.",
-            "name": "aspt([goal(rp),action(highdose_aspirin),promotes(highdose_aspirin,rp)],action(highdose_aspirin))"
-            }
+    #res_arg3={"bindings": {"A": "diclofenac", "G": "rp"},
+    #        "expl": "Treatment 'diclofenac' should be considered as it promotes goal 'rp', given patient facts.",
+    #        "name": "aspt([goal(rp),action(diclofenac),promotes(diclofenac,rp)],action(diclofenac))"
+    #        }
+    #res_arg4={"bindings": {"A": "celecoxib", "G": "rp"},
+    #        "expl": "Treatment 'celecoxib' should be considered as it promotes goal 'rp', given patient facts.",
+    #        "name": "aspt([goal(rp),action(celecoxib),promotes(celecoxib,rp)],action(celecoxib))"
+    #        }
+    #res_arg5={"bindings": {"A": "mefenamic_acid", "G": "rp"},
+    #        "expl": "Treatment 'mefenamic_acid' should be considered as it promotes goal 'rp', given patient facts.",
+    #        "name": "aspt([goal(rp),action(mefenamic_acid),promotes(mefenamic_acid,rp)],action(mefenamic_acid))"
+    #        }
+    #res_arg6={"bindings": {"A": "etoricoxib", "G": "rp"},
+    #        "expl": "Treatment 'etoricoxib' should be considered as it promotes goal 'rp', given patient facts.",
+    #        "name": "aspt([goal(rp),action(etoricoxib),promotes(etoricoxib,rp)],action(etoricoxib))"
+    #        }
+    #res_arg7={"bindings": {"A": "indomethacin", "G": "rp"},
+    #        "expl": "Treatment 'indomethacin' should be considered as it promotes goal 'rp', given patient facts.",
+    #        "name": "aspt([goal(rp),action(indomethacin),promotes(indomethacin,rp)],action(indomethacin))"
+    #        }
+    #res_arg8={"bindings": {"A": "highdose_aspirin", "G": "rp"},
+    #        "expl": "Treatment 'highdose_aspirin' should be considered as it promotes goal 'rp', given patient facts.",
+    #        "name": "aspt([goal(rp),action(highdose_aspirin),promotes(highdose_aspirin,rp)],action(highdose_aspirin))"
+    #        }
     results.append(res_arg1)
     results.append(res_arg2)
-    results.append(res_arg3)
-    results.append(res_arg4)
-    results.append(res_arg5)
-    results.append(res_arg6)
-    results.append(res_arg7)
-    results.append(res_arg8)
+    #results.append(res_arg3)
+    #results.append(res_arg4)
+    #results.append(res_arg5)
+    #results.append(res_arg6)
+    #results.append(res_arg7)
+    #results.append(res_arg8)
 
     assert_results(winning,results)
 
