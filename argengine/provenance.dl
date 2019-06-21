@@ -1,0 +1,3 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% provenance information
+
+a(provenance(action(A), patient(Patient), relationship(wasAttributedTo))) :- a(aspt([goal(G), action(A), promotes(A,G)],action(A))), patient(Patient).

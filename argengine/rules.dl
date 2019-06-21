@@ -2,7 +2,6 @@
 
 % ASPT argument scheme -- goal is reduce pain, facts do not change the outcome.
 a(aspt([goal(G), action(A), promotes(A,G)],action(A))) :- goal(G), action(A), promotes(A,G).
-a(provenance(wasAttributedTo(action(A), Patient))) :- goal(G), action(A), promotes(A,G), patient(Patient).
 
 % nhs painkillers guideline
 goal(rp) :- suffers_from(Patient,backpain).

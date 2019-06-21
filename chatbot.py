@@ -54,7 +54,8 @@ class ChatBot(Resource):
         params.append('ground.dl')
         params.append('metalevel.dl') # by default metalevel semantics are used.
         params.append('rules.dl') # rules that will be used for reasoning.
-
+        params.append('provenance.dl')
+        
         # get the query TODO
         query=''
         if str(keyname) == 'symptom':

@@ -37,14 +37,14 @@ class TestChatbot(Resource):
         if name == 's6': # single amber alert
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'selfcheck','value':'', 'expl':1, 'filter':'amber'}
             query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
-        
+
         if name == 's7': # symptom headache
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'3','keyname':'symptom','value':'headache', 'expl':1, 'filter':'aspt'}
-            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }     
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
 
         if name == 's8': # as a follow up to s1, remove ibuprofen from the results
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'ibuprofen', 'expl':1, 'filter':'aspt'}
-            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }          
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
 
         if name == 's9': # as a follow up to s1, remove ibuprofen and naproxen from the results
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'ibuprofen,naproxen', 'expl':1, 'filter':'aspt'}
@@ -52,6 +52,10 @@ class TestChatbot(Resource):
 
         if name == 's10': # as a follow up to s7, remove paracetamol from the results
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'3','keyname':'notrecommend','value':'paracetamol', 'expl':1, 'filter':'aspt'}
-            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }            
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
+
+        if name == 's11':
+            params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain', 'expl':1, 'filter':'provenance' }
+            query = { key: value for (key, value) in (params.items() + pdata_82_noalert.items()) }
 
         return ChatBot.getArgumenationResponse(query);
