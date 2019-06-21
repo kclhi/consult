@@ -98,3 +98,7 @@ def dred(s):
         explanation+= "The diastolic measurement of the patient {} is {}. This value is more than 109; therefore, a double red flag is raised.".format(bindings["P"],bindings["D"])
 
     return bindings,explanation
+
+def provenance(s):
+
+    return "",""
