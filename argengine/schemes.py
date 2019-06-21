@@ -101,9 +101,9 @@ def dred(s):
 
 def provenance(s):
 
-    pred_dict= {"action":["A"], "patient":["P"], "relationship": ["R"]}
+    pred_dict= {"source":["S"], "target":["T"], "relationship": ["R"]}
     bindings = string_parser(pred_dict,s)
 
-    explanation = "Patient {} {} action {}".format(bindings["P"],bindings["R"],bindings["A"])
+    explanation = "{} {} {}".format(bindings["S"],bindings["R"],bindings["T"])
 
     return bindings,explanation

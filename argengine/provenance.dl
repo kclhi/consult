@@ -1,3 +1,4 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% provenance information
 
-a(provenance(action(A), patient(Patient), relationship(wasAttributedTo))) :- a(aspt([goal(G), action(A), promotes(A,G)],action(A))), patient(Patient).
+a(provenance(source(A), target(giveRecommendation), relationship(wasGeneratedBy))) :- a(aspt([goal(G), action(A), promotes(A,G)],action(A))), patient(Patient).
+a(provenance(source(giveRecommendation), target(Patient), relationship(wasAssociatedWith))) :- a(aspt([goal(G), action(A), promotes(A,G)],action(A))), patient(Patient).
