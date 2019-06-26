@@ -184,6 +184,8 @@ router.put('/:id', function(req, res, next) {
  * @apiGroup Patient
  *
  * @apiParam {Number} patientID Users unique ID.
+ *
+ * @apiSuccess {List} Patient data: ID, DOB, age, ethnicity, subscribed medication and conditions.
  */
 router.get('/:patientID', function(req, res, next) {
 

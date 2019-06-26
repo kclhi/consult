@@ -97,6 +97,8 @@ function sendAlert(response, patientID, dialogueID, alertField, alertValue, read
     patientHeaders.push("birthDate");
     patientRow.push(JSON.parse(patientData).birthDate);
 
+  }
+
 }
 
 function addDateRows(resource, row) {
@@ -145,7 +147,7 @@ function processObservation(req, res, type, callback) {
                 logger.info("Added provenance entry.");
                 done();
 
-        });
+              });
 
             } else {
 
@@ -286,7 +288,7 @@ router.put('/:id', function(req, res, next) {
 
                     });
 
-router.put('/:id', function(req, res, next) {
+                  });
 
                 });
 
@@ -435,7 +437,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
       res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
 
-    } else {
+    });
 
   } else {
 
