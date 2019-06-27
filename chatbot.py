@@ -62,6 +62,8 @@ class ChatBot(Resource):
                 query = 'suffers_from('+pid+',backpain).\n'
             if str(value) == 'headache':
                 query = 'suffers_from('+pid+',headache).\n'
+            if str(value) == 'swollen_ankle':
+                query = 'suffers_from('+pid+',swollen_ankle).\n'
         elif str(keyname) == 'notrecommend': #not recommend the specified treatments by the patient
             vset = str(value).split(',')
             for v in vset:
