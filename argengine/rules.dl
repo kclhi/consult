@@ -6,6 +6,7 @@ a(aspt([goal(G), action(A), promotes(A,G)],action(A))) :- goal(G), action(A), pr
 % nhs painkillers guideline
 goal(rp) :- suffers_from(Patient,backpain).
 goal(rhp) :- suffers_from(Patient,headache).
+goal(rs) :- suffers_from(Patient,swollen_ankle). % goal: reduce swelling
 
 % NHS recommendations
 % source: https://www.nhs.uk/conditions/nsaids/
@@ -24,6 +25,19 @@ action(naproxen) :- patient(Patient), goal(rp), not not_recommend(Patient,naprox
 action(paracetamol) :- patient(Patient), goal(rhp), not not_recommend(Patient,paracetamol).
 action(ibuprofen) :- patient(Patient), goal(rhp), not not_recommend(Patient,ibuprofen).
 
+% swollen ankle case
+action(amlodipine) :- patient(Patient), goal(rs), not not_recommend(Patient,amlodipine).
+action(clevidipine) :- patient(Patient), goal(rs), not not_recommend(Patient,clevidipine).
+action(diltiazem_hydrochloride) :- patient(Patient), goal(rs), not not_recommend(Patient,diltiazem_hydrochloride).
+action(felodipine) :- patient(Patient), goal(rs), not not_recommend(Patient,felodipine).
+action(lacidipine) :- patient(Patient), goal(rs), not not_recommend(Patient,lacidipine).
+action(lercanidipine_hydrochloride) :- patient(Patient), goal(rs), not not_recommend(Patient,lercanidipine_hydrochloride).
+action(nicardipine_hydrochloride) :- patient(Patient), goal(rs), not not_recommend(Patient,nicardipine_hydrochloride).
+action(nifedipine) :- patient(Patient), goal(rs), not not_recommend(Patient,nifedipine).
+action(nimodipine) :- patient(Patient), goal(rs), not not_recommend(Patient,nimodipine).
+action(ramipril_with_felodipine) :- patient(Patient), goal(rs), not not_recommend(Patient,ramipril_with_felodipine).
+action(verapamil_hydrochloride) :- patient(Patient), goal(rs), not not_recommend(Patient,verapamil_hydrochloride).
+
 % goal definition backpain
 promotes(ibuprofen,rp).
 promotes(naproxen,rp).
@@ -37,6 +51,19 @@ promotes(naproxen,rp).
 % goal definition headache
 promotes(paracetamol,rhp).
 promotes(ibuprofen,rhp).
+
+% goal definition swollen ankle
+promotes(amlodipine,rs).
+promotes(clevidipine,rs).
+promotes(diltiazem_hydrochloride,rs).
+promotes(felodipine,rs).
+promotes(lacidipine,rs).
+promotes(lercanidipine_hydrochloride,rs).
+promotes(nicardipine_hydrochloride,rs).
+promotes(nifedipine,rs).
+promotes(nimodipine,rs).
+promotes(ramipril_with_felodipine,rs).
+promotes(verapamil_hydrochloride,rs).
 
 % question semantics
 arg(Q) :- ask(Q,X).
