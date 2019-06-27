@@ -27,7 +27,7 @@ def assert_results(winning,results):
 def clean_dir():
     # remove dummy patient folder
     import shutil
-    #shutil.rmtree("./data/p07209f10_58a4_11e9_994c_cd7260ae2b18")
+    shutil.rmtree("./data/p07209f10_58a4_11e9_994c_cd7260ae2b18")
 
 def test_chatbot_s1_backpain_noalert_filter():
     clean_dir()
@@ -155,6 +155,90 @@ def test_chatbot_s6_selfcheck_single_amberalert():
             "name": "amber([systolic(p07209f10_58a4_11e9_994c_cd7260ae2b18,142),\"<150\",\">134\"],flag(amber))"
             }
 
+    results.append(res_arg1)
+
+    assert_results(winning,results)
+    
+def test_chatbot_s7_headache():
+    clean_dir()
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'headache','pdata':[{'res.c271649006':'Amber Flag','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':142,'c271650006':80,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    winning = make_call(query)
+
+    results = []
+    res_arg1={"bindings": {"A": "ibuprofen", "G": "rhp"},
+            "expl": "Treatment 'ibuprofen' should be considered as it promotes goal 'rhp', given patient facts.",
+            "name": "aspt([goal(rhp),action(ibuprofen),promotes(ibuprofen,rhp)],action(ibuprofen))"
+            }
+    res_arg2={"bindings": {"A": "paracetamol", "G": "rhp"},
+            "expl": "Treatment 'paracetamol' should be considered as it promotes goal 'rhp', given patient facts.",
+            "name": "aspt([goal(rhp),action(paracetamol),promotes(paracetamol,rhp)],action(paracetamol))"
+            }
+    
+    results.append(res_arg1)
+    results.append(res_arg2)
+    
+    assert_results(winning,results)
+    
+def test_chatbot_s8_twostep_removetr():
+    clean_dir()
+    
+    # make first query to recommend anything for backpain
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    make_call(query)
+    
+    # make a follow-up query to remove some of the treatments
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'ibuprofen','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    winning=make_call(query)
+    
+
+    results = []
+    res_arg1={"bindings": {"A": "naproxen", "G": "rp"},
+            "expl": "Treatment 'naproxen' should be considered as it promotes goal 'rp', given patient facts.",
+            "name": "aspt([goal(rp),action(naproxen),promotes(naproxen,rp)],action(naproxen))"
+            }
+    
+    results.append(res_arg1)
+
+    assert_results(winning,results)
+    
+def test_chatbot_s9_twostep_removetwotr():
+    clean_dir()
+    
+    # make first query to recommend anything for backpain
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    make_call(query)
+    
+    # make a follow-up query to remove some of the treatments
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'ibuprofen,naproxen','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    winning=make_call(query)    
+
+    assert winning == "No winning arguments."
+    
+def test_chatbot_s9_twostep_removetr():
+    clean_dir()
+    
+    # make first query to recommend anything for backpain
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'headache','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    make_call(query)
+    
+    # make a follow-up query to remove some of the treatments
+    query = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'notrecommend','value':'paracetamol','pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}], 'expl':1, 'filter':'aspt'}
+
+    winning=make_call(query)
+    
+
+    results = []
+    res_arg1={"bindings": {"A": "ibuprofen", "G": "rhp"},
+            "expl": "Treatment 'ibuprofen' should be considered as it promotes goal 'rhp', given patient facts.",
+            "name": "aspt([goal(rhp),action(ibuprofen),promotes(ibuprofen,rhp)],action(ibuprofen))"
+            }
+    
     results.append(res_arg1)
 
     assert_results(winning,results)
