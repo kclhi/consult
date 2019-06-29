@@ -17,6 +17,10 @@
 			{
 				"msg": "Swollen ankle",
 				"n": "103"
+			},
+			{
+				"msg": "Something else",
+				"n": "104"
 			}
 		],
 		"Media": "",
@@ -28,7 +32,7 @@
 		"Step": "101",
 		"BranchLevel": "2",
 		"Comment": "",
-		"Print": "Ok, I will check the NHS Choices guidelines, your medical history and any possible counter-indications and provide you some recommendations. Speak to your pharmacist about this.",
+		"Print": "OK. I will check the NHS Choices guidelines, and provide you the relevant information. A useful source of help is your local pharmacist. All UK pharmacists are trained to provide help and give advice for common symptoms.",
 		"CondJmp": [
 			{
 				"msg": "Ok",
@@ -116,7 +120,7 @@
 				}
 			]
 		},
-		"Print": "Looking at the guidelines we have found the following information: \"Extract from NHS choices\": the following drugs should be considered as they reduce pain: [ext0.winning.*.bindings.A]. Do you know if you are allergic to or have had side effects from taking any of these?",
+		"Print": "Looking at the guidelines we have found the following information: 'Non-steroidal anti-inflammatory drug (NSAID) tablets, such as [ext0.winning.*.bindings.A], can help relieve back pain'. Do you know if you are allergic to or have had side effects from taking any of these?",
 		"CondJmp": [
 			{
 				"multi": "true",
@@ -213,15 +217,100 @@
 		"Step": "1201",
 		"BranchLevel": "",
 		"Comment": "",
-		"Print": "Can we check your health record? [responses]",
+		"Print": "You told us you had side effects from, or an allergy to, [responses]. Your remaining treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
 		"CondJmp": [
 			{
-				"msg": "Yes",
-				"n": "2201"
-			},
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"External": {
+			"URL": "http://localhost:5000/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "notrecommend"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "context",
+						"Key": "dialogueParams.responses"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"URL": "http://localhost:3006/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			],
+			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
+		},
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "102",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "OK. I will check the NHS Choices guidelines, and provide you the relevant information. A useful source of help is your local pharmacist. All UK pharmacists are trained to provide help and give advice for common symptoms.",
+		"CondJmp": [
 			{
-				"msg": "No",
-				"n": "2202"
+				"msg": "Ok",
+				"n": "202"
 			}
 		],
 		"Media": "",
@@ -230,18 +319,360 @@
 	},
 	{
 		"Dialogue": "1",
-		"Step": "2201",
+		"Step": "202",
+		"BranchLevel": "2",
+		"Comment": "",
+		"External": {
+			"URL": "http://localhost:5000/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "literal",
+						"Value": "3"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "headache"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"URL": "http://localhost:3006/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			]
+		},
+		"Print": "Looking at the guidelines we have found the following information: 'Take: [ext0.winning.*.bindings.A]'. Do you know if you are allergic to or have had side effects from taking any of these?",
+		"CondJmp": [
+			{
+				"multi": "true",
+				"n": "1202",
+				"substitution": "[ext0.winning.*.bindings.A]",
+				"External": {
+					"URL": "http://localhost:5000/argengine/chatbot",
+					"Method": "POST",
+					"Body": [
+						{
+							"Key": "pid",
+							"Value": {
+								"Type": "context",
+								"Key": "user"
+							}
+						},
+						{
+							"Key": "sid",
+							"Value": {
+								"Type": "literal",
+								"Value": "3"
+							}
+						},
+						{
+							"Key": "keyname",
+							"Value": {
+								"Type": "literal",
+								"Value": "symptom"
+							}
+						},
+						{
+							"Key": "value",
+							"Value": {
+								"Type": "literal",
+								"Value": "headache"
+							}
+						},
+						{
+							"Key": "pdata",
+							"Value": {
+								"Type": "external",
+								"URL": "http://localhost:3006/mine/get/bp",
+								"Method": "POST",
+								"Body": [
+									{
+										"Key": "pid",
+										"Value": {
+											"Type": "context",
+											"Key": "user"
+										}
+									},
+									{
+										"Key": "nn",
+										"Value": {
+											"Type": "literal",
+											"Value": 7
+										}
+									}
+								]
+							}
+						},
+						{
+							"Key": "expl",
+							"Value": {
+								"Type": "literal",
+								"Value": "1"
+							}
+						},
+						{
+							"Key": "filter",
+							"Value": {
+								"Type": "literal",
+								"Value": "aspt"
+							}
+						}
+					]
+				}
+			},
+			{
+				"msg": "None of them",
+				"n": "1202"
+			},
+			{
+				"msg": "Don't know",
+				"n": "1202"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "1202",
 		"BranchLevel": "",
-		"Comment": "patient asks for an explanation",
-		"Print": "Treatment B should be considered as it promotes the goal G, which will help with symptom s1. Do you want more information?",
+		"Comment": "",
+		"Print": "You told us you had side effects from, or an allergy to, [responses]. Your remaining treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"External": {
+			"URL": "http://localhost:5000/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "literal",
+						"Value": "3"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "notrecommend"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "context",
+						"Key": "dialogueParams.responses"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"URL": "http://localhost:3006/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			],
+			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
+		},
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "103",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Are both of your ankles swollen?",
 		"CondJmp": [
 			{
 				"msg": "Yes",
-				"n": "12201"
+				"n": "203"
 			},
 			{
 				"msg": "No",
-				"n": "22201"
+				"n": "204"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "203",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Have you recently started a new medication from this list: AMLODIPINE, CLEVIDIPINE, DILTIAZEM HYDROCHLORIDE, FELODIPINE, LACIDIPINE, LERCANIDIPINE HYDROCHLORIDE, NICARDIPINE HYDROCHLORIDE, NIFEDIPINE, NIMODIPINE, RAMIPRIL, VERAPAMIL?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1203"
+			},
+			{
+				"msg": "No",
+				"n": "2203"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "204",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "1203",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Swollen ankles (both ankles) is a common side effect of the medications of this type. Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "2203",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Please head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "104",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "A useful source of help is your local pharmacist. All UK pharmacists are trained to provide help and give advice for common symptoms. You may also seek advice from your GP practice.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
 			}
 		],
 		"Media": "",

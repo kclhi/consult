@@ -73,10 +73,12 @@ touch .env
 Add the following information to this environment file using a text editor:
 
 ```
+MATTERMOST_ADMIN_USERNAME=[username]
+MATTERMOST_ADMIN_PASSWORD=[password]
 MATTERMOST_WEBHOOK="[hook]"
 ```
 
-Where [hook] is the an incoming mattermost webhook for sending alerts (See: [https://docs.mattermost.com/developer/webhooks-incoming.html](https://docs.mattermost.com/developer/webhooks-incoming.html)).
+Where [hook] is the an incoming mattermost webhook for sending alerts (See: [https://docs.mattermost.com/developer/webhooks-incoming.html](https://docs.mattermost.com/developer/webhooks-incoming.html)), and the username and password associated with an administrator account.
 
 Run server:
 

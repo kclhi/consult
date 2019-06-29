@@ -229,7 +229,7 @@ function findResponse(receivedMsg, chatContext, callback) {
                 chatContext.dialogueParams.responses.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
                 var options;
 
-                if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams.responses.includes(a.msg)).map(a => a.msg) ) && options.length > 0 ) {
+                if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams.responses.includes(a.msg)).map(a => a.msg) ) && options.toString().length > 0 ) { // TODO: Remove toString. Determine why filtered arrays are still of size 1.
 
                   response.Print = "Thank you. Do any of the other options apply?" // Next ouput should ask the user if they wish to select anything else
                   response.Answers = options// Options to show are the remaining multiple choice options
@@ -391,16 +391,20 @@ function addExternalAnswers(answerArray, chatContext, callback) {
 
         logger.debug("Substitution text returned: " + substitutionText);
 
-        substitutionText.split(" ").forEach(function(msg) {
+        if ( substitutionText ) {
 
-          var localAnswer = JSON.parse(JSON.stringify(answer)); // Duplicate object.
-          delete localAnswer["substitution"]; // Delete template answer information.
-          delete localAnswer["External"];
-          localAnswer.msg = msg;
-          logger.debug("Adding dynamic answer: " + JSON.stringify(localAnswer));
-          answerArray.splice(answerArray.indexOf(answer), 0, localAnswer);
+          utils.replaceAll(substitutionText, "or ", "").split(" ").forEach(function(msg) {
 
-        });
+            var localAnswer = JSON.parse(JSON.stringify(answer)); // Duplicate object.
+            delete localAnswer["substitution"]; // Delete template answer information.
+            delete localAnswer["External"];
+            localAnswer.msg = msg;
+            logger.debug("Adding dynamic answer: " + JSON.stringify(localAnswer));
+            answerArray.splice(answerArray.indexOf(answer), 0, localAnswer);
+
+          });
+
+        }
 
         next();
 
@@ -421,7 +425,7 @@ function addExternalAnswers(answerArray, chatContext, callback) {
 
 }
 
-function externalResponse(external, chatContext, substituionText, callback) {
+function externalResponse(external, chatContext, substitutionText, callback) {
 
   // Do we need to create anything for the body of this external call?
   if ( external.Body ) {
@@ -439,15 +443,18 @@ function externalResponse(external, chatContext, substituionText, callback) {
 
         logger.debug("Context body item: " + JSON.stringify(item));
 
-        if ( chatContext[item.Value.Key] ) {
+        var contextItem;
 
-          externalCallBody[item.Key] = chatContext[item.Value.Key];
+        // As context items might be JSON subkey specifications (e.g. X.Y), use validPath function to extract.
+        if ( contextItem = utils.validPath(chatContext, item.Value.Key.split(".")) ) {
+
+          externalCallBody[item.Key] = contextItem.toString();
           logger.debug("Added externalCallBody entry for " +  item.Key);
 
         } else {
 
           logger.error("Could not find requested chat context item: " + item.Value.Key);
-          callback(null, null);
+          callback(substitutionText);
 
         }
 
@@ -482,7 +489,7 @@ function externalResponse(external, chatContext, substituionText, callback) {
               } else {
 
                 logger.error("Could not find requested chat context item: " + pathItem.Key);
-                callback(null, null);
+                callback(substitutionText);
 
               }
 
@@ -517,7 +524,7 @@ function externalResponse(external, chatContext, substituionText, callback) {
               } else {
 
                 logger.error("Could not find requested chat context item: " + pathItem.Value.Key);
-                callback(null, null);
+                callback(substitutionText);
 
               }
 
@@ -544,7 +551,7 @@ function externalResponse(external, chatContext, substituionText, callback) {
           if ( error || (response && response.statusCode >= 400) || !body ) {
 
             logger.error("Failed to populate body item with external call: " + ( error ? error : "" ) + " Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ));
-            callback(null, null);
+            callback(substitutionText);
 
           } else {
 
@@ -580,7 +587,7 @@ function externalResponse(external, chatContext, substituionText, callback) {
       logger.debug("Full body for external call ready.");
 
       // Make external call and replace printed response with returned value after external call body populated.
-      externalURLResponse(external, substituionText, externalCallBody, function(substitutionText) {
+      externalURLResponse(external, substitutionText, externalCallBody, function(substitutionText) {
 
         callback(substitutionText);
 
@@ -591,7 +598,7 @@ function externalResponse(external, chatContext, substituionText, callback) {
   } else {
 
     // Make external call and replace printed response with returned value without call body.
-    externalURLResponse(external, substituionText, {}, function(substitutionText) {
+    externalURLResponse(external, substitutionText, {}, function(substitutionText) {
 
       callback(substitutionText);
 
@@ -626,7 +633,7 @@ function externalURLResponse(external, substitutionText, externalCallBody, callb
         // Extract each template item ([...]) from the substitution text. This is the regex to be matched with the external response.
         if ( templateItems = substitutionText.match(new RegExp(config.get("dialogue_manager.TEMPLATE_REGEX"), 'g')) ) {
 
-          templateItems.forEach(function(templateItem) {
+          for ( let templateItem of templateItems ) { // Traditional FOR for break later.
 
             logger.debug("Regex extracted from dialogue template: " + templateItem);
 
@@ -640,16 +647,31 @@ function externalURLResponse(external, substitutionText, externalCallBody, callb
 
                 logger.debug(templateItem + " matches with " + key + " which resolves to " + utils.resolve(key, parsedBody) + ". Storing this to be used as part of the response.")
                 // Multiple matches are stored as a list.
-                replacementString += ( utils.resolve(key, parsedBody) + " " );
+                replacementString += ( utils.resolve(key, parsedBody) + " or " );
 
               }
 
             });
 
-            logger.debug("Replacing " + templateItem + " with " + replacementString.substring(0, replacementString.length - 1));
-            substitutionText = substitutionText.replace(templateItem, replacementString.substring(0, replacementString.length - 1));
+            if ( replacementString.length > 0 ) {
 
-          });
+              logger.debug("Replacing " + templateItem + " with " + replacementString.substring(0, replacementString.length - 4));
+              substitutionText = substitutionText.replace(templateItem, replacementString.substring(0, replacementString.length - 4));
+
+            } else {
+
+              // Use script to determine what to do if a template item in a response can't be replaced by the external call.
+              if ( external.NoReplacement ) {
+
+                logger.debug("No keys in the external response match. Replacing whole text with specified no response replacement.");
+                substitutionText = external.NoReplacement;
+                break;
+
+              }
+
+            }
+
+          }
 
         } else {
 
@@ -701,7 +723,7 @@ router.post('/response', function(req, res, next) {
   findResponse(receivedMsg, chatContext, function(response, answerButtonsArr) {
 
     // Don't allow template responses to go back to user.
-    if ( !response || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
+    if ( !response || !response.Print || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
 
       response = {};
       response.Print = ERROR_TEXT;
