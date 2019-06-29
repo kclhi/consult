@@ -338,7 +338,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 /**
- * @api {get} /:patientID/:code/:start/:end Request patient vitals (Observation) information
+ * @api {get} /Observation/:patientID/:code/:start/:end Request patient vitals (Observation) information
  * @apiName GetObservations
  * @apiGroup Observations
  *

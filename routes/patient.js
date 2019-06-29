@@ -109,7 +109,7 @@ function addUser(username, password, callback) {
 }
 
 /**
- * @api {get} /register/:id/:token Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.
+ * @api {get} /Patient/register/:id/:token Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.
  * @apiName GetPassword
  * @apiGroup Register
  *
@@ -179,7 +179,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 /**
- * @api {get} /:patientID Request patient information
+ * @api {get} /Patient/:patientID Request patient information
  * @apiName GetPatient
  * @apiGroup Patient
  *
