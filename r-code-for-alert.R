@@ -34,15 +34,11 @@ bp.process<-function(pid, nn) {
   else if (c271649006.mean.recent<180 & c271649006.mean.recent>149) {res.c271649006<-"Red Flag"}
   else if (c271649006.mean.recent<150 & c271649006.mean.recent>134) {res.c271649006<-"Amber Flag"}
   else {res.c271649006<-"no alert"}
-  # c271649006.alert.status<-cat("Mean c271649006 is: ",c271649006.mean.recent, res.c271649006)
-  # return(c271649006.alert.status)
 
   if (c271650006.mean.recent>109){res.c271650006<-"Double Red Flag"}
   else if (c271650006.mean.recent<110 & c271650006.mean.recent>94) {res.c271650006<-"Red Flag"}
   else if (c271650006.mean.recent<95 & c271650006.mean.recent>84) {res.c271650006<-"Amber Flag"}
   else {res.c271650006<-"no alert"}
-  #c271650006.alert.status<-cat(" Mean c271650006 is: ",c271650006.mean.recent, res.c271650006)
-  # return(c271650006.alert.status)
 
   patient.facts<-tail(bp, n=1)
   alert.content<-data.frame(res.c271649006, res.c271650006, patient.facts)

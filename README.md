@@ -19,7 +19,7 @@ R
 Install packages listed in [requrements.txt](requirements.txt), e.g.
 
 ```
-> install.packages('pumber')
+> install.packages('plumber')
 ```
 
 ## Download
@@ -57,7 +57,7 @@ git push
 Run server:
 
 ```
-Rscript r-server.R
+Rscript main.R
 ```
 
 The server runs by default on port 3006. Visit localhost:3006/[route] to test changes to GET endpoints and use software such as [Postman](https://www.getpostman.com/) to test changes to POST (and other) endpoints.
