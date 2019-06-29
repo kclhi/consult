@@ -37,6 +37,8 @@ git submodule init
 git submodule update
 ```
 
+NB: If cloning over HTTPS, edit [.gitmodules](.gitmodules) to reflect the HTTPS URL before running update, and then sync with `git submodule sync` before updating.
+
 ## Documentation
 
 [View](https://github.kcl.ac.uk/pages/consult/device-integration_garmin/).
