@@ -73,7 +73,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/:patientID/:code/:start/:end",
+    "url": "/Observation/:patientID/:code/:start/:end",
     "title": "Request patient vitals (Observation) information",
     "name": "GetObservations",
     "group": "Observations",
@@ -130,7 +130,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/:patientID",
+    "url": "/Patient/:patientID",
     "title": "Request patient information",
     "name": "GetPatient",
     "group": "Patient",
@@ -143,6 +143,19 @@ define({ "api": [
             "optional": false,
             "field": "patientID",
             "description": "<p>Users unique ID.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "List",
+            "optional": false,
+            "field": "Patient",
+            "description": "<p>data: ID, DOB, age, ethnicity, subscribed medication and conditions.</p>"
           }
         ]
       }
@@ -189,7 +202,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/register/:id/:token",
+    "url": "/Patient/register/:id/:token",
     "title": "Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.",
     "name": "GetPassword",
     "group": "Register",
