@@ -12,11 +12,14 @@ function createClinicalImpression(template, data, callback) {
 }
 
 /**
- * @api {post} /ClinicalImpression/add Add new ClinicalImpression resource (e.g. GP notes).
+ * @api {post} /ClinicalImpression/add Add new ClinicalImpression (e.g. GP notes).
  * @apiName Add
  * @apiGroup ClinicalImpressions
  *
- * @apiParam {String} Body ClinicalImpression resource.
+ * @apiParam {String} id Resource ID
+ * @apiParam {String} note Impression details
+ * @apiParam {String} subjectReference Patient ID
+ * @apiParam {String} effectiveDateTime (optional) Timestamp of impression
  *
  * @apiSuccess {String} Confirmation Resource added.
  */

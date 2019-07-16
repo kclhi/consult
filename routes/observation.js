@@ -458,7 +458,10 @@ function createObservationResource(template, data, callback) {
  * @apiName Add
  * @apiGroup Observations
  *
- * @apiParam {String} Observation resource.
+ * @apiParam {String} id Resource ID.
+ * @apiParam {String} subjectReference Patient ID.
+ * @apiParam {String} effectiveDateTime (Optional) Timestamp of (mood) observation.
+ * @apiParam {String} 285854004 Recorded emotion.
  *
  * @apiSuccess {String} Resource added.
  */

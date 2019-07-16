@@ -16,7 +16,19 @@ function createQuestionnaireResponseResource(template, data, callback) {
  * @apiName Add
  * @apiGroup QuestionnaireResponses
  *
- * @apiParam {String} Body QuestionnaireResponse resource.
+ * @apiParam {String} id Resource ID.
+ * @apiParam {String} subjectReference Patient ID.
+ * @apiParam {String} effectiveDateTime (Optional) Timestamp of response
+ * @apiParam {String} LittleInterest PHQ9 score for LittleInterest
+ * @apiParam {String} FeelingDown PHQ9 score for FeelingDown
+ * @apiParam {String} TroubleSleeping PHQ9 score for TroubleSleeping
+ * @apiParam {String} FeelingTired PHQ9 score for FeelingTired
+ * @apiParam {String} BadAppetite PHQ9 score for BadAppetite
+ * @apiParam {String} FeelingBadAboutSelf PHQ9 score for FeelingBadAboutSelf
+ * @apiParam {String} TroubleConcentrating PHQ9 score for TroubleConcentrating
+ * @apiParam {String} MovingSpeaking PHQ9 score for MovingSpeaking
+ * @apiParam {String} Difficulty PHQ9 score for Difficulty
+ * @apiParam {String} TotalScore Total PHQ9 score
  *
  * @apiSuccess {String} Confirmation Resource added.
  */

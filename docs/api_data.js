@@ -2,7 +2,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/ClinicalImpression/add",
-    "title": "Add new ClinicalImpression resource (e.g. GP notes).",
+    "title": "Add new ClinicalImpression (e.g. GP notes).",
     "name": "Add",
     "group": "ClinicalImpressions",
     "parameter": {
@@ -12,8 +12,29 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "Body",
-            "description": "<p>ClinicalImpression resource.</p>"
+            "field": "id",
+            "description": "<p>Resource ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "note",
+            "description": "<p>Impression details</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(optional) Timestamp of impression</p>"
           }
         ]
       }
@@ -48,8 +69,29 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "Observation",
-            "description": "<p>resource.</p>"
+            "field": "id",
+            "description": "<p>Resource ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(Optional) Timestamp of (mood) observation.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "285854004",
+            "description": "<p>Recorded emotion.</p>"
           }
         ]
       }
@@ -177,8 +219,92 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "Body",
-            "description": "<p>QuestionnaireResponse resource.</p>"
+            "field": "id",
+            "description": "<p>Resource ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(Optional) Timestamp of response</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "LittleInterest",
+            "description": "<p>PHQ9 score for LittleInterest</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingDown",
+            "description": "<p>PHQ9 score for FeelingDown</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TroubleSleeping",
+            "description": "<p>PHQ9 score for TroubleSleeping</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingTired",
+            "description": "<p>PHQ9 score for FeelingTired</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "BadAppetite",
+            "description": "<p>PHQ9 score for BadAppetite</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingBadAboutSelf",
+            "description": "<p>PHQ9 score for FeelingBadAboutSelf</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TroubleConcentrating",
+            "description": "<p>PHQ9 score for TroubleConcentrating</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MovingSpeaking",
+            "description": "<p>PHQ9 score for MovingSpeaking</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Difficulty",
+            "description": "<p>PHQ9 score for Difficulty</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TotalScore",
+            "description": "<p>Total PHQ9 score</p>"
           }
         ]
       }
