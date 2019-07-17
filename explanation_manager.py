@@ -31,7 +31,6 @@ class ExplanationManager():
                     arg = n[10:-1] # get the name of the justified argument
                     sname = arg.split("(")[0]
                     binds,exp = getattr(schemes, sname)(arg)
-                    binds,exp = getattr(schemes, sname)(arg)
                     AF_graph_expl.node[n]['expl'] = exp
                     if 'filter_array' in locals() and len(filter_array) != 0: # we want to filter results according to scheme names
                         for sname in filter_array:
@@ -41,10 +40,10 @@ class ExplanationManager():
                         # all the winning arguments will be returned
                         winning['arg'+str(i)]= {'name': arg, 'expl': exp, 'bindings': binds}
                     i+=1
-        
+
         if not bool(winning):
-            winning = "No winning arguments."    
-            
+            winning = "No winning arguments."
+
         pdict["ext0"]["AF_json"] = json_graph.node_link_data(AF_graph_expl) # get the updated graph with explanations
         pdict["ext0"]["winning"] = winning
         return pdict
