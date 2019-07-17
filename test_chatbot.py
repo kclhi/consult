@@ -54,8 +54,8 @@ class TestChatbot(Resource):
             params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'3','keyname':'notrecommend','value':'paracetamol', 'expl':1, 'filter':'aspt'}
             query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
 
-        if name == 's11':
-            params = { 'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'1','keyname':'symptom','value':'backpain', 'expl':1, 'filter':'provenance' }
-            query = { key: value for (key, value) in (params.items() + pdata_82_noalert.items()) }
+        if name == 's11': # swollen ankle treatments
+            params = {'pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','sid':'4','keyname':'symptom','value':'swollen_ankle', 'expl':1, 'filter':'aspt'}
+            query = { key: value for (key, value) in (params.items() + pdata_142_amber.items()) }
 
         return ChatBot.getArgumenationResponse(query);
