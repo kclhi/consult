@@ -16,20 +16,23 @@ class ChatBot(Resource):
 
     @apiParam {Number} pid Patient ID.
     @apiParam {Number} sid Session ID.
-    @apiParam {String} keyname [symptom|preference].
+    @apiParam {String} keyname [symptom|notrecommend|preference|selfcheck].
     @apiParam {Number} value Value for keyname.
-    @apiParam {String} pdata Patient data in JSON format (e.g. {'patient.id':1234, 'raised_bp':0, 'last.sys':142, 'last.dia':86, 'pid':1234, 'age':60,  'ethnicity':'black_african', 'testresult1':125, 'testresult1.type':'sys'})
-
-    @apiExample {curl} : 'Ask for a painkiller for backpain'
-        curl --request POST http://localhost:5000/argengine/chatbot --data '{"pid": 1234, "sid": 1, "keyname": "symptom", "value": "backpain", "pdata": {"patient.id": 1234, "raised_bp": 0, "last.sys": 142, "last.dia": 86, "pid": 1234, "age": 60, "ethnicity": "black_african", "testresult1": 125, "testresult1.type": "sys"}}'
-
+    @apiParam {String} pdata Patient data in JSON format (e.g. { 'pdata':[{'res.c271649006':'no alert','res.c271650006':'no alert','pid':'07209f10-58a4-11e9-994c-cd7260ae2b18','c271649006':82,'c271650006':53,'c8867h4':53,'datem':'2018-01-10','date.month':'2018-01-01','time':'00:00:00','weekday':'Wednesday','birthDate':'1952-02-17','age':67,'ethnicity':'black_african', 'medication2' : 'Thiazide', 'medication1': 'NSAID', 'problem1': 'Osteoarthritis', 'problem2': 'Hypertension'}] })
+    @apiParam {Number} expl If this is one 1, the explanation manager will be invoked to generate explanations.
+    @apiParam {String} [filter] A comma-separated list of scheme names. The argumentation results will be filtered according to this list.
+    
+    @apiExample {curl} : 's1'
+        # Ask for a painkiller for backpain by providing explanations.
+        curl --request GET http://localhost:5000/argengine/chatbot/s1
+    
     @apiExample {curl} : 'High blood pressure observed. Ask for a painkiller for backpain.'
         curl --request POST http://localhost:5000/argengine/chatbot --data {'pid': 1234, 'sid':2, 'keyname': 'symptom', 'value':'backpain', 'pdata': {'patient.id':1234,'raised_bp':1,'last.sys':142,'last.dia':86,'pid':1234,'age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'}}'
 
     @apiExample {curl} : 'High blood pressure observed. Ask for a painkiller for backpain. Express drug preference.'
         curl --request POST http://localhost:5000/argengine/chatbot --data '{'pid': 1234, 'sid':2, 'keyname': 'preference', 'value':'paracetamol,codeine', 'pdata': {'patient.id':1234,'raised_bp':1,'last.sys':142,'last.dia':86,'pid':1234,'age':60,'ethnicity':'black_african','testresult1':125,'testresult1.type':'sys'}}'
 
-    @apiSuccess {String} response Argumentation results.
+    @apiSuccess {String} response Argumentation results together with textual explanations.
     """
     def post(self):
 
@@ -40,7 +43,7 @@ class ChatBot(Resource):
     @staticmethod
     def getArgumenationResponse(pdict):
 
-        pid = "p"+pdict['pid'].replace("-","_") #TODO
+        pid = "p"+pdict['pid'].replace("-","_")
         sid = str(pdict['sid'])
         keyname = pdict['keyname']
         value = pdict['value']
@@ -55,7 +58,7 @@ class ChatBot(Resource):
         params.append('metalevel.dl') # by default metalevel semantics are used.
         params.append('rules.dl') # rules that will be used for reasoning.
 
-        # get the query TODO
+        # get the query
         query=''
         if str(keyname) == 'symptom':
             if str(value) == 'backpain':
