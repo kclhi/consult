@@ -11,12 +11,12 @@ class HTTPMessage {
 
           if (!error && response.statusCode == 200) {
 
-            console.log(response.body);
+            console.log(JSON.stringify(response.body));
             resolve(response.body);
 
           } else {
 
-            console.log(error);
+            console.log("Error sending message to HTTP endpoint: " + url + ". Response body: " + JSON.stringify(response.body) + ". Error: " + error + ". Sent body: " + JSON.stringify(body) + ".");
             resolve(error);
 
           }
