@@ -75,9 +75,10 @@ Add the following information to this environment file using a text editor:
 ```
 FHIR_USERNAME=[FHIRServerUsername]
 FHIR_PASSWORD=[FHIRServerPassword]
+LDAP_MANAGER_PASSWORD=[LDAPManagerPassword]
 ```
 
-Where [FHIRServerUsername] and [FHIRServerPassword] are replaced with their real values.
+Where [FHIRServerUsername], [FHIRServerPassword] and [LDAPManagerPassword] are replaced with their real values.
 
 Run server:
 

@@ -354,7 +354,7 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
   if ( req.params && req.params.patientID && req.params.code && req.params.start && req.params.end ) {
 
     // TODO: Ensure highest count.
-    getFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&_lastUpdated=gt" + req.params.start + "&_lastUpdated=lt" + req.params.end + "&_count=10000", function(data) {
+    getFHIRServer("Observation", "subject=" + req.params.patientID + "&code=" + req.params.code + "&date=gt" + req.params.start + "&date=lt" + req.params.end + "&_count=10000", function(data) {
 
       header = [];
       rows = "";
