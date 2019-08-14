@@ -380,23 +380,36 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
           components.forEach(function(component) {
 
-            var code, valueQuantity, valueSampledData;
+            var code, valueQuantity, valueSampledData, valueString;
 
             if ( code = utils.validPath(component, ["code", "coding", "0", "code"]) ) {
 
               // Because if quantity if 0, will be matched as false without strict equality.
-              if ( ( ( valueQuantity = utils.validPath(component, ["valueQuantity", "value"]) ) !== false ) || ( ( valueSampledData = utils.validPath(component, ["valueSampledData", "data"]) ) !== false ) ) {
+              if ( ( ( valueQuantity = utils.validPath(component, ["valueQuantity", "value"]) ) !== false ) || ( ( valueSampledData = utils.validPath(component, ["valueSampledData", "data"]) ) !== false ) || ( ( valueString = utils.validPath(component, ["valueString"]) ) !== false ) ) {
 
                 var formattedCode = "\"c" + code.replace("-", "h") + "\"";
 
                 if ( !header.includes(formattedCode) ) header.push(formattedCode);
 
-                row.push("\"" + ( ( valueQuantity && valueQuantity !== false ) ? valueQuantity : valueSampledData ) + "\"");
+                if ( valueQuantity && valueQuantity !== false ) {
+
+                  row.push("\"" + valueQuantity + "\"");
+
+                } else if ( valueSampledData && valueSampledData !== false ) {
+
+                  row.push("\"" + valueSampledData + "\"");
+
+                } else if ( valueString && valueString !== false ) {
+
+                  row.push("\"" + valueString + "\"");
+
+                }
 
               } else {
 
                 if (!valueQuantity) utils.noParse("sensor code (input " + req.params.code + ")", ["valueQuantity", "value"], component);
                 if (!valueSampledData) utils.noParse("sensor code (input " + req.params.code + ")", ["valueSampledData", "data"], component);
+                if (!valueString) utils.noParse("sensor code (input " + req.params.code + ")", ["valueString"], component);
 
               }
 
@@ -427,11 +440,13 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
         header.push("\"time\"");
         header.push("\"weekday\"\n");
         res.send(utils.replaceAll(header.toString(), ",", " ") + utils.replaceAll(rows.toString(), ",", " "));
+        return;
 
       } else {
 
         logger.error("Could not parse FHIR server response: " + ( data ? data : ""));
         res.sendStatus(400);
+        return;
 
       }
 
