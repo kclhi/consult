@@ -57,6 +57,56 @@ define({ "api": [
     "groupTitle": "ClinicalImpressions"
   },
   {
+    "type": "get",
+    "url": "/ClinicalImpression/:patientID/:start/:end",
+    "title": "Request GP note (ClinicalImpression) information",
+    "name": "GetClinicalImpression",
+    "group": "ClinicalImpressions",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The start time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The end time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "response",
+            "description": "<p>A list of clinical impression data as an R-formatted table.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/clinical-impression.js",
+    "groupTitle": "ClinicalImpressions"
+  },
+  {
     "type": "post",
     "url": "/Observation/add",
     "title": "Add new Observation resource (e.g. patient mood).",
@@ -70,7 +120,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "id",
-            "description": "<p>Resource ID.</p>"
+            "description": "<p>Resource ID (Optional).</p>"
           },
           {
             "group": "Parameter",
