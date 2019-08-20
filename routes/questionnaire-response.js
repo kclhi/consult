@@ -87,10 +87,21 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
             items.forEach(function(item) {
 
-              if ( ( linkId = utils.validPath(item, ["linkId"]) ) && ( response = utils.validPath(item, ["answer", 0, "valueCoding", "code"]) ) ) {
+              if ( linkId = utils.validPath(item, ["linkId"]) ) {
 
                 if ( !header.includes(linkId) ) header.push("\"" + linkId + "\"");
-                row.push("\"" + response + "\"");
+
+                if ( responseCode = utils.validPath(item, ["answer", 0, "valueCoding", "code"]) ) {
+
+                  row.push("\"" + responseCode + "\"");
+
+                }
+
+                if ( responseInteger = utils.validPath(item, ["answer", 0, "valueInteger"]) ) {
+
+                  row.push("\"" + responseInteger + "\"");
+
+                }
 
               }
 
