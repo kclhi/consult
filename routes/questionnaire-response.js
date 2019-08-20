@@ -95,19 +95,19 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
                 }
 
-                if ( responseInteger = utils.validPath(item, ["answer", 0, "valueInteger"]) ) {
+                if ( ( responseInteger = utils.validPath(item, ["answer", 0, "valueInteger"]) ) !== false ) {
 
                   row.push("\"" + responseInteger + "\"");
 
                 }
 
-                if ( responseCode || responseInteger ) {
+                if ( responseCode || responseInteger || responseInteger === 0 ) {
 
                   if ( !header.includes("\"" + linkId + "\"") ) header.push("\"" + linkId + "\"");
 
                 } else {
 
-                  logger.error("No associated value for " + linkId);
+                  logger.error("No associated QuestionnaireResponse value for " + linkId);
 
                 }
 
