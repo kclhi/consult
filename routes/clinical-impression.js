@@ -4,6 +4,7 @@ const config = require('config');
 
 const utils = require('../lib/utils');
 const fhir = require('../lib/fhir');
+const logger = require('../config/winston');
 
 function createClinicalImpression(template, data, callback) {
 
@@ -16,7 +17,6 @@ function getFHIRServer(query, params, callback) {
   utils.getFHIRServer(query, params, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
 }
-
 
 function addDateRows(resource, row) {
 
@@ -94,6 +94,7 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
         });
 
+        header.push("\"note\"");
         header.push("\"datem\"");
         header.push("\"date.month\"");
         header.push("\"time\"");
