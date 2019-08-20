@@ -346,6 +346,13 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
+            "field": "ThoughtsHurting",
+            "description": "<p>PHQ9 score for ThoughtsHurting</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
             "field": "Difficulty",
             "description": "<p>PHQ9 score for Difficulty</p>"
           },

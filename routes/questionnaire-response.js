@@ -45,6 +45,7 @@ function addDateRows(resource, row) {
  * @apiParam {String} FeelingBadAboutSelf PHQ9 score for FeelingBadAboutSelf
  * @apiParam {String} TroubleConcentrating PHQ9 score for TroubleConcentrating
  * @apiParam {String} MovingSpeaking PHQ9 score for MovingSpeaking
+ * @apiParam {String} ThoughtsHurting PHQ9 score for ThoughtsHurting
  * @apiParam {String} Difficulty PHQ9 score for Difficulty
  * @apiParam {String} TotalScore Total PHQ9 score
  *

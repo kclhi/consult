@@ -138,6 +138,18 @@
       ]
     },
     {
+      "linkId": "ThoughtsHurting",
+      "text": "Thoughts that you would be better off dead, or of hurting yourself.",
+      "answer": [
+        {
+          "valueCoding": {
+           "system": "http://loinc.org/vs/LL358-3",
+           "code": "[ThoughtsHurting]"
+          }
+        }
+      ]
+    },
+    {
       "linkId": "Difficulty",
       "text": "If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people",
       "answer": [
