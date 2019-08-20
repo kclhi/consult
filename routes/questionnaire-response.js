@@ -89,8 +89,6 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
               if ( linkId = utils.validPath(item, ["linkId"]) ) {
 
-                if ( !header.includes("\"" + linkId + "\"") ) header.push("\"" + linkId + "\"");
-
                 if ( responseCode = utils.validPath(item, ["answer", 0, "valueCoding", "code"]) ) {
 
                   row.push("\"" + responseCode + "\"");
@@ -100,6 +98,16 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
                 if ( responseInteger = utils.validPath(item, ["answer", 0, "valueInteger"]) ) {
 
                   row.push("\"" + responseInteger + "\"");
+
+                }
+
+                if ( responseCode || responseInteger ) {
+
+                  if ( !header.includes("\"" + linkId + "\"") ) header.push("\"" + linkId + "\"");
+
+                } else {
+
+                  logger.error("No associated value for " + linkId);
 
                 }
 
