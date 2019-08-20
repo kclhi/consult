@@ -378,6 +378,56 @@
   },
   {
     "type": "get",
+    "url": "/QuestionnaireResponse/:patientID/:start/:end",
+    "title": "Request questionnaire response (QuestionnaireResponse) information",
+    "name": "GetQuestionnaireResponse",
+    "group": "QuestionnaireResponses",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The start time of the range of QuestionnaireResponses to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The end time of the range of QuestionnaireResponses to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "response",
+            "description": "<p>A list of questionnaire response data as an R-formatted table.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/questionnaire-response.js",
+    "groupTitle": "QuestionnaireResponses"
+  },
+  {
+    "type": "get",
     "url": "/Patient/register/:id/:token",
     "title": "Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.",
     "name": "GetPassword",
