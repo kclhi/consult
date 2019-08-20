@@ -89,7 +89,7 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
               if ( linkId = utils.validPath(item, ["linkId"]) ) {
 
-                if ( !header.includes(linkId) ) header.push("\"" + linkId + "\"");
+                if ( !header.includes("\"" + linkId + "\"") ) header.push("\"" + linkId + "\"");
 
                 if ( responseCode = utils.validPath(item, ["answer", 0, "valueCoding", "code"]) ) {
 
