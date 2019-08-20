@@ -39,6 +39,7 @@
     "reference": "Patient/[subjectReference]"
   },
   "effectiveDateTime": "[effectiveDateTime]",
+  "authored": "[effectiveDateTime]",
   "item": [
     {
       "linkId": "LittleInterest",

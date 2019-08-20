@@ -20,7 +20,7 @@ function getFHIRServer(query, params, callback) {
 
 function addDateRows(resource, row) {
 
-  resourceTime = new Date(resource.date);
+  resourceTime = new Date(resource.authored);
   row.push(resourceTime.toISOString().split('T')[0]);
   row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
   row.push(resourceTime.toISOString().split('T')[1].substring(0, resourceTime.toISOString().split('T')[1].indexOf(".")));
@@ -72,7 +72,7 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
   if ( req.params && req.params.patientID && req.params.start && req.params.end ) {
 
     // TODO: Ensure highest count.
-    getFHIRServer("QuestionnaireResponse", "subject=" + req.params.patientID + "&date=gt" + req.params.start + "&date=lt" + req.params.end + "&_count=10000", function(data) {
+    getFHIRServer("QuestionnaireResponse", "subject=" + req.params.patientID + "&authored=gt" + req.params.start + "&authored=lt" + req.params.end + "&_count=10000", function(data) {
 
       header = [];
       rows = "";
