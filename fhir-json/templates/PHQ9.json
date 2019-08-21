@@ -42,6 +42,30 @@
   "authored": "[effectiveDateTime]",
   "item": [
     {
+      "linkId": "LittleInterest (PHQ2)",
+      "text": "Little interest or pleasure in doing things",
+      "answer": [
+        {
+          "valueCoding": {
+           "system": "http://loinc.org/vs/LL3044-6",
+           "code": "[LittleInterestInitial]"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "FeelingDown (PHQ2)",
+      "text": "Feeling down, depressed, or hopeless",
+      "answer": [
+        {
+          "valueCoding": {
+           "system": "http://loinc.org/vs/LL3044-6",
+           "code": "[FeelingDownInitial]"
+          }
+        }
+      ]
+    },
+    {
       "linkId": "LittleInterest",
       "text": "Little interest or pleasure in doing things",
       "answer": [

@@ -290,6 +290,20 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
+            "field": "LittleInterestInitial",
+            "description": "<p>PHQ2 yes/no for LittleInterest</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingDownInitial",
+            "description": "<p>PHQ2 yes/no for FeelingDown</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
             "field": "LittleInterest",
             "description": "<p>PHQ9 score for LittleInterest</p>"
           },

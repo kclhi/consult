@@ -37,6 +37,8 @@ function addDateRows(resource, row) {
  * @apiParam {String} id Resource ID.
  * @apiParam {String} subjectReference Patient ID.
  * @apiParam {String} effectiveDateTime (Optional) Timestamp of response
+ * @apiParam {String} LittleInterestInitial PHQ2 yes/no for LittleInterest
+ * @apiParam {String} FeelingDownInitial PHQ2 yes/no for FeelingDown
  * @apiParam {String} LittleInterest PHQ9 score for LittleInterest
  * @apiParam {String} FeelingDown PHQ9 score for FeelingDown
  * @apiParam {String} TroubleSleeping PHQ9 score for TroubleSleeping
