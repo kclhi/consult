@@ -36,21 +36,53 @@ module.exports = function(messageObject) {
 				var arr_out = arr_other;
 				var outputMsgs = [];
 
-				for (var w in arr_out) {
-					outputMsgs.push({url:arr_out[w],payload:arr_out[w]});
-				}
+				for (var w in arr_out) outputMsgs.push({url:arr_out[w],payload:arr_out[w]});
 
 				request.get(outputMsgs[0].payload, function(error, response, body) {
 
-					var json = {
-						"reading": "ECG",
-						"id": uuidv1(),
-						"subjectReference": req.params.patientID,
-						"practitionerReference": req.params.practitionerID,
-						"data": utils.replaceAll(utils.replaceAll(utils.replaceAll(body, "[0-9]{13}\,", ""), "\n", " "), ",", " ")
-					};
+					var currentTimestamp = -1;
+					var timestampsAndValues = body.split(/[\n,]+/)
+					var currentECGSegement = [];
+					var allECGSegements = {};
 
-					messageObject.send(config.get('sensor_to_fhir.URL') + "/create/ecg", json).then(() => res.sendStatus(200));
+					for ( var i = 0; i < timestampsAndValues.length - 1; i = i + 2 ) {
+
+						var unixTimestamp = Math.trunc(timestampsAndValues[i] / 1000);
+
+						if ( unixTimestamp != currentTimestamp && currentECGSegement.length > 0 ) {
+
+							allECGSegements[currentTimestamp] = currentECGSegement;
+							currentTimestamp = unixTimestamp;
+							currentECGSegement = [];
+
+						} else {
+
+							currentECGSegement.push(timestampsAndValues[i+1])
+
+						}
+
+					}
+
+					async.eachSeries(Object.keys(allECGSegements), function(timestamp, done) {
+
+						rawData = utils.replaceAll(allECGSegements[timestamp].toString(), ",", " ")
+
+						var json = {
+							"reading": "ECG",
+							"id": uuidv1(),
+							"subjectReference": req.params.patientID,
+							"practitionerReference": req.params.practitionerID,
+							"data": rawData,
+							"effectiveDateTime": new Date(timestamp * 1000)
+						};
+
+						messageObject.send(config.get('sensor_to_fhir.URL') + "/create/ecg", json).then(() => done());
+
+					}, function(ecgError) {
+
+						res.sendStatus(200);
+
+					});
 
 				});
 
