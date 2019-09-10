@@ -1,0 +1,28 @@
+document
+
+    default <http://pgt.inf.kcl.ac.uk/>
+    prefix pgt <http://pgt.inf.kcl.ac.uk/pgt/>
+    prefix var <http://pgt.inf.kcl.ac.uk/var/>
+    prefix vvar <http://pgt.inf.kcl.ac.uk/vvar/>
+    prefix zone <http://pgt.inf.kcl.ac.uk/zone/>
+
+    prefix snomed <http://snomed.info/sct>
+
+    agent(var:patient, [prov:type="snomed#Patient", snomed:patientIdentifier='vvar:patientID'])
+    agent(var:argumentation, [prov:type="snomed#Software"])
+
+    entity(var:sensorReading, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:sensorReading'])
+    entity(var:guideline, [prov:type="snomed#Knowledge", snomed:guideline='vvar:guideline'])
+    entity(var:recommendation, [prov:type="snomed#MedicationRecommendation", snomed:drug='vvar:drug'])
+    entity(var:symptom, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:symptom'])
+
+    activity(var:giveRecommendation, [prov:type="snomed#RecommendationTo"])
+
+    used(var:giveRecommendation, var:sensorReading, -)
+    used(var:giveRecommendation, var:guideline, -)
+    used(var:giveRecommendation, var:symptom, -)
+    wasGeneratedBy(var:recommendation, var:giveRecommendation, -)
+    wasAssociatedWith(var:giveRecommendation, var:argumentation, -)
+    wasAssociatedWith(var:symptom, var:patient)
+
+endDocument

@@ -5,6 +5,7 @@ from flask import request
 sys.path.insert(0, './argengine')
 from data_science import DataScience
 from explanation_manager import ExplanationManager
+from provenance_explanation_manager import ProvenanceExplanationManager
 import parse_aspartix
 
 class ChatBot(Resource):
@@ -55,7 +56,7 @@ class ChatBot(Resource):
         params.append('metalevel.dl') # by default metalevel semantics are used.
         params.append('rules.dl') # rules that will be used for reasoning.
         params.append('provenance.dl')
-        
+
         # get the query TODO
         query=''
         if str(keyname) == 'symptom':
@@ -123,7 +124,7 @@ class ChatBot(Resource):
         result_json=parse_aspartix.run_aspartix_web(hostip,params)
 
         # invoke the Explanation Manager
-        if expl: result_json = ExplanationManager.getExplanation(result_json, filter_words) if 'filter_words' in locals() else ExplanationManager.getExplanation(result_json)
+        if expl: result_json = ProvenanceExplanationManager.getExplanation(result_json, filter_words) if 'filter_words' in locals() else ProvenanceExplanationManager.getExplanation(result_json)
 
         print "Returning result: " + str(result_json)
         return result_json
