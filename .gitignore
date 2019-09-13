@@ -13,6 +13,7 @@ data/*/
 data/*/*/
 static/images/*
 !static/images/sample/
+*.sqlite
 
 ### Dropbox ###
 # Dropbox settings and caches
