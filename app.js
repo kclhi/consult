@@ -28,6 +28,7 @@ const { patient, updateLDAPClient } = require('./routes/patient');
 const observation = require('./routes/observation');
 const questionnaireResponse = require('./routes/questionnaire-response');
 const clinicalImpression = require('./routes/clinical-impression');
+const auditEvent = require('./routes/audit-event');
 
 // Route setup involving async
 function init(callback) {
@@ -68,6 +69,7 @@ init(function() {
   app.use('/Observation', observation);
   app.use('/QuestionnaireResponse', questionnaireResponse);
   app.use('/ClinicalImpression', clinicalImpression);
+  app.use('/AuditEvent', auditEvent);
 
   // Add errors routes after async routes added.
 

@@ -6,9 +6,9 @@ const utils = require('../lib/utils');
 const fhir = require('../lib/fhir');
 const logger = require('../config/winston');
 
-function createClinicalImpression(template, data, callback) {
+function createAuditEvent(template, data, callback) {
 
-  fhir.createClinicalImpressionResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), template, data, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
+  fhir.createAuditEventResource(config.get('fhir_server.URL'), config.get('fhir_server.REST_ENDPOINT'), template, data, callback, config.get('fhir_server.USERNAME'), config.get('fhir_server.PASSWORD'));
 
 }
 
@@ -20,7 +20,7 @@ function getFHIRServer(query, params, callback) {
 
 function addDateRows(resource, row) {
 
-  resourceTime = new Date(resource.date);
+  resourceTime = new Date(resource.recorded);
   row.push(resourceTime.toISOString().split('T')[0]);
   row.push(resourceTime.toISOString().split('T')[0].substring(0, 8) + "01");
   row.push(resourceTime.toISOString().split('T')[1].substring(0, resourceTime.toISOString().split('T')[1].indexOf(".")));
@@ -30,40 +30,41 @@ function addDateRows(resource, row) {
 }
 
 /**
- * @api {post} /ClinicalImpression/add Add new ClinicalImpression (e.g. GP notes).
+ * @api {post} /AuditEvent/add Add new AuditEvent (e.g. dashboard event).
  * @apiName Add
- * @apiGroup ClinicalImpressions
+ * @apiGroup AuditEvents
  *
  * @apiParam {String} id Resource ID (optional)
- * @apiParam {String} note Impression details
  * @apiParam {String} subjectReference Patient ID
- * @apiParam {String} effectiveDateTime (optional) Timestamp of impression
+ * @apiParam {String} eventType Type of event
+ * @apiParam {String} eventData Data associated with event
+ * @apiParam {String} effectiveDateTime (optional) Timestamp of event
  *
  * @apiSuccess {String} Confirmation Resource added.
  */
 router.post('/add', function(req, res, next) {
 
-  createClinicalImpression("notes", req.body, function(status) { res.sendStatus(status); });
+  createAuditEvent("event", req.body, function(status) { res.sendStatus(status); });
 
 });
 
 /**
- * @api {get} /ClinicalImpression/:patientID/:start/:end Request GP note (ClinicalImpression) information
- * @apiName GetClinicalImpression
- * @apiGroup ClinicalImpressions
+ * @api {get} /AuditEvent/:patientID/:start/:end Request event (AuditEvent) information
+ * @apiName GetAuditEvent
+ * @apiGroup AuditEvents
  *
  * @apiParam {Number} patientID Users unique ID.
- * @apiParam {Number} start The start time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).
- * @apiParam {Number} end The end time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).
+ * @apiParam {Number} start The start time of the range of events to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).
+ * @apiParam {Number} end The end time of the range of events to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).
  *
- * @apiSuccess {String} response A list of clinical impression data as an R-formatted table.
+ * @apiSuccess {String} response A list of event data as an R-formatted table.
  */
 router.get('/:patientID/:start/:end', function(req, res, next) {
 
   if ( req.params && req.params.patientID && req.params.start && req.params.end ) {
 
     // TODO: Ensure highest count.
-    getFHIRServer("ClinicalImpression", "subject=" + req.params.patientID + "&date=gt" + req.params.start + "&date=lt" + req.params.end + "&_count=10000", function(data) {
+    getFHIRServer("AuditEvent", "patient=" + req.params.patientID + "&date=gt" + req.params.start + "&date=lt" + req.params.end + "&_count=10000", function(data) {
 
       header = [];
       rows = "";
@@ -74,9 +75,15 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
           row = [];
 
-          if ( utils.validPath(resource, ["resource", "description"]) ) {
+          if ( eventType = utils.validPath(resource, ["resource", "source", "site"]) ) {
 
-            row.push("\"" + resource.resource.description + "\"");
+            row.push("\"" + eventType + "\"");
+
+          }
+
+          if ( eventData = utils.validPath(resource, ["resource", "entity", "0", "description"]) ) {
+
+            row.push("\"" + eventData + "\"");
 
           }
 
@@ -94,7 +101,8 @@ router.get('/:patientID/:start/:end', function(req, res, next) {
 
         });
 
-        header.push("\"note\"");
+        header.push("\"type\"");
+        header.push("\"data\"");
         header.push("\"datem\"");
         header.push("\"date.month\"");
         header.push("\"time\"");
