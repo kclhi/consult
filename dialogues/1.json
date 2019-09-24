@@ -253,7 +253,7 @@
 					"Key": "value",
 					"Value": {
 						"Type": "context",
-						"Key": "dialogueParams.responses"
+						"Key": "dialogueParams.responses.all"
 					}
 				},
 				{

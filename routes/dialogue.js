@@ -224,7 +224,9 @@ function findResponse(receivedMsg, chatContext, callback) {
 
                 if (!chatContext.dialogueParams) chatContext.dialogueParams = {};
 
-                if (!chatContext.dialogueParams.responses) chatContext.dialogueParams.responses = [];
+                if (!chatContext.dialogueParams.responses) chatContext.dialogueParams.responses = {};
+
+                if (!chatContext.dialogueParams.responses.all) chatContext.dialogueParams.responses.all = [];
 
                 chatContext.dialogueParams.responses.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
                 var options;
@@ -245,6 +247,16 @@ function findResponse(receivedMsg, chatContext, callback) {
               } else {
 
                 stepNo = condjmpArr[idx].n
+
+                if ( condjmpArr[idx].store ) { // Do we want to store the response in a context array?
+
+                  if (!chatContext.dialogueParams) chatContext.dialogueParams = {};
+
+                  if (!chatContext.dialogueParams.responses) chatContext.dialogueParams.responses = {};
+
+                  chatContext.dialogueParams.responses[condjmpArr[idx].id] = receivedMsg;
+
+                }
 
               }
 
@@ -448,8 +460,22 @@ function externalResponse(external, chatContext, substitutionText, callback) {
         // As context items might be JSON subkey specifications (e.g. X.Y), use validPath function to extract.
         if ( contextItem = utils.validPath(chatContext, item.Value.Key.split(".")) ) {
 
-          externalCallBody[item.Key] = contextItem.toString();
-          logger.debug("Added externalCallBody entry for " +  item.Key);
+          // If the context item is a JSON object, add each key from that object.
+          if ( typeof contextItem === "object" ) {
+
+            Object.keys(contextItem).forEach(function(key) {
+
+              externalCallBody[key] = contextItem[key];
+              logger.debug("Added externalCallBody entry for " +  key);
+
+            });
+
+          } else {
+
+            externalCallBody[item.Key] = contextItem.toString();
+            logger.debug("Added externalCallBody entry for " +  item.Key);
+
+          }
 
         } else {
 
