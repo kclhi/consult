@@ -34,26 +34,73 @@ function addDateRows(resource, row) {
  * @apiName Add
  * @apiGroup QuestionnaireResponses
  *
- * @apiParam {String} id Resource ID.
+ * @apiParam {String} id (Optional) Resource ID.
  * @apiParam {String} subjectReference Patient ID.
  * @apiParam {String} effectiveDateTime (Optional) Timestamp of response
- * @apiParam {String} LittleInterestInitial PHQ2 yes/no for LittleInterest
- * @apiParam {String} FeelingDownInitial PHQ2 yes/no for FeelingDown
- * @apiParam {String} LittleInterest PHQ9 score for LittleInterest
- * @apiParam {String} FeelingDown PHQ9 score for FeelingDown
- * @apiParam {String} TroubleSleeping PHQ9 score for TroubleSleeping
- * @apiParam {String} FeelingTired PHQ9 score for FeelingTired
- * @apiParam {String} BadAppetite PHQ9 score for BadAppetite
- * @apiParam {String} FeelingBadAboutSelf PHQ9 score for FeelingBadAboutSelf
- * @apiParam {String} TroubleConcentrating PHQ9 score for TroubleConcentrating
- * @apiParam {String} MovingSpeaking PHQ9 score for MovingSpeaking
- * @apiParam {String} ThoughtsHurting PHQ9 score for ThoughtsHurting
- * @apiParam {String} Difficulty PHQ9 score for Difficulty
- * @apiParam {String} TotalScore Total PHQ9 score
+ * @apiParam {String} LittleInterestInitial (Optional, if PHQ9) PHQ2 yes/no for LittleInterest
+ * @apiParam {String} FeelingDownInitial (Optional, if PHQ9) PHQ2 yes/no for FeelingDown
+ * @apiParam {String} LittleInterest (Optional, if PHQ2) PHQ9 score for LittleInterest
+ * @apiParam {String} FeelingDown (Optional, if PHQ2) PHQ9 score for FeelingDown
+ * @apiParam {String} TroubleSleeping (Optional, if PHQ2) PHQ9 score for TroubleSleeping
+ * @apiParam {String} FeelingTired (Optional, if PHQ2) PHQ9 score for FeelingTired
+ * @apiParam {String} BadAppetite (Optional, if PHQ2) PHQ9 score for BadAppetite
+ * @apiParam {String} FeelingBadAboutSelf (Optional, if PHQ2) PHQ9 score for FeelingBadAboutSelf
+ * @apiParam {String} TroubleConcentrating (Optional, if PHQ2) PHQ9 score for TroubleConcentrating
+ * @apiParam {String} MovingSpeaking (Optional, if PHQ2) PHQ9 score for MovingSpeaking
+ * @apiParam {String} ThoughtsHurting (Optional, if PHQ2) PHQ9 score for ThoughtsHurting
+ * @apiParam {String} Difficulty (Optional, if PHQ2) PHQ9 score for Difficulty
+ * @apiParam {String} TotalScore (Optional, if PHQ2) Total PHQ9 score
  *
  * @apiSuccess {String} Confirmation Resource added.
  */
 router.post('/add', function(req, res, next) {
+
+  // Set PHQ2 scores to 0 if not supplied. TODO: Differentiate between doesn't apply (e.g. PHQ9) and not answered.
+  if ( !req.body.LittleInterestInitial ) req.body.LittleInterestInitial = 0;
+  if ( !req.body.FeelingDownInitial ) req.body.FeelingDownInitial = 0;
+
+  // PHQ9
+  var totalScore = 0;
+  const PHQ9Fields = ["LittleInterest", "FeelingDown", "TroubleSleeping", "FeelingTired", "BadAppetite", "FeelingBadAboutSelf", "TroubleConcentrating", "MovingSpeaking", "ThoughtsHurting", "Difficulty"];
+  const PHQ9Scores = {"Not at all": 0, "Several days": 1, "More than half the days": 2, "Nearly every day": 3};
+
+  PHQ9Fields.forEach(function(PHQ9field) {
+
+    if ( req.body[PHQ9field] ) {
+
+      // If an answer is provided rather than a score, determine what the score is.
+      if ( typeof req.body[PHQ9field] != "number" ) {
+
+        if ( PHQ9Scores[req.body[PHQ9field]] !== false ) {
+
+          // Convert answer to numeric equivalent.
+          req.body[PHQ9field] = PHQ9Scores[req.body[PHQ9field]];
+
+        } else {
+
+          logger.error("Examining field " + PHQ9field + ". Could not find PHQ9 score for response: " + req.body[PHQ9field]);
+
+        }
+
+      }
+
+      // Sum up scores if total score not provided
+      if ( !req.body.TotalScore ) {
+
+        totalScore += req.body[PHQ9field];
+
+      }
+
+    } else {
+
+      // Set field to -1 if not supplied (e.g. if PHQ2 response)
+      req.body[PHQ9field] = -1;
+
+    }
+
+  });
+
+  if ( !req.body.TotalScore ) req.body.TotalScore = totalScore;
 
   createQuestionnaireResponseResource("PHQ9", req.body, function(status) { res.sendStatus(status); });
 

@@ -384,7 +384,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "id",
-            "description": "<p>Resource ID.</p>"
+            "description": "<p>(Optional) Resource ID.</p>"
           },
           {
             "group": "Parameter",
@@ -405,91 +405,91 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "LittleInterestInitial",
-            "description": "<p>PHQ2 yes/no for LittleInterest</p>"
+            "description": "<p>(Optional, if PHQ9) PHQ2 yes/no for LittleInterest</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "FeelingDownInitial",
-            "description": "<p>PHQ2 yes/no for FeelingDown</p>"
+            "description": "<p>(Optional, if PHQ9) PHQ2 yes/no for FeelingDown</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "LittleInterest",
-            "description": "<p>PHQ9 score for LittleInterest</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for LittleInterest</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "FeelingDown",
-            "description": "<p>PHQ9 score for FeelingDown</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for FeelingDown</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "TroubleSleeping",
-            "description": "<p>PHQ9 score for TroubleSleeping</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for TroubleSleeping</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "FeelingTired",
-            "description": "<p>PHQ9 score for FeelingTired</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for FeelingTired</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "BadAppetite",
-            "description": "<p>PHQ9 score for BadAppetite</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for BadAppetite</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "FeelingBadAboutSelf",
-            "description": "<p>PHQ9 score for FeelingBadAboutSelf</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for FeelingBadAboutSelf</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "TroubleConcentrating",
-            "description": "<p>PHQ9 score for TroubleConcentrating</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for TroubleConcentrating</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "MovingSpeaking",
-            "description": "<p>PHQ9 score for MovingSpeaking</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for MovingSpeaking</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "ThoughtsHurting",
-            "description": "<p>PHQ9 score for ThoughtsHurting</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for ThoughtsHurting</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "Difficulty",
-            "description": "<p>PHQ9 score for Difficulty</p>"
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for Difficulty</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "TotalScore",
-            "description": "<p>Total PHQ9 score</p>"
+            "description": "<p>(Optional, if PHQ2) Total PHQ9 score</p>"
           }
         ]
       }
