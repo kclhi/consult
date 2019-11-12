@@ -49,7 +49,8 @@
 		"BranchLevel": "2",
 		"Comment": "",
 		"External": {
-			"URL": "http://localhost:5000/argengine/chatbot",
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -84,7 +85,8 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "http://localhost:3006/mine/get/bp",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -127,7 +129,8 @@
 				"n": "1201",
 				"substitution": "[ext0.winning.*.bindings.A]",
 				"External": {
-					"URL": "http://localhost:5000/argengine/chatbot",
+					"devURL": "http://localhost:5000/argengine/chatbot",
+					"URL": "https://maximoff/argengine/chatbot",
 					"Method": "POST",
 					"Body": [
 						{
@@ -162,7 +165,8 @@
 							"Key": "pdata",
 							"Value": {
 								"Type": "external",
-								"URL": "http://localhost:3006/mine/get/bp",
+								"devURL": "http://localhost:3006/mine/get/bp",
+								"URL": "https://maximoff/mine/get/bp",
 								"Method": "POST",
 								"Body": [
 									{
@@ -225,7 +229,8 @@
 			}
 		],
 		"External": {
-			"URL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
+			"devURL": "http://localhost:5000/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -260,7 +265,8 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
+						"devURL": "http://localhost:3006/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -323,7 +329,8 @@
 		"BranchLevel": "2",
 		"Comment": "",
 		"External": {
-			"URL": "http://localhost:5000/argengine/chatbot",
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -358,6 +365,7 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
+						"devURL": "https://maximoff/mine/get/bp",
 						"URL": "http://localhost:3006/mine/get/bp",
 						"Method": "POST",
 						"Body": [
@@ -401,7 +409,8 @@
 				"n": "1202",
 				"substitution": "[ext0.winning.*.bindings.A]",
 				"External": {
-					"URL": "http://localhost:5000/argengine/chatbot",
+					"devURL": "http://localhost:5000/argengine/chatbot",
+					"URL": "https://maximoff/argengine/chatbot",
 					"Method": "POST",
 					"Body": [
 						{
@@ -436,7 +445,8 @@
 							"Key": "pdata",
 							"Value": {
 								"Type": "external",
-								"URL": "http://localhost:3006/mine/get/bp",
+								"devURL": "http://localhost:3006/mine/get/bp",
+								"URL": "https://maximoff/mine/get/bp",
 								"Method": "POST",
 								"Body": [
 									{
@@ -499,7 +509,8 @@
 			}
 		],
 		"External": {
-			"URL": "http://localhost:5000/argengine/chatbot",
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -534,7 +545,8 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "http://localhost:3006/mine/get/bp",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{

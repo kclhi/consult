@@ -75,7 +75,7 @@ function getWebhook(callback) {
 
 }
 
-function findResponse(receivedMsg, chatContext, callback) {
+function findResponse(receivedMsg, chatContext, dev, callback) {
 
   var newDialNo // Kai: Triggered by upstream node if new dialogue
   // Kai: ?? How does this overwrite if there is an old dialogue going on? Delete old dialogue, let it finish? Extra button to cancel it?
@@ -131,7 +131,6 @@ function findResponse(receivedMsg, chatContext, callback) {
       switch ( cmd ) {
 
         case '/start': // Kai: Hard-coded menu
-        case '/starttest':
 
           // Kai: send keyboard with all options
           response.Print = "How can I help you? Please select from the buttons below to start.";
@@ -202,7 +201,7 @@ function findResponse(receivedMsg, chatContext, callback) {
 
           dialNo = newDialNo; // Kai: Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
           stepNo = 1; // Kai: Start at the beginning
-          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, callback);
+          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
 
       } else { // Kai: Handle user response to previous message. Find previous script step
 
@@ -212,7 +211,7 @@ function findResponse(receivedMsg, chatContext, callback) {
 
           var condjmpArr = dialArr[idx].CondJmp // Kai: If undefined ...
 
-          addExternalAnswers(condjmpArr, chatContext, function(condjmpArr) { // Need to add dynamic answers prior to next command which searches for ID of last response.
+          addExternalAnswers(condjmpArr, chatContext, dev, function(condjmpArr) { // Need to add dynamic answers prior to next command which searches for ID of last response.
 
             idx = condjmpArr.findIndex(i => (i.msg == receivedMsg));
 
@@ -228,10 +227,10 @@ function findResponse(receivedMsg, chatContext, callback) {
 
                 if (!chatContext.dialogueParams.responses.all) chatContext.dialogueParams.responses.all = [];
 
-                chatContext.dialogueParams.responses.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
+                chatContext.dialogueParams.responses.all.push(receivedMsg); // Store this response (to be potentially held along with others) in a context array.
                 var options;
 
-                if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams.responses.includes(a.msg)).map(a => a.msg) ) && options.toString().length > 0 ) { // TODO: Remove toString. Determine why filtered arrays are still of size 1.
+                if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams.responses.all.includes(a.msg)).map(a => a.msg) ) && options.toString().length > 0 ) { // TODO: Remove toString. Determine why filtered arrays are still of size 1.
 
                   response.Print = "Thank you. Do any of the other options apply?" // Next ouput should ask the user if they wish to select anything else
                   response.Answers = options// Options to show are the remaining multiple choice options
@@ -262,7 +261,7 @@ function findResponse(receivedMsg, chatContext, callback) {
 
             } // Kai: else stepNo is unchanged. Will repeat previous message automatically.
 
-            addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, callback);
+            addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
 
           });
 
@@ -271,7 +270,7 @@ function findResponse(receivedMsg, chatContext, callback) {
           logger.error("Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!");
           response.Print = ERROR_TEXT;
           error = 1; // Kai: END
-          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, callback);
+          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
 
         }
 
@@ -287,7 +286,7 @@ function findResponse(receivedMsg, chatContext, callback) {
 
 }
 
-function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mutli, error, answerButtonsArr, dialArr, dialNo, stepNo, callback) {
+function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mutli, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback) {
 
   // Kai: Find response to message
   var idx = dialArr.findIndex(i => i.Step == stepNo); // Kai: If undefined ...
@@ -297,7 +296,7 @@ function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mu
     msgRow = dialArr[idx]
     var condjmpArr = msgRow.CondJmp // Kai: If undefined ...
 
-    addExternalAnswers(condjmpArr, chatContext, function(condjmpArr) {
+    addExternalAnswers(condjmpArr, chatContext, dev, function(condjmpArr) {
 
       if ( !multi ) { // Only add response and answers if not using a dynamically create multiple choice elicitation response.
 
@@ -309,7 +308,7 @@ function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mu
       response.Media = msgRow.Media;
       response.Action = msgRow.Action;
 
-      createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, callback);
+      createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback);
 
     });
 
@@ -318,13 +317,13 @@ function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mu
     logger.error("Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!");
     response.Print = ERROR_TEXT;
     error = 1; // Kai: END
-    createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, callback);
+    createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback);
 
   }
 
 }
 
-function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, callback) {
+function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback) {
 
   // Kai: Last response of dialogue?
   if ( error === 1 || ( condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi ) ) {
@@ -362,7 +361,16 @@ function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi,
 
     Object.keys(chatContext.dialogueParams).forEach(function(key) {
 
-      response.Print = response.Print.replace("[" + key + "]", chatContext.dialogueParams[key]);
+      var dialogueParamsValue = chatContext.dialogueParams[key];
+
+      // If a context variable is an object, (crudly) combine all its values to replace within the chat response.
+      if ( (typeof dialogueParamsValue == "object") && !(dialogueParamsValue instanceof Array) ) {
+
+        dialogueParamsValue = Object.keys(dialogueParamsValue).reduce(function(result, value) { return result.concat(dialogueParamsValue[value]); }, []).toString();
+
+      }
+
+      response.Print = response.Print.replace("[" + key + "]", dialogueParamsValue);
 
     });
 
@@ -373,7 +381,7 @@ function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi,
 
     logger.debug("Response is external");
 
-    externalResponse(msgRow.External, chatContext, response.Print, function(substitutionText) {
+    externalResponse(msgRow.External, chatContext, response.Print, dev, function(substitutionText) {
 
       response.Print = substitutionText;
       callback(response, answerButtonsArr);
@@ -389,7 +397,7 @@ function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi,
 
 }
 
-function addExternalAnswers(answerArray, chatContext, callback) {
+function addExternalAnswers(answerArray, chatContext, dev, callback) {
 
   logger.debug("Checking for external answers.");
 
@@ -399,7 +407,7 @@ function addExternalAnswers(answerArray, chatContext, callback) {
 
       logger.debug("Making external call to populate responses.");
 
-      externalResponse(answer.External, chatContext, answer.substitution, function(substitutionText) {
+      externalResponse(answer.External, chatContext, answer.substitution, dev, function(substitutionText) {
 
         logger.debug("Substitution text returned: " + substitutionText);
 
@@ -437,7 +445,7 @@ function addExternalAnswers(answerArray, chatContext, callback) {
 
 }
 
-function externalResponse(external, chatContext, substitutionText, callback) {
+function externalResponse(external, chatContext, substitutionText, dev, callback) {
 
   // Do we need to create anything for the body of this external call?
   if ( external.Body ) {
@@ -461,7 +469,7 @@ function externalResponse(external, chatContext, substitutionText, callback) {
         if ( contextItem = utils.validPath(chatContext, item.Value.Key.split(".")) ) {
 
           // If the context item is a JSON object, add each key from that object.
-          if ( typeof contextItem === "object" ) {
+          if ( typeof contextItem === "object" && !contextItem instanceof Array ) {
 
             Object.keys(contextItem).forEach(function(key) {
 
@@ -491,7 +499,15 @@ function externalResponse(external, chatContext, substitutionText, callback) {
 
         logger.debug("External body item: " + JSON.stringify(item));
 
-        var URL = item.Value.URL;
+        if ( dev ) {
+
+          var URL = item.Value.devURL;
+
+        } else {
+
+          var URL = item.Value.URL
+
+        }
 
         // Do we need to add anything to the URL of this nested external call, required to populate the body.
         if ( item.Value.Path ) {
@@ -613,7 +629,7 @@ function externalResponse(external, chatContext, substitutionText, callback) {
       logger.debug("Full body for external call ready.");
 
       // Make external call and replace printed response with returned value after external call body populated.
-      externalURLResponse(external, substitutionText, externalCallBody, function(substitutionText) {
+      externalURLResponse(external, substitutionText, externalCallBody, dev, function(substitutionText) {
 
         callback(substitutionText);
 
@@ -624,7 +640,7 @@ function externalResponse(external, chatContext, substitutionText, callback) {
   } else {
 
     // Make external call and replace printed response with returned value without call body.
-    externalURLResponse(external, substitutionText, {}, function(substitutionText) {
+    externalURLResponse(external, substitutionText, {}, dev, function(substitutionText) {
 
       callback(substitutionText);
 
@@ -634,12 +650,22 @@ function externalResponse(external, chatContext, substitutionText, callback) {
 
 }
 
-function externalURLResponse(external, substitutionText, externalCallBody, callback) {
+function externalURLResponse(external, substitutionText, externalCallBody, dev, callback) {
+
+  if ( dev ) {
+
+    var URL = external.devURL;
+
+  } else {
+
+    var URL = external.URL;
+
+  }
 
   // Main external call.
   request({
 
-    url: external.URL,
+    url: URL,
     method: external.Method,
     json: externalCallBody
 
@@ -647,7 +673,7 @@ function externalURLResponse(external, substitutionText, externalCallBody, callb
 
     if ( error || (response && response.statusCode >= 400) || !body ) {
 
-      logger.error("Failed to call external source (" + external.URL + ") for dynamic print return. Error: " + ( error ? error : "No error given" ) + ". Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ) + ". Body: " + ( ( body && typeof body === "object" ) ? JSON.stringify(body) : "No return body." ));
+      logger.error("Failed to call external source (" + URL + ") for dynamic print return. Error: " + ( error ? error : "No error given" ) + ". Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ) + ". Body: " + ( ( body && typeof body === "object" ) ? JSON.stringify(body) : "No return body." ));
       callback(null);
 
     } else {
@@ -746,7 +772,7 @@ router.post('/response', function(req, res, next) {
 
   }
 
-  findResponse(receivedMsg, chatContext, function(response, answerButtonsArr) {
+  findResponse(receivedMsg, chatContext, (req.app.get('env') === 'development'), function(response, answerButtonsArr) {
 
     // Don't allow template responses to go back to user.
     if ( !response || !response.Print || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
@@ -816,7 +842,7 @@ router.post('/initiate', function(req, res, next) {
   chatContext.user = req.body.username;
   chatContext.dialogueParams = req.body.dialogueParams;
 
-  findResponse("/" + req.body.dialogueID, chatContext, function(dialogueResponse, answerButtonsArr) {
+  findResponse("/" + req.body.dialogueID, chatContext, (req.app.get('env') === 'development'), function(dialogueResponse, answerButtonsArr) {
 
     if ( dialogueResponse && dialogueResponse.Print && answerButtonsArr ) {
 

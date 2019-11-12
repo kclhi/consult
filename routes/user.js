@@ -13,7 +13,7 @@ const mattermost = require('../lib/mattermost');
  * @apiGroup Users
  *
  * @apiParam {String} username Create a user with this name.
- * @apiParam {Number} dialogueID Create a user with this password.
+ * @apiParam {Number} password Create a user with this password.
  * @apiParam {Number} email Create a user with this email address.
  *
  */

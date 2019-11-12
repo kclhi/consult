@@ -89,7 +89,8 @@
 		"BranchLevel": "2",
 		"Comment": "",
 		"External": {
-			"URL": "http://localhost:5000/argengine/chatbot",
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maixmoff/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -124,7 +125,8 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "http://localhost:3006/mine/get/bp",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
