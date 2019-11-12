@@ -1,6 +1,6 @@
 [
 	{
-		"Dialogue": "2-1",
+		"Dialogue": "2-1-initiate",
 		"Step": "1",
 		"BranchLevel": "1",
 		"Comment": "This is triggered by an amber value for BP",
@@ -24,7 +24,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-1",
+		"Dialogue": "2-1-initiate",
 		"Step": "101",
 		"BranchLevel": "1",
 		"Comment": "Triggered by app",
@@ -44,7 +44,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-1",
+		"Dialogue": "2-1-initiate",
 		"Step": "102",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -64,7 +64,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-1",
+		"Dialogue": "2-1-initiate",
 		"Step": "103",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -84,7 +84,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-1",
+		"Dialogue": "2-1-initiate",
 		"Step": "1011",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -174,7 +174,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-1",
+		"Dialogue": "2-1-initiate",
 		"Step": "1012",
 		"BranchLevel": "2",
 		"Comment": "",

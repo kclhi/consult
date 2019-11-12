@@ -137,10 +137,10 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
 
           for ( const answer of dialIds ) {
 
-            if ( answer ) {
+            if ( answer && answer.indexOf("initiate") < 0 ) {
 
               answerButtonsArr.push({
-                "name": "/" + answer,
+                "name": utils.replaceAll(answer, "-", " "),
                 "integration": {
                   "url": config.get('dialogue_manager.URL') + "/response",
                   "context": {

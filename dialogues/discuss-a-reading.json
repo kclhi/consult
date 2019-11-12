@@ -1,6 +1,6 @@
 [
 	{
-		"Dialogue": "3",
+		"Dialogue": "discuss-a-reading",
 		"Step": "1",
 		"BranchLevel": "",
 		"Comment": "Triggered by the user asking about a chart",
@@ -28,7 +28,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "3",
+		"Dialogue": "discuss-a-reading",
 		"Step": "110",
 		"BranchLevel": "",
 		"Comment": "",
@@ -44,7 +44,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "3",
+		"Dialogue": "discuss-a-reading",
 		"Step": "120",
 		"BranchLevel": "",
 		"Comment": "",
@@ -60,7 +60,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "3",
+		"Dialogue": "discuss-a-reading",
 		"Step": "130",
 		"BranchLevel": "",
 		"Comment": "",
@@ -76,7 +76,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "3",
+		"Dialogue": "discuss-a-reading",
 		"Step": "140",
 		"BranchLevel": "",
 		"Comment": "",

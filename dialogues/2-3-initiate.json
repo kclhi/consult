@@ -1,6 +1,6 @@
 [
 	{
-		"Dialogue": "2-2",
+		"Dialogue": "2-3-initiate",
 		"Step": "1",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -20,7 +20,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-2",
+		"Dialogue": "2-3-initiate",
 		"Step": "1011",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -62,7 +62,7 @@
 					"Value": {
 						"Type": "external",
 						"devURL": "http://localhost:3006/mine/get/bp",
-						"URL": "http://maximoff/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -110,7 +110,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "2-2",
+		"Dialogue": "2-3-initiate",
 		"Step": "1012",
 		"BranchLevel": "2",
 		"Comment": "",

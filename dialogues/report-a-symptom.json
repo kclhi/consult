@@ -1,6 +1,6 @@
 [
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "1",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -28,7 +28,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "101",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -44,7 +44,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "201",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -217,7 +217,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "1201",
 		"BranchLevel": "",
 		"Comment": "",
@@ -229,8 +229,8 @@
 			}
 		],
 		"External": {
-			"URL": "https://maximoff/argengine/chatbot",
 			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -265,8 +265,8 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"URL": "https://maximoff/mine/get/bp",
 						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -308,7 +308,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "102",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -324,7 +324,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "202",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -365,8 +365,8 @@
 					"Key": "pdata",
 					"Value": {
 						"Type": "external",
-						"devURL": "https://maximoff/mine/get/bp",
-						"URL": "http://localhost:3006/mine/get/bp",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{
@@ -497,7 +497,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "1202",
 		"BranchLevel": "",
 		"Comment": "",
@@ -588,7 +588,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "103",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -608,7 +608,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "203",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -628,7 +628,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "204",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -644,7 +644,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "1203",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -660,7 +660,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "2203",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -676,7 +676,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "1",
+		"Dialogue": "report-a-symptom",
 		"Step": "104",
 		"BranchLevel": "2",
 		"Comment": "",
