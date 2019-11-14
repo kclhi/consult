@@ -3,6 +3,7 @@ const request = require('request');
 const router = express.Router();
 const async = require('async');
 const uuidv1 = require('uuid/v1');
+const logger = require('../config/winston');
 
 const models = require('../models');
 const utils = require('../lib/utils');
@@ -22,7 +23,7 @@ module.exports = function(messageObject) {
 
 		request.post("https://us-central1-mbshealthstream.cloudfunctions.net/getEcgFilesByPatchId", {
 			json: {
-				"patchId":"VC2B008BF_FFD00F",
+				"patchId":"VC2B008BF_FFD00E",
 				"licenseKey": config.get("vitalpatch.LICENSE_KEY"),
 				"apiKey": config.get("vitalpatch.API_KEY")
 			},
@@ -80,6 +81,7 @@ module.exports = function(messageObject) {
 
 					}, function(ecgError) {
 
+						if (ecgError) logger.error(ecgError);
 						res.sendStatus(200);
 
 					});
@@ -88,7 +90,8 @@ module.exports = function(messageObject) {
 
 			} else {
 
-				console.log(error);
+				logger.error("Could not acquire ECG data. " + error + " " + ( response && response.body && typeof response.body === 'object' ? JSON.stringify(response.body) : "" ) + " " + ( response && response.statusCode ? response.statusCode : "" ));
+				res.sendStatus(301);
 
 			}
 

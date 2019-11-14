@@ -19,3 +19,4 @@ mysql2
 config
 uuid
 password-generator
+winston
