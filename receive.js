@@ -1,5 +1,6 @@
 const amqp = require('amqplib');
 const async = require('async');
+const logger = require('./config/winston');
 require('dotenv').config()
 const config = require('config');
 
@@ -31,10 +32,12 @@ function init() {
 
               if ( statusCode < 300 ) {
 
+                logger.debug("Created new observation resource with status: " + statusCode)
                 return channel.ack(message);
 
               } else {
 
+                logger.debug("Unexpected status code when trying to create observation resource: " + statusCode);log
                 return Promise.resolve(statusCode);
 
               }
@@ -47,22 +50,22 @@ function init() {
 
         return ok.then(function(consumeOk) {
 
-          console.log('Listening to queue ' + queue);
+          logger.info('Listening to queue ' + queue);
           callback();
 
         });
 
       });
 
-    }, function(err) {
+    }, function(error) {
 
-      return Promise.resolve(err);
+      return Promise.resolve(error);
 
     });
 
   }).catch(function(error) {
 
-    console.log(error);
+    logger.debug(error);
     return setTimeout(init, 5000);
 
   });

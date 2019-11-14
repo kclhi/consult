@@ -10,3 +10,4 @@ async
 apidoc
 amqplib
 config
+winston
