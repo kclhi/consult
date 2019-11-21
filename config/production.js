@@ -22,6 +22,10 @@ module.exports = {
 
   dialogue_manager: {
     URL: "https://" + process.env.DNC_ADDRESS  + "/dialogue",
+  },
+
+  argumentation_engine: {
+    URL: "https://" + process.env.PROCESSING_ADDRESS + "/argengine",
   }
 
 };

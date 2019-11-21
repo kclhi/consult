@@ -20,6 +20,10 @@ module.exports = {
 
   dialogue_manager: {
     URL: "http://localhost:3007/dialogue",
+  },
+
+  argumentation_engine: {
+    URL: "http://localhost:5000/argengine",
   }
 
 };

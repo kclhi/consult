@@ -56,8 +56,8 @@ function addDateRows(resource, row) {
 router.post('/add', function(req, res, next) {
 
   // Set PHQ2 scores to 0 if not supplied. TODO: Differentiate between doesn't apply (e.g. PHQ9) and not answered.
-  if ( !req.body.LittleInterestInitial ) req.body.LittleInterestInitial = 0;
-  if ( !req.body.FeelingDownInitial ) req.body.FeelingDownInitial = 0;
+  if ( !req.body.LittleInterestInitial ) req.body.LittleInterestInitial = "No";
+  if ( !req.body.FeelingDownInitial ) req.body.FeelingDownInitial = "No";
 
   // PHQ9
   var totalScore = 0;
