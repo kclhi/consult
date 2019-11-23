@@ -104,7 +104,7 @@
 					"Key": "sid",
 					"Value": {
 						"Type": "context",
-						"Value": "chatId"
+						"Key": "chatId"
 					}
 				},
 				{
