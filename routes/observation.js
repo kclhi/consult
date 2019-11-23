@@ -268,17 +268,17 @@ router.put('/:id', function(req, res, next) {
 
             if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
-              sendAlert(response, patientID.replace("Patient/", ""), "2-1", "res.c271649006", ["Amber Flag"], "c271649006", function(sbpStatus) {
+              sendAlert(response, patientID.replace("Patient/", ""), "2-1-initiate", "res.c271649006", ["Amber Flag"], "c271649006", function(sbpStatus) {
 
-                sendAlert(response, patientID.replace("Patient/", ""), "2-1", "res.c271650006", ["Amber Flag"], "c271650006", function(dbpStatus) {
+                sendAlert(response, patientID.replace("Patient/", ""), "2-1-initiate", "res.c271650006", ["Amber Flag"], "c271650006", function(dbpStatus) {
 
-                  sendAlert(response, patientID.replace("Patient/", ""), "2-2", "res.c271649006", ["Red Flag"], "c271649006", function(sbpStatus) {
+                  sendAlert(response, patientID.replace("Patient/", ""), "2-2-initiate", "res.c271649006", ["Red Flag"], "c271649006", function(sbpStatus) {
 
-                    sendAlert(response, patientID.replace("Patient/", ""), "2-2", "res.c271650006", ["Red Flag"], "c271650006", function(dbpStatus) {
+                    sendAlert(response, patientID.replace("Patient/", ""), "2-2-initiate", "res.c271650006", ["Red Flag"], "c271650006", function(dbpStatus) {
 
-                      sendAlert(response, patientID.replace("Patient/", ""), "2-3", "res.c271649006", ["Double Red Flag"], "c271649006", function(sbpStatus) {
+                      sendAlert(response, patientID.replace("Patient/", ""), "2-3-initiate", "res.c271649006", ["Double Red Flag"], "c271649006", function(sbpStatus) {
 
-                        sendAlert(response, patientID.replace("Patient/", ""), "2-3", "res.c271650006", ["Double Red Flag"], "c271650006", function(dbpStatus) {
+                        sendAlert(response, patientID.replace("Patient/", ""), "2-3-initiate", "res.c271650006", ["Double Red Flag"], "c271650006", function(dbpStatus) {
 
                           res.sendStatus(Math.min(sbpStatus, dbpStatus));
 
