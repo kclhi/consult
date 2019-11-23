@@ -27,61 +27,24 @@ router.post('/create', function(req, res, next) {
 
         if ( teamId ) {
 
-          mattermost.createHook(token, teamId, "connie", "", "", function(success) {
+          mattermost.createHook(token, teamId, config.get('chatbot.USERNAME'), "", "", function(success) {
 
             if ( success ) {
 
-              mattermost.createCommand(token, teamId, "P", "start", config.get('dialogue_manager.URL') + "/response", function(success) {
+              mattermost.createCommand(token, teamId, "P", config.get('chatbot.COMMAND'), config.get('dialogue_manager.URL') + "/response", function(success) {
 
                 if ( success ) {
 
-                  request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/users", {
+                  mattermost.createUser(token, req.body.username, req.body.password, req.body.email, teamId, function(success) {
 
-                    headers: {
-                     "Authorization": "Bearer " + token
-                    },
-                    json: {
-                      "username": req.body.username,
-                      "password": req.body.password,
-                      "email": req.body.email
-                    }
+                    if ( success ) {
 
-                  },
-                  function (error, response, body) {
-
-                    if ( !error && ( response && response.statusCode < 400 ) ) {
-
-                      request.post(config.get('mattermost.CHAT_INTERNAL_URL') + config.get('mattermost.API_PATH') + "/teams/" + teamId + "/members", {
-
-                        headers: {
-                         "Authorization": "Bearer " + token
-                        },
-                        json: {
-                          "team_id": teamId,
-                          "user_id": body.id
-                        }
-
-                      },
-                      function (error, response, body) {
-
-                        if ( !error && ( response && response.statusCode < 400 ) ) {
-
-                          logger.info("Created user.");
-                          res.sendStatus(200);
-
-                        } else {
-
-                          logger.error("Error adding user to team: " + error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
-                          res.sendStatus(400);
-
-                        }
-
-                      });
+                      res.sendStatus(200);
 
                     } else {
 
-                      logger.error("Error adding user: " + error + " " + ( response.statusCode ? response.statusCode : "" ) + " " + ( typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
                       res.sendStatus(400);
+                      logger.error("Got false for create user success.")
 
                     }
 

@@ -9,6 +9,13 @@ module.exports = {
 
   dialogue_manager: {
     TEMPLATE_REGEX: "\\[[a-zA-Z0-9\\\\\.\\*]*\\]"
+  },
+
+  chatbot: {
+    COMMAND: "hello",
+    USERNAME: "connie",
+    AVATAR: "consult.png",
+    ERROR_TEXT: "Sorry, we aren't able to process a response for you right now.jpg"
   }
 
 };

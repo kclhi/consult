@@ -9,8 +9,6 @@ const uuidv1 = require('uuid/v1');
 
 const mattermost = require('../lib/mattermost');
 const utils = require('../lib/utils');
-const CONNIE_AVATAR = "connie.jpg"
-const ERROR_TEXT = "Sorry, we aren't able to process a response for you right now."
 
 let webhook = config.get('mattermost.WEBHOOK');
 
@@ -131,7 +129,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
 
       switch ( cmd ) {
 
-        case '/start': // Kai: Hard-coded menu
+        case '/' + config.get('chatbot.COMMAND'): // Kai: Hard-coded menu
 
           // Kai: send keyboard with all options
           response.Print = "How can I help you? Please select from the buttons below to start.";
@@ -269,7 +267,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
         } else {
 
           logger.error("Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!");
-          response.Print = ERROR_TEXT;
+          response.Print = config.get('chatbot.ERROR_TEXT');
           error = 1; // Kai: END
           addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
 
@@ -316,7 +314,7 @@ function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mu
   } else { // Kai: Jump to unknown dialogue step. Terminate.
 
     logger.error("Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!");
-    response.Print = ERROR_TEXT;
+    response.Print = config.get('chatbot.ERROR_TEXT');
     error = 1; // Kai: END
     createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback);
 
@@ -779,7 +777,7 @@ router.post('/response', function(req, res, next) {
     if ( !response || !response.Print || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
 
       response = {};
-      response.Print = ERROR_TEXT;
+      response.Print = config.get('chatbot.ERROR_TEXT');
       answerButtonsArr = [];
       logger.debug("Template left in text being sent to user.");
 
@@ -791,9 +789,9 @@ router.post('/response', function(req, res, next) {
 
         json: {
           "response_type": "in_channel",
-          "username": "connie",
+          "username": config.get('chatbot.USERNAME'),
           "channel": "@" + chatContext.user,
-          "icon_url": config.get('dialogue_manager.URL') + "/" + CONNIE_AVATAR,
+          "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
           "attachments": [
             {
               "pretext": "",
@@ -857,9 +855,9 @@ router.post('/initiate', function(req, res, next) {
 
             json: {
               "response_type": "in_channel",
-              "username": "connie",
+              "username": config.get('chatbot.USERNAME'),
               "channel": "@" + req.body.username,
-              "icon_url": config.get('dialogue_manager.URL') + "/" + CONNIE_AVATAR,
+              "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
               "attachments": [
                 {
                   "image_url": config.get('dialogue_manager.URL') + "/warning.jpg",
