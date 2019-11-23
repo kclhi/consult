@@ -5,6 +5,7 @@ const logger = require('../config/winston');
 const fs = require('fs');
 const async = require('async');
 const config = require('config');
+const uuidv1 = require('uuid/v1');
 
 const mattermost = require('../lib/mattermost');
 const utils = require('../lib/utils');
@@ -748,13 +749,13 @@ router.post('/response', function(req, res, next) {
 
     var chatContext = {};
     chatContext.user = req.body.user_name;
-    chatContext.chatId = req.body.user_id;
+    chatContext.chatId = uuidv1();
 
   // For initiated chats, assign them an ID. Could also be done during the initiation.
   } else if ( !req.body.context.chatContext.chatId ) {
 
     var chatContext = req.body.context.chatContext;
-    chatContext.chatId = req.body.user_id;
+    chatContext.chatId = uuidv1();
 
   } else  {
 

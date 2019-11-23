@@ -63,8 +63,8 @@
 				{
 					"Key": "sid",
 					"Value": {
-						"Type": "literal",
-						"Value": "1"
+						"Type": "context",
+						"Key": "chatId"
 					}
 				},
 				{
@@ -143,8 +143,8 @@
 						{
 							"Key": "sid",
 							"Value": {
-								"Type": "literal",
-								"Value": "1"
+								"Type": "context",
+								"Key": "chatId"
 							}
 						},
 						{
@@ -243,8 +243,8 @@
 				{
 					"Key": "sid",
 					"Value": {
-						"Type": "literal",
-						"Value": "1"
+						"Type": "context",
+						"Key": "chatId"
 					}
 				},
 				{
@@ -343,8 +343,8 @@
 				{
 					"Key": "sid",
 					"Value": {
-						"Type": "literal",
-						"Value": "3"
+						"Type": "context",
+						"Key": "chatId"
 					}
 				},
 				{
@@ -423,8 +423,8 @@
 						{
 							"Key": "sid",
 							"Value": {
-								"Type": "literal",
-								"Value": "3"
+								"Type": "context",
+								"Key": "chatId"
 							}
 						},
 						{
@@ -523,8 +523,8 @@
 				{
 					"Key": "sid",
 					"Value": {
-						"Type": "literal",
-						"Value": "3"
+						"Type": "context",
+						"Key": "chatId"
 					}
 				},
 				{

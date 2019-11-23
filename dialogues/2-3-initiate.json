@@ -39,8 +39,8 @@
 				{
 					"Key": "sid",
 					"Value": {
-						"Type": "literal",
-						"Value": "1"
+						"Type": "context",
+						"Value": "chatId"
 					}
 				},
 				{
