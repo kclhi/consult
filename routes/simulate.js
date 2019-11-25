@@ -54,15 +54,17 @@ module.exports = function(messageObject) {
 
 					messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", jsonRow).then(() => next());
 
-				}, function(err) {
+				}, function(error) {
 
+					if (error) logger.error(error);
 					res.sendStatus(200);
 
 				});
 
 			} else {
 
-				console.error("Data not supplied in suitable format");
+				logger.error("Data not supplied in suitable format");
+				res.sendStatus(304);
 
 			}
 
