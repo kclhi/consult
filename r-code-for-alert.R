@@ -7,6 +7,29 @@ library(DBI)
 library(RSQLite)
 library(RMySQL)
 
+patient.sample<-function(pid) {
+
+  c271650006<-"107"
+  c271649006<-"83"
+  c8867h4<-"58"
+  datem<-"2019-03-25"
+  date.month<-"2019-03-01"
+  time<-"13:13:15,"
+  weekday<-"Monday,"
+  birthDate<-"1952-02-17"
+  age<-"66"
+  ethnicity<-"White"
+  medication1<-"NSAID"
+  medication2<-"Thiazide"
+  problem1<-"Osteoarthritis"
+  problem2<-"Hypertension"
+  res.c271650006<-"no alert"
+  res.c271649006<-"no alert"
+
+  return(data.frame(pid, c271650006, c271649006, c8867h4, datem, date.month, time, weekday, birthDate, age, ethnicity, medication1, medication2, problem1, problem2, res.c271650006, res.c271649006))
+
+}
+
 bp.process<-function(pid, nn) {
 
   if ( Sys.getenv("R_ENV") == "production" ) {
@@ -26,46 +49,38 @@ bp.process<-function(pid, nn) {
 
     # Processing logic
     past<-head(bp, n=nn)
-    c271649006.mean.past<-mean(past$c271649006)
-    c271650006.mean.past<-mean(past$c271650006)
-    recent<-tail(bp, n=1)
-    c271649006.mean.recent<-mean(recent$c271649006)
-    c271650006.mean.recent<-mean(recent$c271650006)
 
-    if (c271649006.mean.recent>179){res.c271649006<-"Double Red Flag"}
-    else if (c271649006.mean.recent<180 & c271649006.mean.recent>149) {res.c271649006<-"Red Flag"}
-    else if (c271649006.mean.recent<150 & c271649006.mean.recent>134) {res.c271649006<-"Amber Flag"}
-    else {res.c271649006<-"no alert"}
+    if ( nrow(past) > 0 ) {
 
-    if (c271650006.mean.recent>109){res.c271650006<-"Double Red Flag"}
-    else if (c271650006.mean.recent<110 & c271650006.mean.recent>94) {res.c271650006<-"Red Flag"}
-    else if (c271650006.mean.recent<95 & c271650006.mean.recent>84) {res.c271650006<-"Amber Flag"}
-    else {res.c271650006<-"no alert"}
+      c271649006.mean.past<-mean(past$c271649006)
+      c271650006.mean.past<-mean(past$c271650006)
+      recent<-tail(bp, n=1)
+      c271649006.mean.recent<-mean(recent$c271649006)
+      c271650006.mean.recent<-mean(recent$c271650006)
 
-    patient.facts<-tail(bp, n=1)
-    alert.content<-data.frame(res.c271649006, res.c271650006, patient.facts)
+      if (c271649006.mean.recent>179){res.c271649006<-"Double Red Flag"}
+      else if (c271649006.mean.recent<180 & c271649006.mean.recent>149) {res.c271649006<-"Red Flag"}
+      else if (c271649006.mean.recent<150 & c271649006.mean.recent>134) {res.c271649006<-"Amber Flag"}
+      else {res.c271649006<-"no alert"}
+
+      if (c271650006.mean.recent>109){res.c271650006<-"Double Red Flag"}
+      else if (c271650006.mean.recent<110 & c271650006.mean.recent>94) {res.c271650006<-"Red Flag"}
+      else if (c271650006.mean.recent<95 & c271650006.mean.recent>84) {res.c271650006<-"Amber Flag"}
+      else {res.c271650006<-"no alert"}
+
+      patient.facts<-tail(bp, n=1)
+      alert.content<-data.frame(res.c271649006, res.c271650006, patient.facts)
+
+    } else {
+
+      alert.content<-patient.sample(pid);
+
+    }
 
   } else {
 
-    # Tempoarily add dummy data if DB not populated TODO: handle instance in which user engages in dialogue 1 without BP data available (because arg engine recommend endpoint expects BP data).
-    c271650006<-"107"
-    c271649006<-"83"
-    c8867h4<-"58"
-    datem<-"2019-03-25"
-    date.month<-"2019-03-01"
-    time<-"13:13:15,"
-    weekday<-"Monday,"
-    birthDate<-"1952-02-17"
-    age<-"66"
-    ethnicity<-"White"
-    medication1<-"NSAID"
-    medication2<-"Thiazide"
-    problem1<-"Osteoarthritis"
-    problem2<-"Hypertension"
-    res.c271650006<-"no alert"
-    res.c271649006<-"no alert"
-
-    alert.content<-data.frame(pid, c271650006, c271649006, c8867h4, datem, date.month, time, weekday, birthDate, age, ethnicity, medication1, medication2, problem1, problem2, res.c271650006, res.c271649006)
+    # Tempoarily add dummy data if DB not populated (or if empty for patient) TODO: properly handle instance in which user engages in dialogue (1) without BP data available (because arg engine (recommend) endpoint expects BP data).
+    alert.content<-patient.sample(pid);
 
   }
 
