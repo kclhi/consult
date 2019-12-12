@@ -391,15 +391,15 @@ router.get('/:patientID/:code/:start/:end', function(req, res, next) {
 
                 if ( !header.includes(formattedCode) ) header.push(formattedCode);
 
-                if ( valueQuantity && valueQuantity !== false ) {
+                if ( valueQuantity !== false ) {
 
                   row.push("\"" + valueQuantity + "\"");
 
-                } else if ( valueSampledData && valueSampledData !== false ) {
+                } else if ( valueSampledData !== false ) {
 
                   row.push("\"" + valueSampledData + "\"");
 
-                } else if ( valueString && valueString !== false ) {
+                } else if ( valueString !== false ) {
 
                   row.push("\"" + valueString + "\"");
 

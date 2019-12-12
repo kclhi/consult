@@ -30,7 +30,7 @@ function addUser(username, password, callback) {
     sn : "anon",
     uid: username,
     objectClass: 'inetOrgPerson',
-    // TODO: Password should not be in plaintext on LDAP server. Password should be generated.
+    // TODO: Password should be generated.
     userPassword: password
   }
 
@@ -51,7 +51,8 @@ function addUser(username, password, callback) {
         if ( error ) {
 
           logger.error("Error adding user to LDAP service: " + error);
-          res.sendStatus(400);
+          logger.debug(username);
+          callback(400);
 
         } else {
 
@@ -124,7 +125,7 @@ router.get('/register/:id/:token', function(req, res, next) {
 
     const hash = crypto.createHmac('sha256', config.get('credentials.SECRET')).update(req.params.id).digest('hex');
 
-    if ( req.params.token == hash ) {
+    if ( req.params.id && req.params.token && req.params.token == hash ) {
 
       logger.info("Valid details supplied. Creating user.");
       const password = generatePassword();
