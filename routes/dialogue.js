@@ -232,8 +232,8 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
                 if ( ( options = condjmpArr.filter(a => a.multi == "true" && !chatContext.dialogueParams.responses.all.includes(a.msg)).map(a => a.msg) ) && options.toString().length > 0 ) { // TODO: Remove toString. Determine why filtered arrays are still of size 1.
 
                   response.Print = "Thank you. Do any of the other options apply?" // Next ouput should ask the user if they wish to select anything else
-                  response.Answers = options// Options to show are the remaining multiple choice options
-                  response.Answers.push("None of them"); // Add the same option 'No' option as in the original multiple choice question to the request for other multiple choice responses, as if no more responses remain this is logically equivalent to say no in the first place.
+                  response.Answers = options // Options to show are the remaining multiple choice options
+                  response.Answers.push("None of them"); // Add the same option 'None of them' as in the original multiple choice question to the request for other multiple choice responses, as if no more responses remain this is logically equivalent to saying no in the first place.
 
                 } else {
 
@@ -486,8 +486,16 @@ function externalResponse(external, chatContext, substitutionText, dev, callback
 
         } else {
 
-          logger.error("Could not find requested chat context item: " + item.Value.Key);
-          callback(substitutionText);
+          if ( item.Value.Default ) {
+
+            externalCallBody[item.Key] = item.Value.Default;
+            logger.debug("Added default externalCallBody entry for " +  item.Key);
+
+          } else {
+
+            logger.error("Could not find requested chat context item (and no empty replacement): " + item.Value.Key);
+
+          }
 
         }
 
@@ -530,7 +538,6 @@ function externalResponse(external, chatContext, substitutionText, dev, callback
               } else {
 
                 logger.error("Could not find requested chat context item: " + pathItem.Key);
-                callback(substitutionText);
 
               }
 
@@ -565,7 +572,6 @@ function externalResponse(external, chatContext, substitutionText, dev, callback
               } else {
 
                 logger.error("Could not find requested chat context item: " + pathItem.Value.Key);
-                callback(substitutionText);
 
               }
 
@@ -592,7 +598,6 @@ function externalResponse(external, chatContext, substitutionText, dev, callback
           if ( error || (response && response.statusCode >= 400) || !body ) {
 
             logger.error("Failed to populate body item with external call: " + ( error ? error : "" ) + " Status: " + ( response && response.statusCode ? response.statusCode : "Status code unknown" ));
-            callback(substitutionText);
 
           } else {
 

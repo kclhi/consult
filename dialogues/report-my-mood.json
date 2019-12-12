@@ -1,6 +1,6 @@
 [
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "1",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -24,7 +24,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "2",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -48,7 +48,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "301",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -84,7 +84,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "302",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -120,7 +120,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "303",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -156,7 +156,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "304",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -192,7 +192,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "305",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -228,7 +228,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "306",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -264,7 +264,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "307",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -300,7 +300,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "308",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -336,7 +336,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "309",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -372,7 +372,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "310",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -408,7 +408,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "311",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -445,7 +445,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-my-mood-initiate",
+		"Dialogue": "report-my-mood",
 		"Step": "4",
 		"BranchLevel": "2",
 		"Comment": "",

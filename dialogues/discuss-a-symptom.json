@@ -205,7 +205,7 @@
 			},
 			{
 				"msg": "None of them",
-				"n": "1301"
+				"n": "1201"
 			},
 			{
 				"msg": "Don't know",
@@ -258,7 +258,8 @@
 					"Key": "value",
 					"Value": {
 						"Type": "context",
-						"Key": "dialogueParams.responses.all"
+						"Key": "dialogueParams.responses.all",
+						"Default": "none"
 					}
 				},
 				{
@@ -301,98 +302,7 @@
 					}
 				}
 			],
-			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
-		},
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "discuss-a-symptom",
-		"Step": "1301",
-		"BranchLevel": "",
-		"Comment": "",
-		"Print": "You told us you don't have any allergies. Your treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
-		"CondJmp": [
-			{
-				"msg": "END",
-				"n": "0"
-			}
-		],
-		"External": {
-			"devURL": "http://localhost:5000/argengine/chatbot",
-			"URL": "https://maximoff/argengine/chatbot",
-			"Method": "POST",
-			"Body": [
-				{
-					"Key": "pid",
-					"Value": {
-						"Type": "context",
-						"Key": "user"
-					}
-				},
-				{
-					"Key": "sid",
-					"Value": {
-						"Type": "context",
-						"Key": "chatId"
-					}
-				},
-				{
-					"Key": "keyname",
-					"Value": {
-						"Type": "literal",
-						"Value": "symptom"
-					}
-				},
-				{
-					"Key": "value",
-					"Value": {
-						"Type": "literal",
-						"Value": "backpain"
-					}
-				},
-				{
-					"Key": "pdata",
-					"Value": {
-						"Type": "external",
-						"devURL": "http://localhost:3006/mine/get/bp",
-						"URL": "https://maximoff/mine/get/bp",
-						"Method": "POST",
-						"Body": [
-							{
-								"Key": "pid",
-								"Value": {
-									"Type": "context",
-									"Key": "user"
-								}
-							},
-							{
-								"Key": "nn",
-								"Value": {
-									"Type": "literal",
-									"Value": 7
-								}
-							}
-						]
-					}
-				},
-				{
-					"Key": "expl",
-					"Value": {
-						"Type": "literal",
-						"Value": "1"
-					}
-				},
-				{
-					"Key": "filter",
-					"Value": {
-						"Type": "literal",
-						"Value": "aspt"
-					}
-				}
-			],
-			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
+			"NoReplacement": "You told us you do not have any allergies to the drugs listed. Speak to a pharmacist if you're not sure."
 		},
 		"Media": "",
 		"Actions": "",
@@ -576,7 +486,7 @@
 			},
 			{
 				"msg": "None of them",
-				"n": "1302"
+				"n": "1202"
 			},
 			{
 				"msg": "Don't know",
@@ -629,7 +539,8 @@
 					"Key": "value",
 					"Value": {
 						"Type": "context",
-						"Key": "dialogueParams.responses.all"
+						"Key": "dialogueParams.responses.all",
+						"Default": "none"
 					}
 				},
 				{
@@ -672,98 +583,7 @@
 					}
 				}
 			],
-			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
-		},
-		"Media": "",
-		"Actions": "",
-		"Var": ""
-	},
-	{
-		"Dialogue": "discuss-a-symptom",
-		"Step": "1302",
-		"BranchLevel": "",
-		"Comment": "",
-		"Print": "You told us you don't have any allergies. Your treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
-		"CondJmp": [
-			{
-				"msg": "END",
-				"n": "0"
-			}
-		],
-		"External": {
-			"devURL": "http://localhost:5000/argengine/chatbot",
-			"URL": "https://maximoff/argengine/chatbot",
-			"Method": "POST",
-			"Body": [
-				{
-					"Key": "pid",
-					"Value": {
-						"Type": "context",
-						"Key": "user"
-					}
-				},
-				{
-					"Key": "sid",
-					"Value": {
-						"Type": "context",
-						"Key": "chatId"
-					}
-				},
-				{
-					"Key": "keyname",
-					"Value": {
-						"Type": "literal",
-						"Value": "notrecommend"
-					}
-				},
-				{
-					"Key": "value",
-					"Value": {
-						"Type": "literal",
-						"Value": "headache"
-					}
-				},
-				{
-					"Key": "pdata",
-					"Value": {
-						"Type": "external",
-						"devURL": "http://localhost:3006/mine/get/bp",
-						"URL": "https://maximoff/mine/get/bp",
-						"Method": "POST",
-						"Body": [
-							{
-								"Key": "pid",
-								"Value": {
-									"Type": "context",
-									"Key": "user"
-								}
-							},
-							{
-								"Key": "nn",
-								"Value": {
-									"Type": "literal",
-									"Value": 7
-								}
-							}
-						]
-					}
-				},
-				{
-					"Key": "expl",
-					"Value": {
-						"Type": "literal",
-						"Value": "1"
-					}
-				},
-				{
-					"Key": "filter",
-					"Value": {
-						"Type": "literal",
-						"Value": "aspt"
-					}
-				}
-			],
-			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
+			"NoReplacement": "You told us you do not have any allergies to the drugs listed. Speak to a pharmacist if you're not sure."
 		},
 		"Media": "",
 		"Actions": "",
