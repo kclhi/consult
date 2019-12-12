@@ -15,7 +15,7 @@ module.exports = {
     COMMAND: "hello",
     USERNAME: "connie",
     AVATAR: "consult.png",
-    ERROR_TEXT: "Sorry, we aren't able to process a response for you right now.jpg"
+    ERROR_TEXT: "Sorry, we aren't able to process a response for you right now."
   }
 
 };

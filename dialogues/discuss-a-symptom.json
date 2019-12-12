@@ -1,6 +1,6 @@
 [
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "1",
 		"BranchLevel": "1",
 		"Comment": "",
@@ -28,7 +28,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "101",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -44,7 +44,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "201",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -205,11 +205,11 @@
 			},
 			{
 				"msg": "None of them",
-				"n": "1201"
+				"n": "1301"
 			},
 			{
 				"msg": "Don't know",
-				"n": "1201"
+				"n": "2203"
 			}
 		],
 		"Media": "",
@@ -217,7 +217,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "1201",
 		"BranchLevel": "",
 		"Comment": "",
@@ -308,7 +308,98 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
+		"Step": "1301",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "You told us you don't have any allergies. Your treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "backpain"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			],
+			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
+		},
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
 		"Step": "102",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -324,7 +415,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "202",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -485,11 +576,11 @@
 			},
 			{
 				"msg": "None of them",
-				"n": "1202"
+				"n": "1302"
 			},
 			{
 				"msg": "Don't know",
-				"n": "1202"
+				"n": "2203"
 			}
 		],
 		"Media": "",
@@ -497,7 +588,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "1202",
 		"BranchLevel": "",
 		"Comment": "",
@@ -538,7 +629,7 @@
 					"Key": "value",
 					"Value": {
 						"Type": "context",
-						"Key": "dialogueParams.responses"
+						"Key": "dialogueParams.responses.all"
 					}
 				},
 				{
@@ -588,7 +679,98 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
+		"Step": "1302",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "You told us you don't have any allergies. Your treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://maximoff/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "notrecommend"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "headache"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://maximoff/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			],
+			"NoReplacement": "Please contact 111, head to your pharmacy or discuss with your GP."
+		},
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
 		"Step": "103",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -608,7 +790,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "203",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -628,7 +810,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "204",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -644,7 +826,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "1203",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -660,7 +842,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "2203",
 		"BranchLevel": "2",
 		"Comment": "",
@@ -676,7 +858,7 @@
 		"Var": ""
 	},
 	{
-		"Dialogue": "report-a-symptom",
+		"Dialogue": "discuss-a-symptom",
 		"Step": "104",
 		"BranchLevel": "2",
 		"Comment": "",
