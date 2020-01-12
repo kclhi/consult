@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const request = require('request');
 const auth = require('basic-auth');
+const schedule = require('node-schedule');
 
 // Environment variables
 require('dotenv').config()
@@ -45,10 +46,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 const simulate = require('./routes/simulate');
+const register = require('./routes/register');
+const medi = require('./lib/medi');
 
 const amqp = require('amqplib');
 const QueueMessage = require('./lib/messages/queueMessage');
 const HTTPMessage = require('./lib/messages/httpMessage');
+
+function pollMedi(messageObject) {
+
+  var poll = schedule.scheduleJob("*/" + config.get("vitalpatch.POLL_INTERVAL") + " * * * *", function(){
+
+    models.users.findAll({raw: true}).then(function(users) {
+
+      users.forEach(function(user) {
+
+        medi.getAndForward(user.patientId, config.get("ehr.DEFAULT_PRACTITIONER_ID"), user.patchId, messageObject);
+
+      });
+
+    });
+
+  });
+
+}
 
 // Route setup involving async
 function init() {
@@ -59,6 +80,8 @@ function init() {
 
       console.log("Connected to " + config.get('message_queue.HOST'));
       router.use('/simulate', simulate(new QueueMessage(connection, config.get('message_queue.NAME'))));
+      router.use('/register', register(new QueueMessage(connection, config.get('message_queue.NAME'))));
+      pollMedi(messageObject);
 
     }).catch(function(error) {
 
@@ -70,6 +93,8 @@ function init() {
   } else {
 
     router.use('/simulate', simulate(new HTTPMessage()));
+    router.use('/register', register(new HTTPMessage()));
+    pollMedi(new HTTPMessage());
     return Promise.resolve();
 
   }

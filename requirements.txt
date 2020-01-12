@@ -20,3 +20,4 @@ config
 uuid
 password-generator
 winston
+node-schedule

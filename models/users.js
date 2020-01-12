@@ -1,14 +1,11 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var users = sequelize.define('users', {
-    nhsNumber: {
-      type: DataTypes.STRING
-    },
-    patientID: {
-      type: DataTypes.STRING
-    },
-    token: {
+    patientId: {
       primaryKey: true,
+      type: DataTypes.STRING
+    },
+    patchId: {
       type: DataTypes.STRING
     }
   }, {

@@ -4,6 +4,7 @@ proxy/locations/*
 !proxy/locations/vitalpatch
 proxy/certs/*
 !proxy/certs/gen-domain-cert.sh
+resources/
 
 # Created by https://www.gitignore.io/api/node,venv,linux,dropbox,virtualenv,archlinuxpackages
 # Edit at https://www.gitignore.io/?templates=node,venv,linux,dropbox,virtualenv,archlinuxpackages
