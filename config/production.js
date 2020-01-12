@@ -16,6 +16,13 @@ module.exports = {
     ACTIVE: true,
     HOST: "sensor-fhir-mapper_rabbit_1",
     NAME: "device-integration_vitalpatch-sensor-fhir-mapper"
-  }
+  },
+
+  vitalpatch: {
+    LICENSE_KEY: process.env.PRODUCTION_VITALPATCH_LICENSE_KEY,
+    API_KEY: process.env.PRODUCTION_VITALPATCH_API_KEY,
+    URL: "https://us-central1-mbshealthstreamkcl.cloudfunctions.net/getEcgFilesByPatchId",
+    POLL_INTERVAL: 60
+  },
 
 };

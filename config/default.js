@@ -6,10 +6,10 @@ module.exports = {
   },
 
   vitalpatch: {
-    LICENSE_KEY: process.env.VITALPATCH_LICENSE_KEY,
-    API_KEY: process.env.VITALPATCH_API_KEY,
+    LICENSE_KEY: process.env.DEVELOPMENT_VITALPATCH_LICENSE_KEY,
+    API_KEY: process.env.DEVELOPMENT_VITALPATCH_API_KEY,
     URL: "https://us-central1-mbshealthstream.cloudfunctions.net/getEcgFilesByPatchId",
-    POLL_INTERVAL: 1
+    POLL_INTERVAL: 3
   },
 
   ehr: {
