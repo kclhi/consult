@@ -3,5 +3,5 @@
   "version": "0.1.0",
   "description": "Middleware designed to interface with the Vitalpatch API.",
   "title": "device-integration_vitalpatch",
-  "url" : "https://consult.hscr.kcl.ac.uk/vitalpatch"
+  "url" : "https://consult/vitalpatch"
 }
