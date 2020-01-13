@@ -69,6 +69,8 @@ function pollMedi(messageObject) {
 
   });
 
+  return Promise.resolve();
+
 }
 
 // Route setup involving async
@@ -81,7 +83,7 @@ function init() {
       console.log("Connected to " + config.get('message_queue.HOST'));
       router.use('/simulate', simulate(new QueueMessage(connection, config.get('message_queue.NAME'))));
       router.use('/register', register(new QueueMessage(connection, config.get('message_queue.NAME'))));
-      pollMedi(messageObject);
+      return pollMedi(new QueueMessage(connection, config.get('message_queue.NAME')));
 
     }).catch(function(error) {
 

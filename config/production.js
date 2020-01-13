@@ -22,7 +22,7 @@ module.exports = {
     LICENSE_KEY: process.env.PRODUCTION_VITALPATCH_LICENSE_KEY,
     API_KEY: process.env.PRODUCTION_VITALPATCH_API_KEY,
     URL: "https://us-central1-mbshealthstreamkcl.cloudfunctions.net/getEcgFilesByPatchId",
-    POLL_INTERVAL: 60
+    POLL_INTERVAL: 5
   },
 
 };
