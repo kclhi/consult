@@ -9,6 +9,10 @@ module.exports = {
   dialogue_manager: {
   	URL: "https://" + process.env.DNC_ADDRESS + "/dialogue",
     STATIC: false
+  },
+
+  message_passer: {
+    URL: "http://message-passer_webapp_1:3005",
   }
 
 };

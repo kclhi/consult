@@ -9,6 +9,10 @@ module.exports = {
   dialogue_manager: {
   	URL: "http://localhost:3007/dialogue",
     STATIC: false
+  },
+
+  message_passer: {
+    URL: "http://localhost:3005"
   }
 
 };

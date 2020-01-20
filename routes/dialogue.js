@@ -74,6 +74,33 @@ function getWebhook(callback) {
 
 }
 
+function logDialogue(id, dialogueId) {
+
+  request.post(config.get("message_passer.URL") + "/AuditEvent/add", {
+    
+    json: {
+      "subjectReference": id,
+      "eventType": "dialogue started",
+      "eventData": dialogueId
+    }
+
+  },
+  function (error, response, body) {
+
+    if ( !error && ( response && response.statusCode <= 201 ) ) {
+
+      logger.debug("Dialogue start logged.")
+
+    } else {
+
+      logger.error("Error logging dialogue start: " + error + ", status code: " + ( response && response.statusCode ? response.statusCode : "" ) + ", body: " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : body ));
+
+    }
+
+  });
+
+}
+
 function findResponse(receivedMsg, chatContext, dev, callback) {
 
   var newDialNo // Kai: Triggered by upstream node if new dialogue
@@ -200,6 +227,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
 
           dialNo = newDialNo; // Kai: Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
           stepNo = 1; // Kai: Start at the beginning
+          logDialogue(chatContext.user, dialNo);
           addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
 
       } else { // Kai: Handle user response to previous message. Find previous script step
