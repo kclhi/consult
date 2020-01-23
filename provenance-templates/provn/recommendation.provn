@@ -11,10 +11,10 @@ document
     agent(var:patient, [prov:type="snomed#Patient", snomed:patientIdentifier='vvar:patientID'])
     agent(var:argumentation, [prov:type="snomed#Software"])
 
-    entity(var:sensorReading, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:sensorReading'])
-    entity(var:guideline, [prov:type="snomed#Knowledge", snomed:guideline='vvar:guideline'])
-    entity(var:recommendation, [prov:type="snomed#MedicationRecommendation", snomed:drug='vvar:drug'])
-    entity(var:symptom, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:symptom'])
+    entity(var:sensorReading, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:sensorReadingValue'])
+    entity(var:guideline, [prov:type="snomed#Knowledge", snomed:guideline='vvar:guidelineDescription'])
+    entity(var:recommendation, [prov:type="snomed#MedicationRecommendation", snomed:drug='vvar:recommendationDrug'])
+    entity(var:symptom, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:symptomFinding'])
 
     activity(var:giveRecommendation, [prov:type="snomed#RecommendationTo"])
 
@@ -23,6 +23,6 @@ document
     used(var:giveRecommendation, var:symptom, -)
     wasGeneratedBy(var:recommendation, var:giveRecommendation, -)
     wasAssociatedWith(var:giveRecommendation, var:argumentation, -)
-    wasAssociatedWith(var:symptom, var:patient)
+    wasAssociatedWith(var:symptom, var:patient, -)
 
 endDocument

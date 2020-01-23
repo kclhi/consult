@@ -1,6 +1,6 @@
 import schemes # explanation schemes
 
-class ExplanationManager():
+class ExplanationManager(object):
 
     @staticmethod
     def getExplanation(query_data, filter_words=None):
