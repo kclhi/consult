@@ -2,3 +2,6 @@
 
 a(provenance(source(A), relationship(wasGeneratedBy), target(giveRecommendation))) :- a(aspt([goal(G), action(A), promotes(A,G)],action(A))), patient(Patient).
 a(provenance(source(giveRecommendation), relationship(wasAssociatedWith), target(Patient))) :- a(aspt([goal(G), action(A), promotes(A,G)],action(A))), patient(Patient).
+a(provenance(source(giveRecommendation), relationship(used), target(S))) :- suffers_from(Patient,S).
+a(provenance(source(giveRecommendation), relationship(used), target(R))) :- systolic(Patient,R).
+a(provenance(source(giveRecommendation), relationship(used), target(R))) :- diastolic(Patient,R).

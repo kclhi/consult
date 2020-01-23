@@ -4,13 +4,13 @@ import json
 import requests
 
 def post(method, params):
-    url = 'http://localhost:8080/'
+    url = 'http://localhost:8081/'
     headers = {'Content-Type' : 'application/json'}
     r = requests.post(url + method, headers=headers, params=params)
     return r.text
 
 def get(method, params):
-    url = 'http://localhost:8080/'
+    url = 'http://localhost:8081/'
     headers = {'Content-Type' : 'application/json'}
     r = requests.get(url + method, headers=headers, params=params)
     return r.text
