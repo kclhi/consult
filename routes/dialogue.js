@@ -49,6 +49,7 @@ function getWebhook(callback) {
               } else {
 
                 logger.error("Error getting webhook: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + " " + ( body && typeof response.body === 'object' ? JSON.stringify(body) : "" ) );
+                callback();
 
               }
 
@@ -57,6 +58,7 @@ function getWebhook(callback) {
           } else {
 
             logger.error("Got null value for team.")
+            callback();
 
           }
 
@@ -65,6 +67,7 @@ function getWebhook(callback) {
       } else {
 
         logger.error("Got null value for token.")
+        callback();
 
       }
 
@@ -77,7 +80,7 @@ function getWebhook(callback) {
 function logDialogue(id, dialogueId) {
 
   request.post(config.get("message_passer.URL") + "/AuditEvent/add", {
-    
+
     json: {
       "subjectReference": id,
       "eventType": "dialogue started",
@@ -798,7 +801,7 @@ router.post('/response', function(req, res, next) {
 
     var receivedMsg = req.body.command;  // Input from chat server
 
-  } else if ( req.body.context.command ) {
+  } else if ( req.body.context && req.body.context.command ) {
 
     var receivedMsg = req.body.context.command;
 
@@ -818,39 +821,47 @@ router.post('/response', function(req, res, next) {
 
     getWebhook(function(webhook) {
 
-      request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
+      if ( webhook ) {
 
-        json: {
-          "response_type": "in_channel",
-          "username": config.get('chatbot.USERNAME'),
-          "channel": "@" + chatContext.user,
-          "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
-          "attachments": [
-            {
-              "pretext": "",
-              "text": response.Print,
-              "actions": answerButtonsArr
-            }
-          ]
+        request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
+
+          json: {
+            "response_type": "in_channel",
+            "username": config.get('chatbot.USERNAME'),
+            "channel": "@" + chatContext.user,
+            "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
+            "attachments": [
+              {
+                "pretext": "",
+                "text": response.Print,
+                "actions": answerButtonsArr
+              }
+            ]
+          },
+          requestCert: true
+
         },
-        requestCert: true
+      	function (error, response, body) {
 
-      },
-    	function (error, response, body) {
+          if (error || ( response && response.statusCode >= 400 )) {
 
-        if (error || ( response && response.statusCode >= 400 )) {
+    		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+             res.end();
 
-  		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
-           res.end();
+          } else {
 
-        } else {
+            // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
+            res.end();
 
-          // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
-          res.end();
+          }
 
-        }
+        });
 
-      });
+      } else {
+
+        res.end();
+
+      }
 
     });
 
