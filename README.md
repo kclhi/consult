@@ -34,6 +34,10 @@ git clone https://github.kcl.ac.uk/consult/dialogue-manager.git
 
 [View](https://github.kcl.ac.uk/pages/consult/dialogue-manager/).
 
+```
+curl -H 'Content-Type: application/json' -X POST http://localhost:3007/dialogue/response -d '{"command":"/discuss-a-symptom","context":{"chatContext":{"chatId":"123"}}'
+```
+
 ## Editing
 
 This is an [express](https://expressjs.com/) project. The majority of the logic is contained within [app.js](app.js), and in the routes and lib folders.

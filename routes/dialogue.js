@@ -821,23 +821,25 @@ router.post('/response', function(req, res, next) {
 
     getWebhook(function(webhook) {
 
+      requestJSON = {
+        "response_type": "in_channel",
+        "username": config.get('chatbot.USERNAME'),
+        "channel": "@" + chatContext.user,
+        "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
+        "attachments": [
+          {
+            "pretext": "",
+            "text": response.Print,
+            "actions": answerButtonsArr
+          }
+        ]
+      };
+
       if ( webhook ) {
 
         request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
 
-          json: {
-            "response_type": "in_channel",
-            "username": config.get('chatbot.USERNAME'),
-            "channel": "@" + chatContext.user,
-            "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
-            "attachments": [
-              {
-                "pretext": "",
-                "text": response.Print,
-                "actions": answerButtonsArr
-              }
-            ]
-          },
+          json: requestJSON,
           requestCert: true
 
         },
@@ -859,7 +861,7 @@ router.post('/response', function(req, res, next) {
 
       } else {
 
-        res.end();
+        res.send(requestJSON);
 
       }
 
