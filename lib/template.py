@@ -29,7 +29,12 @@ def createFragmentFromTemplate(templatePath, fragmentData):
                                 attributeValue = data[entityType][entity][attribute][attributeAttribute];
                                 identifyVar(attributeValue, fragmentData, untypedVars);
                                 identifyType(attributeAttribute, attributeValue, untypedVars, typedVars)
-    return typedVars;
+    jsonFragment = {};
+    for typedVar in typedVars:
+        jsonFragment[typedVar[0]] = [];
+        jsonFragment[typedVar[0]].append({"$": typedVar[1], "type": typedVar[2]})
+
+    return json.dumps(jsonFragment);
 
 if __name__ == '__main__':
 

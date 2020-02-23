@@ -1,8 +1,10 @@
 import schemes # explanation schemes
 from explanation_manager import ExplanationManager
+
+import uuid, json
+from jsonpath_ng import jsonpath, parse
 import lib.provenance as Provenance
 import lib.template as Template
-import uuid
 
 class ProvenanceExplanationManager(ExplanationManager):
 
@@ -17,14 +19,16 @@ class ProvenanceExplanationManager(ExplanationManager):
 
         with open(templatePath,'r') as templateFile:
             template = templateFile.read()
-
-        Provenance.register(documentID, templateID, template);
-        Provenance.generate(documentID, templateID, fragmentID, fragment);
+            Provenance.new_template(templateID, template);
+            Provenance.register_template(documentID, templateID);
+            Provenance.generate(documentID, templateID, fragmentID, fragment);
 
     @staticmethod
     def getExplanation(query_data, filter_words=None):
 
-        provenanceInformation = super(ProvenanceExplanationManager, ProvenanceExplanationManager).getExplanation(query_data, "provenance")["ext0"]["winning"]; # Send this to the template server
+        provenanceInformation = super(ProvenanceExplanationManager, ProvenanceExplanationManager).getExplanation(query_data, "provenance")["ext0"]["winning"];
+        jsonpath_expression = parse('$.*.bindings.S')
+        matches = jsonpath_expression.find(provenanceInformation)
 
         ID = str(uuid.uuid4());
 
@@ -32,13 +36,13 @@ class ProvenanceExplanationManager(ExplanationManager):
         fragmentData = {
             "var:argumentation": "CONSULT Argumentation Engine",
             "var:patient": "PATIENT_" + ID,
-            "vvar:patientID": provenanceInformation["arg9"]["bindings"]["T"], # TODO: dynamically connect provenance output from argumentation engine to fragment data, rather than hardcoding args.
+            "vvar:patientID": [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "wasAssociatedWith"][0],
             "var:giveRecommendation": "GIVE_RECOMMENDATION_" + ID,
-            "vvar:symptomFinding": provenanceInformation["arg6"]["bindings"]["T"],
+            "vvar:symptomFinding": [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "used" and len(match.context.value["T"]) > 3][0], # ~MDC Hack for string. Do proper parsing.
             "var:symptom": "SYMPTOM_" + ID,
-            "vvar:sensorReadingValue": provenanceInformation["arg5"]["bindings"]["T"],
+            "vvar:sensorReadingValue": [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "used" and len(match.context.value["T"]) <= 3][0], # ~MDC Hack for int. Do proper parsing.
             "var:sensorReading": "SENSOR_READING_" + ID,
-            "vvar:recommendationDrug": provenanceInformation["arg4"]["bindings"]["S"],
+            "vvar:recommendationDrug": [match.context.value["S"] for match in matches if match.context.value["R"] == "wasGeneratedBy" and match.context.value["T"] == "giveRecommendation"][0],
             "var:recommendation": "RECOMMENDATION_" + ID,
             "var:guideline": "GUIDELINE_" + ID,
             "vvar:guidelineDescription": "NHS recommendations"
