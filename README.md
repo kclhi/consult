@@ -34,8 +34,12 @@ git clone https://github.kcl.ac.uk/consult/dialogue-manager.git
 
 [View](https://github.kcl.ac.uk/pages/consult/dialogue-manager/).
 
+### Standalone mode
+
+While running, the dialogue manager can also operate in 'standalone' mode (i.e. without any connected components, such as a Mattermost server), and respond to requests directly, e.g.:
+
 ```
-curl -H 'Content-Type: application/json' -X POST http://localhost:3007/dialogue/response -d '{"command":"/discuss-a-symptom","context":{"chatContext":{"chatId":"123"}}'
+curl -H 'Content-Type: application/json' -X POST http://localhost:3007/dialogue/response -d '{"command":"/discuss-a-symptom","context":{"chatContext":{"chatId":"1234"}}}'
 ```
 
 ## Editing

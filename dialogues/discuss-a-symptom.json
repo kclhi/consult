@@ -583,7 +583,7 @@
 					}
 				}
 			],
-			"NoReplacement": "You told us you do not have any allergies to the drugs listed. Speak to a pharmacist if you're not sure."
+			"NoReplacement": "Based on your answers, we have now provided you with all the information we can. Speak to a pharmacist if you're not sure."
 		},
 		"Media": "",
 		"Actions": "",

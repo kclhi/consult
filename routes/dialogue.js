@@ -602,7 +602,7 @@ function externalResponse(external, chatContext, substitutionText, dev, callback
 
               } else {
 
-                logger.error("Could not find requested chat context item: " + pathItem.Value.Key);
+                logger.error("Could not find requested chat context item: " + bodyItem.Value.Key);
 
               }
 
@@ -819,53 +819,61 @@ router.post('/response', function(req, res, next) {
 
     }
 
-    getWebhook(function(webhook) {
+    requestJSON = {
+      "response_type": "in_channel",
+      "username": config.get('chatbot.USERNAME'),
+      "channel": "@" + chatContext.user,
+      "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
+      "attachments": [
+        {
+          "pretext": "",
+          "text": response.Print,
+          "actions": answerButtonsArr
+        }
+      ]
+    };
 
-      requestJSON = {
-        "response_type": "in_channel",
-        "username": config.get('chatbot.USERNAME'),
-        "channel": "@" + chatContext.user,
-        "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
-        "attachments": [
-          {
-            "pretext": "",
-            "text": response.Print,
-            "actions": answerButtonsArr
-          }
-        ]
-      };
+    if ( chatContext.request_text_response ) {
 
-      if ( webhook ) {
+      res.send(requestJSON);
 
-        request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
+    } else {
 
-          json: requestJSON,
-          requestCert: true
+      getWebhook(function(webhook) {
 
-        },
-      	function (error, response, body) {
+        if ( webhook ) {
 
-          if (error || ( response && response.statusCode >= 400 )) {
+          request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
 
-    		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
-             res.end();
+            json: requestJSON,
+            requestCert: true
 
-          } else {
+          },
+        	function (error, response, body) {
 
-            // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
-            res.end();
+            if (error || ( response && response.statusCode >= 400 )) {
 
-          }
+      		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+               res.send(requestJSON);
 
-        });
+            } else {
 
-      } else {
+              // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
+              res.end();
 
-        res.send(requestJSON);
+            }
 
-      }
+          });
 
-    });
+        } else {
+
+          res.send(requestJSON);
+
+        }
+
+      });
+
+    }
 
   });
 
