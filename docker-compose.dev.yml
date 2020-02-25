@@ -10,7 +10,7 @@ services:
       - neo4j
 
   neo4j:
-    image: neo4j
+    image: neo4j:3.4
     environment:
       - NEO4J_AUTH=neo4j/12345
     volumes:

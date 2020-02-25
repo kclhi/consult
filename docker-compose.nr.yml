@@ -1,0 +1,100 @@
+version: "3.7"
+
+services:
+
+  template-server_nr_chain:
+    image: kclhi/template-server_nr_chain:latest
+    ports:
+      - 10000:10000
+    depends_on:
+      - neo4j-nr-chain
+
+  template-server_nr_bucket:
+    image: kclhi/template-server_nr_bucket:latest
+    ports:
+      - 10001:10001
+    depends_on:
+      - neo4j-nr-bucket
+
+  template-server_nr_selinux:
+    image: kclhi/template-server_nr_selinux:latest
+    ports:
+      - 10002:10002
+    depends_on:
+      - neo4j-nr-selinux
+
+  neo4j-nr-chain:
+    image: neo4j:3.4
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+    volumes:
+      - neo4j_nr_chain:/data
+    ports:
+      - 7474:7474
+      - 7687:7687
+
+  neo4j-nr-bucket:
+    image: neo4j:3.4
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+      - NEO4J_dbms_connector_bolt_listen__address=:7688
+      - NEO4J_dbms_connector_bolt_advertised__address=:7688
+    volumes:
+      - neo4j_nr_bucket:/data
+    ports:
+      - 7475:7474
+      - 7688:7687
+
+  neo4j-nr-selinux:
+    image: neo4j:3.4
+    environment:
+      - NEO4J_AUTH=neo4j/12345
+      - NEO4J_dbms_connector_bolt_listen__address=:7689
+      - NEO4J_dbms_connector_bolt_advertised__address=:7689
+    volumes:
+      - neo4j_nr_selinux:/data
+    ports:
+      - 7476:7474
+      - 7689:7687
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    depends_on:
+      - openldap
+    container_name: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_SERVER_PATH=/users
+      - PHPLDAPADMIN_HTTPS=false
+      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+    ports:
+      - 8082:80
+      - 8083:443
+
+  openldap:
+    build:
+      context: ldap
+    image: consult-kcl/openldap:latest
+    command: --loglevel debug
+    environment:
+      - LDAP_TLS=false
+      - LDAP_ORGANISATION=consult
+      - LDAP_DOMAIN=consult.kcl.ac.uk
+      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
+      - LDAP_ADMIN_PASSWORD=root
+    volumes:
+      - ldap_volume:/var/lib/ldap
+      - ldap_volume:/etc/ldap/slapd.d
+    ports:
+      - 389:389
+      - 636:636
+
+volumes:
+  neo4j_nr_chain:
+  neo4j_nr_bucket:
+  neo4j_nr_selinux:
+  ldap_volume:
+
+networks:
+  default:
+    external:
+      name: net_basic

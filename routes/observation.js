@@ -14,15 +14,36 @@ const fhir = require('../lib/fhir');
 
 let lastAlert = 0;
 
-function populateProvenanceTemplate(type, pid, code, value, callback) {
+function populateProvenanceTemplate(type, pid, code, value, port, callback) {
 
-  var document = fs.readFileSync('provenance-templates/template-sensor-fragment.json', 'utf8');
+  var document = fs.readFileSync('provenance-templates/json/sensor-fragment.json', 'utf8');
   document = document.replace("[pid]", pid);
   document = document.replace("[company]", config.get('companies.' + type));
   document = document.replace("[code]", code);
   document = document.replace("[value]", value);
 
-  provenance.add(uuidv1(), document, "template-sensor", "provenance-templates/template-sensor.json", function(response) { callback(response); });
+  var id = uuidv1();
+  var template = "template-sensor-" + id;
+
+  provenance.add(id, document, template, "provenance-templates/json/sensor.json", port, function(response) { callback(response); });
+
+}
+
+function populateProvenanceTemplate_NRChain(type, pid, code, value, calback) {
+
+  populateProvenanceTemplate(type, pid, code, value, 10000, callback);
+
+}
+
+function populateProvenanceTemplate_NRBucket(type, pid, code, value, calback) {
+
+  populateProvenanceTemplate(type, pid, code, value, 10001, callback);
+
+}
+
+function populateProvenanceTemplate_NRSelinux(type, pid, code, value, calback) {
+
+  populateProvenanceTemplate(type, pid, code, value, 10002, callback);
 
 }
 
@@ -114,8 +135,8 @@ function addDateRows(resource, row) {
 
 function processObservation(req, res, type, callback) {
 
-  observationHeaders = [];
-  observationRow = [];
+  var observationHeaders = [];
+  var observationRow = [];
 
   if (patientID = utils.validPath(req, ["body", "subject", "reference"])) {
 
@@ -132,7 +153,7 @@ function processObservation(req, res, type, callback) {
         if ( measures = utils.validPath(req, ["body", "component"]) ) {
 
           // Get observation stats
-          async.eachSeries(measures, function(measure, done) {
+          async.eachSeries(measures, function(measure, next) {
 
             // 'c' prefix added (code) as in R colum name references cannot be numerical (bad practice too). Any hypens also removed.
             const code = "c" + measure["code"].coding[0].code.replace("-", "h");
@@ -142,17 +163,29 @@ function processObservation(req, res, type, callback) {
 
             if ( config.get('provenance_server.TRACK') ) {
 
-              populateProvenanceTemplate(type, patientID, code, value, function(body) {
+              populateProvenanceTemplate_NRChain(type, patientID, code, value, function(body) {
 
-                logger.info("Added provenance entry.");
-                done();
+                logger.info("Added provenance entry (NR: chain).");
+
+                populateProvenanceTemplate_NRChain(type, patientID, code, value, function(body) {
+
+                  logger.info("Added provenance entry (NR: bucket).");
+
+                  populateProvenanceTemplate_NRSelinux(type, patientID, code, value, function(body) {
+
+                    logger.info("Added provenance entry (NR: selinux).");
+                    next();
+
+                  });
+
+                });
 
               });
 
             } else {
 
               logger.warn("Not tracking provenance.");
-              done();
+              next();
 
             }
 
