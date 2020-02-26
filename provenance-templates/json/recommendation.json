@@ -42,10 +42,6 @@
     "default": "http://pgt.inf.kcl.ac.uk/"
   },
   "wasAssociatedWith": {
-    "_:wAW2": {
-      "prov:agent": "var:patient",
-      "prov:activity": "var:symptom"
-    },
     "_:wAW1": {
       "prov:agent": "var:argumentation",
       "prov:activity": "var:giveRecommendation"
@@ -63,6 +59,12 @@
     "_:u1": {
       "prov:entity": "var:sensorReading",
       "prov:activity": "var:giveRecommendation"
+    }
+  },
+  "wasAttributedTo": {
+    "_:wAT1": {
+      "prov:entity": "var:symptom",
+      "prov:agent": "var:patient"
     }
   },
   "entity": {

@@ -23,6 +23,6 @@ document
     used(var:giveRecommendation, var:symptom, -)
     wasGeneratedBy(var:recommendation, var:giveRecommendation, -)
     wasAssociatedWith(var:giveRecommendation, var:argumentation, -)
-    wasAssociatedWith(var:symptom, var:patient, -)
+    wasAttributedTo(var:symptom, var:patient, -)
 
 endDocument

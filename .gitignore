@@ -1,20 +1,6 @@
 # Created by https://www.gitignore.io/api/git,linux,python,dropbox
 # Edit at https://www.gitignore.io/?templates=git,linux,python,dropbox
 
-# Project specific
-examples/
-method-annotations.txt
-*.pptx
-proxy/certs/*
-!proxy/certs/gen-domain-cert.sh
-data/
-data/*
-data/*/
-data/*/*/
-static/images/*
-!static/images/sample/
-*.sqlite
-
 ### Dropbox ###
 # Dropbox settings and caches
 .dropbox
@@ -184,3 +170,18 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/git,linux,python,dropbox
+
+# Project specific
+examples/
+method-annotations.txt
+*.pptx
+proxy/certs/*
+!proxy/certs/gen-domain-cert.sh
+data/
+data/*
+data/*/
+data/*/*/
+static/images/*
+!static/images/sample/
+*.sqlite
+provconvert

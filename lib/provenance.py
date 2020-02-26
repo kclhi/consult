@@ -3,79 +3,79 @@
 import json
 import requests
 
-def post(method, params):
-    url = 'http://localhost:8081/'
+def post(method, params, port):
+    url = 'http://localhost:' + str(port) + '/'
     headers = {'Content-Type' : 'application/json'}
     r = requests.post(url + method, headers=headers, params=params)
     return r.text
 
-def get(method, params):
-    url = 'http://localhost:8081/'
+def get(method, params, port):
+    url = 'http://localhost:' + str(port) + '/'
     headers = {'Content-Type' : 'application/json'}
     r = requests.get(url + method, headers=headers, params=params)
     return r.text
 
-def new(identifier, default_namespace):
+def new(identifier, default_namespace, port):
     params = {'identifier' : identifier, 'defaultNamespace' : default_namespace}
-    return post('new', params)
+    return post('new', params, port)
 
-def namespace(identifier, prefix, namespace):
+def namespace(identifier, prefix, namespace, port):
     params = {'identifier' : identifier, 'prefix' : prefix, 'namespace' : namespace}
-    return post('namespace', params)
+    return post('namespace', params, port)
 
-def register(document_identifier, template_identifier, data):
+def register(document_identifier, template_identifier, data, port):
     params = {'documentIdentifier' : document_identifier,
             'templateIdentifier' : template_identifier, 'templateData' : data}
-    return post('register', params)
+    return post('register', params, port)
 
-def register_template(document_identifier, template_identifier):
+def register_template(document_identifier, template_identifier, port):
     params = {'documentIdentifier' : document_identifier,
             'templateIdentifier' : template_identifier}
-    return post('registerTemplate', params)
+    return post('registerTemplate', params, port)
 
-def new_template(template_identifier, data):
+def new_template(template_identifier, data, port):
     params = {'templateIdentifier' : template_identifier, 'templateData' : data}
-    return post('newTemplate', params)
+    return post('newTemplate', params, port)
 
-def generate(document_identifier, template_identifier, fragment_identifier, data):
+def generate(document_identifier, template_identifier, fragment_identifier, data, port):
     params = {'documentIdentifier' : document_identifier,
             'templateIdentifier' : template_identifier,
             'fragmentIdentifier' : fragment_identifier, 'data' : data}
-    return post('generate', params)
+    return post('generate', params, port)
 
-def list_documents():
-    return get('list', {})
+def list_documents(port):
+    return get('list', {}, port)
 
-def delete(identifier):
+def delete(identifier, port):
     params = {'identifier' : identifier}
-    return post('delete', params)
+    return post('delete', params, port)
 
-def export(identifier, doctype):
+def export(identifier, doctype, port):
     params = {'identifier' : identifier, 'docType' : doctype}
-    return get('export', params)
+    return get('export', params, port)
 
-def geninit(document_identifier, template_identifier, fragment_identifier, data):
+def geninit(document_identifier, template_identifier, fragment_identifier, data, port):
     params = {'documentIdentifier' : document_identifier,
             'templateIdentifier' : template_identifier,
             'fragmentIdentifier' : fragment_identifier, 'data' : data}
-    return post('geninit', params)
+    return post('geninit', params, port)
 
-def genzone(document_identifier, template_identifier, fragment_identifier, zone_identifier, data):
+def genzone(document_identifier, template_identifier, fragment_identifier, zone_identifier, data, port):
     params = {'documentIdentifier' : document_identifier,
             'templateIdentifier' : template_identifier,
             'fragmentIdentifier' : fragment_identifier,
             'zoneIdentifier' : zone_identifier, 'data' : data}
-    return post('genzone', params)
+    return post('genzone', params, port)
 
-def genfinal(document_identifier, template_identifier, fragment_identifier):
+def genfinal(document_identifier, template_identifier, fragment_identifier, port):
     params = {'documentIdentifier' : document_identifier,
             'templateIdentifier' : template_identifier,
             'fragmentIdentifier' : fragment_identifier}
-    return post('genfinal', params)
+    return post('genfinal', params, port)
 
-def simulate(template_identifier, limits):
+def simulate(template_identifier, limits, port):
     params = {'templateIdentifier' : template_identifier, 'limits' : limits}
-    return post('simulate', params)
+    return post('simulate', params, port)
 
 def test1():
     dn = 'test-data1'

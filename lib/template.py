@@ -1,11 +1,17 @@
 import json
 from collections import OrderedDict
 
-def identifyVar(attribute, fragmentData, untypedVars):
-    if ("var:" in attribute):
+def identifyVar(attribute, fragmentData, untypedVars, typedVars):
+
+    QUALIFIED_NAME = "prov:QUALIFIED_NAME";
+
+    if ("var" in attribute):
         data = "";
         if ( attribute in fragmentData.keys() ): data = fragmentData[attribute];
-        untypedVars.append([attribute, data]);
+        if ("vvar:" in attribute):
+            untypedVars.append([attribute, data]);
+        else:
+            typedVars.append([attribute, data, QUALIFIED_NAME]); # var substitutions are always qnames.
 
 def identifyType(attribute, value, untypedVars, typedVars):
     if (attribute == "type" and len(untypedVars) > 0):
@@ -21,13 +27,13 @@ def createFragmentFromTemplate(templatePath, fragmentData):
         data = json.load(json_file, object_pairs_hook=OrderedDict)
         for entityType in data:
             for entity in data[entityType]:
-                identifyVar(entity, fragmentData, untypedVars);
+                identifyVar(entity, fragmentData, untypedVars, typedVars);
                 if isinstance(data[entityType][entity], dict):
                     for attribute in data[entityType][entity]:
                         if isinstance(data[entityType][entity][attribute], dict):
                             for attributeAttribute in data[entityType][entity][attribute]:
                                 attributeValue = data[entityType][entity][attribute][attributeAttribute];
-                                identifyVar(attributeValue, fragmentData, untypedVars);
+                                identifyVar(attributeValue, fragmentData, untypedVars, typedVars);
                                 identifyType(attributeAttribute, attributeValue, untypedVars, typedVars)
     jsonFragment = {};
     for typedVar in typedVars:
