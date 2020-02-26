@@ -454,6 +454,9 @@ function addExternalAnswers(answerArray, chatContext, dev, callback) {
 
           });
 
+          // Remove original template answer
+          if ( ( index = answerArray.indexOf(answer) ) > -1 ) answerArray.splice(index, 1);
+
         }
 
         next();
