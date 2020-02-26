@@ -1,0 +1,142 @@
+{
+  "agent": {
+    "chatbot": {
+      "prov:type": {
+        "$": "prov:SoftwareAgent",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    },
+    "patient": {
+      "prov:type": {
+        "$": "snomed#Patient",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "consult:patientIdentifier": {
+        "$": "vvar:patientID",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    }
+  },
+  "wasGeneratedBy": {
+    "_:wGB3": {
+      "prov:entity": "var:selectedOption",
+      "prov:activity": "var:selectOption"
+    },
+    "_:wGB4": {
+      "prov:entity": "var:result",
+      "prov:activity": "var:generateResult"
+    },
+    "_:wGB1": {
+      "prov:entity": "var:dialogSession",
+      "prov:activity": "var:openSession"
+    },
+    "_:wGB2": {
+      "prov:entity": "var:presentedOptions",
+      "prov:activity": "var:generateOptions"
+    }
+  },
+  "activity": {
+    "var:openSession": {},
+    "var:generateResult": {},
+    "var:selectOption": {
+      "zone:id": {
+        "$": "option",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "zone:type": {
+        "$": "series",
+        "type": "xsd:string"
+      }
+    },
+    "var:generateOptions": {
+      "pgt:recEntry": {
+        "$": "var:selectedOption",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "pgt:recType": {
+        "$": "used",
+        "type": "xsd:string"
+      },
+      "zone:id": {
+        "$": "option",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "zone:type": {
+        "$": "series",
+        "type": "xsd:string"
+      }
+    }
+  },
+  "prefix": {
+    "pgt": "http://www.kcl.ac.uk/pgt/",
+    "consult": "http://consult.com/",
+    "zone": "http://www.kcl.ac.uk/zone/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "snomed": "http://snomed.info/sct",
+    "var": "http://www.kcl.ac.uk/ivar/",
+    "default": "http://www.kcl.ac.uk/",
+    "vvar": "http://www.kcl.ac.uk/vvar/"
+  },
+  "wasAssociatedWith": {
+    "_:wAW2": {
+      "prov:agent": "chatbot",
+      "prov:activity": "var:openSession"
+    },
+    "_:wAW1": {
+      "prov:agent": "patient",
+      "prov:activity": "var:openSession"
+    }
+  },
+  "used": {
+    "_:u2": {
+      "prov:entity": "var:presentedOptions",
+      "prov:activity": "var:selectOption"
+    },
+    "_:u3": {
+      "prov:entity": "var:selectedOption",
+      "prov:activity": "var:generateResult"
+    },
+    "_:u1": {
+      "prov:entity": "var:dialogSession",
+      "prov:activity": "var:generateOptions"
+    }
+  },
+  "entity": {
+    "var:selectedOption": {
+      "zone:id": {
+        "$": "option",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "zone:type": {
+        "$": "series",
+        "type": "xsd:string"
+      },
+      "snomed:value": {
+        "$": "vvar:optionValue",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    },
+    "var:presentedOptions": {
+      "zone:id": {
+        "$": "option",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "zone:type": {
+        "$": "series",
+        "type": "xsd:string"
+      },
+      "snomed:valueSet": {
+        "$": "vvar:optionSet",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    },
+    "var:result": {},
+    "var:dialogSession": {
+      "consult:token": {
+        "$": "vvar:token",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    }
+  }
+}

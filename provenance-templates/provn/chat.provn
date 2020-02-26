@@ -1,0 +1,44 @@
+document
+
+    default     <http://www.kcl.ac.uk/>
+    prefix pgt  <http://www.kcl.ac.uk/pgt/>
+    prefix var  <http://www.kcl.ac.uk/ivar/>
+    prefix vvar <http://www.kcl.ac.uk/vvar/>
+    prefix zone <http://www.kcl.ac.uk/zone/>
+
+    prefix snomed  <http://snomed.info/sct>
+    prefix consult <http://consult.com/>
+
+    agent(patient, [prov:type='snomed#Patient',
+            consult:patientIdentifier='vvar:patientID'])
+    agent(chatbot, [prov:type='prov:SoftwareAgent'])
+
+    activity(var:openSession)
+    wasAssociatedWith(var:openSession, patient, -)
+    wasAssociatedWith(var:openSession, chatbot, -)
+
+    entity(var:dialogSession, [consult:token='vvar:token'])
+    wasGeneratedBy(var:dialogSession, var:openSession, -)
+
+    activity(var:generateOptions, [zone:id='option', zone:type="series",
+            pgt:recEntry='var:selectedOption', pgt:recType="used"])
+    used(var:generateOptions, var:dialogSession, -)
+
+    entity(var:presentedOptions, [zone:id='option', zone:type="series",
+            snomed:valueSet='vvar:optionSet'])
+    wasGeneratedBy(var:presentedOptions, var:generateOptions, -)
+
+    activity(var:selectOption, [zone:id='option', zone:type="series"])
+    used(var:selectOption, var:presentedOptions, -)
+
+    entity(var:selectedOption, [zone:id='option', zone:type="series",
+            snomed:value='vvar:optionValue'])
+    wasGeneratedBy(var:selectedOption, var:selectOption, -)
+
+    activity(var:generateResult)
+    used(var:generateResult, var:selectedOption, -)
+
+    entity(var:result)
+    wasGeneratedBy(var:result, var:generateResult, -)
+
+endDocument
