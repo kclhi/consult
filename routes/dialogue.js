@@ -8,9 +8,129 @@ const config = require('config');
 const uuidv1 = require('uuid/v1');
 
 const mattermost = require('../lib/mattermost');
+const provenance = require('../lib/provenance');
+const template = require('../lib/template');
 const utils = require('../lib/utils');
 
 let webhook = config.get('mattermost.WEBHOOK');
+
+function registerTemplate(port, documentId, templateId, fragmentId, fragment, callback) {
+
+  provenance.registerTemplate(documentId, templateId, port, function(registerBody) {
+
+    provenance.geninit(documentId, templateId, fragmentId, fragment, port, function(generateBody) {
+
+      callback(generateBody);
+
+    });
+
+  });
+
+}
+
+function populateProvenanceTemplate(port, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generatedResult, result, callback) {
+
+  const templatePath = "provenance-templates/json/chat.json";
+  const templateId = "template-chat";
+
+  var fragmentData = {
+    "vvar:patientID": ":" + patientId,
+    "var:openSession": ":" + openSession,
+    "var:dialogSession": ":" + dialogueSession,
+    "vvar:token": ":" + token,
+    "var:generateOptions": ":" + generateOptions,
+    "var:presentedOptions": ":" + presentedOptions,
+    "vvar:optionSet": ":" + optionSet,
+    "var:selectOption": ":" + selectOption,
+    "var:selectedOption": ":" + selectedOption,
+    "vvar:optionValue": ":" + optionValue,
+    "var:generateResult": ":" + generatedResult,
+    "var:result": ":" + result
+  }
+
+  var fragment = template.createFragmentFromTemplate(templatePath, fragmentData);
+
+  provenance.new(documentId, 'https://kclhi.org.uk/', port, function(newBody) {
+
+    provenance.namespace(documentId, 'consult', 'https://consult.kcl.ac.uk', port, function(namespaceBody) {
+
+      provenance.listDocuments(port, function(documents) {
+
+        if ( documents.indexOf(templateId) < 0 ) {
+
+          const templateDocument = fs.readFileSync(templatePath, 'utf8');
+          provenance.newTemplate(templateId, templateDocument, port, function(templateCreation) {
+
+            registerTemplate(port, documentId, templateId, fragmentId, fragment, callback);
+
+          });
+
+        } else {
+
+          registerTemplate(port, documentId, templateId, fragmentId, fragment, callback);
+
+        }
+
+      });
+
+    });
+
+  });
+
+}
+
+function populateProvenanceTemplate_NRChain(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generatedResult, result, callback) {
+
+   populateProvenanceTemplate(10000, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generatedResult, result, function(response) { callback(response); });
+
+}
+
+function populateProvenanceTemplateZone(port, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
+
+  const templateId = "template-chat";
+  const templateZonePath = "provenance-templates/json/" + zoneId + ".json";
+
+  var fragmentData = {
+    "var:generateOptions": ":" + generateOptions,
+    "var:presentedOptions": ":" + presentedOptions,
+    "vvar:optionSet": ":" + optionSet,
+    "var:selectOption": ":" + selectOption,
+    "var:selectedOption": ":" + selectedOption,
+    "vvar:optionValue": ":" + optionValue,
+  }
+
+  var fragment = template.createFragmentFromTemplate(templateZonePath, fragmentData);
+
+  provenance.genzone(documentId, templateId, fragmentId, ":" + zoneId, fragment, port, function(generateBody) {
+
+    callback(generateBody);
+
+  });
+
+}
+
+function populateProvenanceTemplateZone_NRChain(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
+
+  populateProvenanceTemplateZone(10000, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) { callback(response); });
+
+}
+
+function saveProvenanceTemplate(port, documentId, fragmentId, callback) {
+
+  const templateId = "template-chat";
+  provenance.genfinal(documentId, templateId, fragmentId, function(generateBody) {
+
+    callback(generateBody);
+
+  });
+
+}
+
+function saveProvenanceTemplate_NRChain(documentId, fragmentId, callback) {
+
+  saveProvenanceTemplate(10000, documentId, fragmentId, function(response) { callback(response) });
+
+}
 
 function getWebhook(callback) {
 
@@ -104,7 +224,7 @@ function logDialogue(id, dialogueId) {
 
 }
 
-function findResponse(receivedMsg, chatContext, dev, callback) {
+function findResponse(receivedMsg, chatContext, dev, documentId, fragmentId, callback) {
 
   var newDialNo // Kai: Triggered by upstream node if new dialogue
   // Kai: ?? How does this overwrite if there is an old dialogue going on? Delete old dialogue, let it finish? Extra button to cancel it?
@@ -231,7 +351,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
           dialNo = newDialNo; // Kai: Overwriting possible Context setting. New dialogue taking precedence. Do we want that??
           stepNo = 1; // Kai: Start at the beginning
           logDialogue(chatContext.user, dialNo);
-          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
+          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, documentId, fragmentId, callback);
 
       } else { // Kai: Handle user response to previous message. Find previous script step
 
@@ -291,7 +411,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
 
             } // Kai: else stepNo is unchanged. Will repeat previous message automatically.
 
-            addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
+            addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, documentId, fragmentId, callback);
 
           });
 
@@ -300,7 +420,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
           logger.error("Hmm, looks like the previous dialogue step has disappeared. Have to wrap up this conversation, unfortunately. Good bye!");
           response.Print = config.get('chatbot.ERROR_TEXT');
           error = 1; // Kai: END
-          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback);
+          addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, documentId, fragmentId, callback);
 
         }
 
@@ -316,7 +436,7 @@ function findResponse(receivedMsg, chatContext, dev, callback) {
 
 }
 
-function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mutli, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, callback) {
+function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mutli, error, answerButtonsArr, dialArr, dialNo, stepNo, dev, documentId, fragmentId, callback) {
 
   // Kai: Find response to message
   var idx = dialArr.findIndex(i => i.Step == stepNo); // Kai: If undefined ...
@@ -338,7 +458,7 @@ function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mu
       response.Media = msgRow.Media;
       response.Action = msgRow.Action;
 
-      createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback);
+      createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, documentId, fragmentId, callback);
 
     });
 
@@ -347,18 +467,23 @@ function addResponseAnswers(receivedMsg, chatContext, chat, response, msgRow, mu
     logger.error("Oops, I cannot find a response. Have to wrap up this conversation, unfortunately. Good bye!");
     response.Print = config.get('chatbot.ERROR_TEXT');
     error = 1; // Kai: END
-    createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback);
+    createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, documentId, fragmentId, callback);
 
   }
 
 }
 
-function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, callback) {
+function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi, error, answerButtonsArr, condjmpArr, dialNo, stepNo, dev, documentId, fragmentId, callback) {
 
   // Kai: Last response of dialogue?
   if ( error === 1 || ( condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi ) ) {
 
     chat = {} // Kai: Delete chat context, end of dialogue.
+    saveProvenanceTemplate_NRChain(documentId, fragmentId, function(savedTemplate) {
+
+      console.log("Final provenance template saved");
+
+    });
 
   } else { // Kai: Prepare next step of dialogue flow
 
@@ -779,6 +904,32 @@ function externalURLResponse(external, substitutionText, externalCallBody, dev, 
 
 }
 
+function chatProvenance(documentId, fragmentId, command, user, chatId, actions, callback) {
+
+  const ID = uuidv1();
+
+  if ( command.indexOf(config.get("chatbot.COMMAND")) > -1 ) {
+
+    populateProvenanceTemplate_NRChain(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions, actions, "selectOption-" + ID, command, command, "generatedResult-" + ID, "Output to patient", function(initialTemplateResponse) {
+
+      logger.info("Added initial provenance chat substitution.");
+      callback(initialTemplateResponse);
+
+    });
+
+  } else {
+
+    populateProvenanceTemplateZone_NRChain(documentId, fragmentId, "option", "generateOptions-" + ID, actions, actions, "selectOption-" + ID, command, command, function(zoneResponse) {
+
+      logger.info("Added provenance chat zone.");
+      callback(zoneResponse);
+
+    });
+
+  }
+
+}
+
 router.post('/response', function(req, res, next) {
 
   // New chat session.
@@ -810,73 +961,92 @@ router.post('/response', function(req, res, next) {
 
   }
 
-  findResponse(receivedMsg, chatContext, (req.app.get('env') === 'development'), function(response, answerButtonsArr) {
+  var actions;
 
-    // Don't allow template responses to go back to user.
-    if ( !response || !response.Print || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
+  if ( req.body.attachments && req.body.attachments.actions ) {
 
-      response = {};
-      response.Print = config.get('chatbot.ERROR_TEXT');
-      answerButtonsArr = [];
-      logger.debug("Template left in text being sent to user.");
+    actions = req.body.attachments.actions;
 
-    }
+  } else {
 
-    requestJSON = {
-      "response_type": "in_channel",
-      "username": config.get('chatbot.USERNAME'),
-      "channel": "@" + chatContext.user,
-      "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
-      "attachments": [
-        {
-          "pretext": "",
-          "text": response.Print,
-          "actions": answerButtonsArr
-        }
-      ]
-    };
+    actions = "/hello";
 
-    if ( chatContext.request_text_response ) {
+  }
 
-      res.send(requestJSON);
+  const documentId = "data-" + chatContext.chatId;
+  const fragmentId = "frag-" + chatContext.chatId;
 
-    } else {
+  chatProvenance(documentId, fragmentId, receivedMsg, chatContext.user, chatContext.chatId, actions, function(provenanceResponse) {
 
-      getWebhook(function(webhook) {
+    findResponse(receivedMsg, chatContext, (req.app.get('env') === 'development'), documentId, fragmentId, function(response, answerButtonsArr) {
 
-        if ( webhook ) {
+      // Don't allow template responses to go back to user.
+      if ( !response || !response.Print || ( response && response.Print.indexOf("[") >= 0 ) || !answerButtonsArr ) {
 
-          request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
+        response = {};
+        response.Print = config.get('chatbot.ERROR_TEXT');
+        answerButtonsArr = [];
+        logger.debug("Template left in text being sent to user.");
 
-            json: requestJSON,
-            requestCert: true
+      }
 
-          },
-        	function (error, response, body) {
+      requestJSON = {
+        "response_type": "in_channel",
+        "username": config.get('chatbot.USERNAME'),
+        "channel": "@" + chatContext.user,
+        "icon_url": config.get('dialogue_manager.URL') + "/" + config.get('chatbot.AVATAR'),
+        "attachments": [
+          {
+            "pretext": "",
+            "text": response.Print,
+            "actions": answerButtonsArr
+          }
+        ]
+      };
 
-            if (error || ( response && response.statusCode >= 400 )) {
+      if ( chatContext.request_text_response ) {
 
-      		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
-               res.send(requestJSON);
+        res.send(requestJSON);
 
-            } else {
+      } else {
 
-              // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
-              res.end();
+        getWebhook(function(webhook) {
 
-            }
+          if ( webhook ) {
 
-          });
+            request.post(webhook.replace(config.get('mattermost.CHAT_EXTERNAL_URL'), config.get('mattermost.CHAT_INTERNAL_URL')), {
 
-        } else {
+              json: requestJSON,
+              requestCert: true
 
-          res.send(requestJSON);
+            },
+          	function (error, response, body) {
 
-        }
+              if (error || ( response && response.statusCode >= 400 )) {
 
-      });
+        		     logger.error("Error responding to dialogue message: " + error + " " + ( response && response.statusCode ? response.statusCode : "" ) + ( response && response.body && typeof response.body === "object" ? JSON.stringify(response.body) : "" ));
+                 res.send(requestJSON);
 
-    }
+              } else {
+
+                // Needs to just 'end' rather than send status, as otherwise displayed as extra message by Mattermost.
+                res.end();
+
+              }
+
+            });
+
+          } else {
+
+            res.send(requestJSON);
+
+          }
+
+        });
+
+      }
+
+    });
 
   });
 
@@ -898,7 +1068,11 @@ router.post('/initiate', function(req, res, next) {
   chatContext.user = req.body.username;
   chatContext.dialogueParams = req.body.dialogueParams;
 
-  findResponse("/" + req.body.dialogueID, chatContext, (req.app.get('env') === 'development'), function(dialogueResponse, answerButtonsArr) {
+  const ID = uuidv1();
+  const documentId = "data-" + ID;
+  const fragmentId = "frag-" + ID;
+
+  findResponse("/" + req.body.dialogueID, chatContext, (req.app.get('env') === 'development'), dcoumentId, fragmentId, function(dialogueResponse, answerButtonsArr) {
 
     if ( dialogueResponse && dialogueResponse.Print && answerButtonsArr ) {
 

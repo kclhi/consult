@@ -13,6 +13,11 @@ module.exports = {
 
   message_passer: {
     URL: "http://localhost:3005"
+  },
+
+  provenance_server: {
+    URL: "http://localhost:8081",
+    TRACK: true
   }
 
 };
