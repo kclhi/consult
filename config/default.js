@@ -17,7 +17,8 @@ module.exports = {
   },
 
   provenance_server: {
-    TRACK: false
+    TRACK: true,
+    NR_MECHANISMS: "chain"
   },
 
   dialogue_manager: {

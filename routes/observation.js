@@ -9,41 +9,118 @@ const logger = require('../config/winston');
 
 const provenance = require('../lib/provenance');
 const patient = require('../lib/patient');
+const template = require('../lib/template');
 const utils = require('../lib/utils');
 const fhir = require('../lib/fhir');
 
 let lastAlert = 0;
 
+function registerTemplate(port, documentId, templateId, fragmentId, fragment, callback) {
+
+  provenance.registerTemplate(documentId, templateId, port, function(registerBody) {
+
+    provenance.generate(documentId, templateId, fragmentId, fragment, port, function(generateBody) {
+
+      callback(generateBody);
+
+    });
+
+  });
+
+}
+
 function populateProvenanceTemplate(type, pid, code, value, port, callback) {
 
-  var document = fs.readFileSync('provenance-templates/json/sensor-fragment.json', 'utf8');
-  document = document.replace("[pid]", pid);
-  document = document.replace("[company]", config.get('companies.' + type));
-  document = document.replace("[code]", code);
-  document = document.replace("[value]", value);
+  var ID = uuidv1();
 
-  var id = uuidv1();
-  var template = "template-sensor-" + id;
+  const templatePath = "provenance-templates/json/sensor.json";
+  const templateId = "template-sensor";
+  const documentId = "document-" + ID;
+  const fragmentId = "fragment-" + ID;
 
-  provenance.add(id, document, template, "provenance-templates/json/sensor.json", port, function(response) { callback(response); });
+  const device = "Blood pressure sensor"
+  const company = "Nokia"
+
+  var fragmentData = {
+    "var:sensor": ":SENSOR_" + ID,
+    "vvar:deviceName": ":" + device,
+    "var:patient": ":PATIENT_" + ID,
+    "vvar:patientID": ":" + pid,
+    "var:sensorCompany": ":COMPANY_" + ID,
+    "vvar:companyName": ":" + company,
+    "var:sensorReading": ":SENSOR_READING_" + ID,
+    "vvar:sensorReading": ":" + value,
+    "var:collectReading": ":COLLECT_READING_" + ID,
+    "vvar:readingType": ":" + code
+  }
+
+  var fragment = template.createFragmentFromTemplate(templatePath, fragmentData);
+
+  provenance.new(documentId, 'https://kclhi.org.uk/', port, function(newBody) {
+
+    provenance.namespace(documentId, 'snomed', 'http://snomed.info/sct', port, function(namespaceBody) {
+
+      provenance.listDocuments(port, function(documents) {
+
+        if ( documents.indexOf(templateId) < 0 ) {
+
+          const templateDocument = fs.readFileSync(templatePath, 'utf8');
+          provenance.newTemplate(templateId, templateDocument, port, function(templateCreation) {
+
+            registerTemplate(port, documentId, templateId, fragmentId, fragment, callback);
+
+          });
+
+        } else {
+
+          registerTemplate(port, documentId, templateId, fragmentId, fragment, callback);
+
+        }
+
+      });
+
+    });
+
+  });
 
 }
 
-function populateProvenanceTemplate_NRChain(type, pid, code, value, calback) {
+function populateProvenanceTemplate_NRChain(type, pid, code, value, callback) {
 
-  populateProvenanceTemplate(type, pid, code, value, 10000, callback);
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) callback();
+
+  populateProvenanceTemplate(type, pid, code, value, 10000, function(body) {
+
+    logger.info("Added provenance entry (NR: chain)");
+    callback(body);
+
+  });
 
 }
 
-function populateProvenanceTemplate_NRBucket(type, pid, code, value, calback) {
+function populateProvenanceTemplate_NRBucket(type, pid, code, value, callback) {
 
-  populateProvenanceTemplate(type, pid, code, value, 10001, callback);
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) callback();
+
+  populateProvenanceTemplate(type, pid, code, value, 10001, function(body) {
+
+    logger.info("Added provenance entry (NR: bucket)");
+    callback(body);
+
+  });
 
 }
 
-function populateProvenanceTemplate_NRSelinux(type, pid, code, value, calback) {
+function populateProvenanceTemplate_NRSelinux(type, pid, code, value, callback) {
 
-  populateProvenanceTemplate(type, pid, code, value, 10002, callback);
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) callback();
+
+  populateProvenanceTemplate(type, pid, code, value, 10002, function(body) {
+
+    logger.info("Added provenance entry (NR: selinux)");
+    callback(body);
+
+  }
 
 }
 
@@ -165,15 +242,10 @@ function processObservation(req, res, type, callback) {
 
               populateProvenanceTemplate_NRChain(type, patientID, code, value, function(body) {
 
-                logger.info("Added provenance entry (NR: chain).");
-
                 populateProvenanceTemplate_NRChain(type, patientID, code, value, function(body) {
-
-                  logger.info("Added provenance entry (NR: bucket).");
 
                   populateProvenanceTemplate_NRSelinux(type, patientID, code, value, function(body) {
 
-                    logger.info("Added provenance entry (NR: selinux).");
                     next();
 
                   });
