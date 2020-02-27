@@ -908,9 +908,10 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
 
   const ID = uuidv1();
 
+  // This is the first command, so initialise full template with server, prior to creating zones.
   if ( command.indexOf(config.get("chatbot.COMMAND")) > -1 ) {
 
-    populateProvenanceTemplate_NRChain(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions, actions, "selectOption-" + ID, command, command, "generatedResult-" + ID, "Output to patient", function(initialTemplateResponse) {
+    populateProvenanceTemplate_NRChain(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", "generatedResult-" + ID, "Output to patient", function(initialTemplateResponse) {
 
       logger.info("Added initial provenance chat substitution.");
       callback(initialTemplateResponse);
@@ -919,7 +920,7 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
 
   } else {
 
-    populateProvenanceTemplateZone_NRChain(documentId, fragmentId, "option", "generateOptions-" + ID, actions, actions, "selectOption-" + ID, command, command, function(zoneResponse) {
+    populateProvenanceTemplateZone_NRChain(documentId, fragmentId, "option", "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", function(zoneResponse) {
 
       logger.info("Added provenance chat zone.");
       callback(zoneResponse);
@@ -961,7 +962,7 @@ router.post('/response', function(req, res, next) {
 
   }
 
-  var actions;
+  var actions = [];
 
   if ( req.body.attachments && req.body.attachments.actions ) {
 
@@ -969,7 +970,7 @@ router.post('/response', function(req, res, next) {
 
   } else {
 
-    actions = "/hello";
+    actions.push("/" + config.get("chatbot.COMMAND"));
 
   }
 
