@@ -82,11 +82,11 @@ function populateProvenanceTemplate(port, documentId, fragmentId, patientId, ope
 // Can double as normal provenance server if no-NR backend used.
 function populateProvenanceTemplate_NRChain(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
 
   var POPULATE_START_NR_CHAIN = Date.now();
 
-  populateProvenanceTemplate(10000, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
+  populateProvenanceTemplate(config.get("provenance_server.NR_CHAIN_URL_PORT"), documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
 
     logger.info("Added initial provenance entry (NR: chain)");
     logger.experiment( "chain (initial)," + ( Date.now() - POPULATE_START_NR_CHAIN ) );
@@ -98,10 +98,10 @@ function populateProvenanceTemplate_NRChain(documentId, fragmentId, patientId, o
 
 function populateProvenanceTemplate_NRBucket(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
 
   var POPULATE_START_NR_BUCKET = Date.now();
-  populateProvenanceTemplate(10001, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
+  populateProvenanceTemplate(config.get("provenance_server.NR_BUCKET_URL_PORT"), documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
 
     logger.info("Added initial provenance entry (NR: bucket)");
     logger.experiment( "bucket (initial)," + ( Date.now() - POPULATE_START_NR_BUCKET ) );
@@ -113,10 +113,10 @@ function populateProvenanceTemplate_NRBucket(documentId, fragmentId, patientId, 
 
 function populateProvenanceTemplate_NRSelinux(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
 
   var POPULATE_START_NR_SELINUX = Date.now();
-  populateProvenanceTemplate(10002, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
+  populateProvenanceTemplate(config.get("provenance_server.NR_SELINUX_URL_PORT"), documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
 
     logger.info("Added initial provenance entry (NR: selinux)");
     logger.experiment( "selinux (initial)," + ( Date.now() - POPULATE_START_NR_SELINUX ) );
@@ -152,10 +152,10 @@ function populateProvenanceTemplateZone(port, documentId, fragmentId, zoneId, ge
 
 function populateProvenanceTemplateZone_NRChain(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
 
   var ZONE_START_NR_CHAIN = Date.now();
-  populateProvenanceTemplateZone(10000, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
+  populateProvenanceTemplateZone(config.get("provenance_server.NR_CHAIN_URL_PORT"), documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
 
     logger.info("Added provenance zone (NR: chain)");
     logger.experiment( "chain (zone)," + ( Date.now() - ZONE_START_NR_CHAIN ) );
@@ -167,10 +167,10 @@ function populateProvenanceTemplateZone_NRChain(documentId, fragmentId, zoneId, 
 
 function populateProvenanceTemplateZone_NRBucket(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
 
   var ZONE_START_NR_BUCKET = Date.now();
-  populateProvenanceTemplateZone(10001, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
+  populateProvenanceTemplateZone(config.get("provenance_server.NR_BUCKET_URL_PORT"), documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
 
     logger.info("Added provenance zone (NR: bucket)");
     logger.experiment( "bucket (zone)," + ( Date.now() - ZONE_START_NR_BUCKET) );
@@ -182,10 +182,10 @@ function populateProvenanceTemplateZone_NRBucket(documentId, fragmentId, zoneId,
 
 function populateProvenanceTemplateZone_NRSelinux(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
 
   var ZONE_START_NR_BUCKET = Date.now();
-  populateProvenanceTemplateZone(10002, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
+  populateProvenanceTemplateZone(config.get("provenance_server.NR_SELINUX_URL_PORT"), documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
 
     logger.info("Added provenance zone (NR: selinux)")
     logger.experiment( "selinux (zone)," + ( Date.now() - ZONE_START_NR_SELINUX) );
@@ -208,10 +208,10 @@ function saveProvenanceTemplate(port, documentId, fragmentId, callback) {
 
 function saveProvenanceTemplate_NRChain(documentId, fragmentId, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
 
   var SAVE_START_NR_CHAIN = Date.now();
-  saveProvenanceTemplate(10000, documentId, fragmentId, function(response) {
+  saveProvenanceTemplate(config.get("provenance_server.NR_CHAIN_URL_PORT"), documentId, fragmentId, function(response) {
 
     logger.info("Saved final provenance entry (NR: chain)");
     logger.experiment( "chain (save)," + ( Date.now() - SAVE_START_NR_CHAIN) );
@@ -223,10 +223,10 @@ function saveProvenanceTemplate_NRChain(documentId, fragmentId, callback) {
 
 function saveProvenanceTemplate_NRBucket(documentId, fragmentId, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
 
   var SAVE_START_NR_BUCKET = Date.now();
-  saveProvenanceTemplate(10001, documentId, fragmentId, function(response) {
+  saveProvenanceTemplate(config.get("provenance_server.NR_BUCKET_URL_PORT"), documentId, fragmentId, function(response) {
 
     logger.info("Saved final provenance entry (NR: bucket)");
     logger.experiment( "bucket (save)," + ( Date.now() - SAVE_START_NR_BUCKET) );
@@ -238,10 +238,10 @@ function saveProvenanceTemplate_NRBucket(documentId, fragmentId, callback) {
 
 function saveProvenanceTemplate_NRSelinux(documentId, fragmentId, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+  if ( config.get("provenance_server.TRACK") == false || config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
 
   var SAVE_START_NR_SELINUX = Date.now();
-  saveProvenanceTemplate(10002, documentId, fragmentId, function(response) {
+  saveProvenanceTemplate(config.get("provenance_server.NR_SELINUX_URL_PORT"), documentId, fragmentId, function(response) {
 
     logger.info("Saved final provenance entry (NR: selinux)");
     logger.experiment( "selinux (save)," + ( Date.now() - SAVE_START_NR_SELINUX) );
