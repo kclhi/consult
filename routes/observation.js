@@ -87,11 +87,14 @@ function populateProvenanceTemplate(type, pid, code, value, port, callback) {
 
 function populateProvenanceTemplate_NRChain(type, pid, code, value, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) callback();
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+
+  var POPULATE_START_NR_CHAIN = Date.now();
 
   populateProvenanceTemplate(type, pid, code, value, 10000, function(body) {
 
     logger.info("Added provenance entry (NR: chain)");
+    logger.experiment( "chain," + ( Date.now() - POPULATE_START_NR_CHAIN ) );
     callback(body);
 
   });
@@ -100,11 +103,14 @@ function populateProvenanceTemplate_NRChain(type, pid, code, value, callback) {
 
 function populateProvenanceTemplate_NRBucket(type, pid, code, value, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) callback();
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+
+  var POPULATE_START_NR_BUCKET = Date.now();
 
   populateProvenanceTemplate(type, pid, code, value, 10001, function(body) {
 
     logger.info("Added provenance entry (NR: bucket)");
+    logger.experiment( "bucket," + ( Date.now() - POPULATE_START_NR_BUCKET ) );
     callback(body);
 
   });
@@ -113,14 +119,17 @@ function populateProvenanceTemplate_NRBucket(type, pid, code, value, callback) {
 
 function populateProvenanceTemplate_NRSelinux(type, pid, code, value, callback) {
 
-  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) callback();
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+
+  var POPULATE_START_NR_SELINUX = Date.now();
 
   populateProvenanceTemplate(type, pid, code, value, 10002, function(body) {
 
     logger.info("Added provenance entry (NR: selinux)");
+    logger.experiment( "selinux," + ( Date.now() - POPULATE_START_NR_SELINUX ) );
     callback(body);
 
-  }
+  });
 
 }
 
