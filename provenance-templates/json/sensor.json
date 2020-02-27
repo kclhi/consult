@@ -1,16 +1,16 @@
 {
   "agent": {
-    "var:sensor": {
+    "sensorCompany": {
       "prov:type": {
-        "$": "snomed#Device",
+        "$": "snomed#Institution",
         "type": "xsd:string"
       },
       "snomed:Name": {
-        "$": "vvar:deviceName",
+        "$": "vvar:companyName",
         "type": "prov:QUALIFIED_NAME"
       }
     },
-    "var:patient": {
+    "patient": {
       "prov:type": {
         "$": "snomed#Patient",
         "type": "xsd:string"
@@ -20,13 +20,13 @@
         "type": "prov:QUALIFIED_NAME"
       }
     },
-    "var:sensorCompany": {
+    "sensor": {
       "prov:type": {
-        "$": "snomed#Institution",
+        "$": "snomed#Device",
         "type": "xsd:string"
       },
       "snomed:Name": {
-        "$": "vvar:companyName",
+        "$": "vvar:deviceName",
         "type": "prov:QUALIFIED_NAME"
       }
     }
@@ -49,6 +49,12 @@
       }
     }
   },
+  "actedOnBehalfOf": {
+    "_:aOBO1": {
+      "prov:responsible": "var:sensorCompany",
+      "prov:delegate": "var:sensor"
+    }
+  },
   "prefix": {
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "var": "http://pgt.inf.kcl.ac.uk/var/",
@@ -63,10 +69,6 @@
     "_:wAW2": {
       "prov:agent": "var:sensor",
       "prov:activity": "var:collectReading"
-    },
-    "_:wAW3": {
-      "prov:agent": "var:sensorCompany",
-      "prov:activity": "var:sensor"
     },
     "_:wAW1": {
       "prov:agent": "var:patient",

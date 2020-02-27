@@ -42,11 +42,8 @@ function populateProvenanceTemplate(type, pid, code, value, port, callback) {
   const company = "Nokia"
 
   var fragmentData = {
-    "var:sensor": ":SENSOR_" + ID,
     "vvar:deviceName": ":" + device,
-    "var:patient": ":PATIENT_" + ID,
     "vvar:patientID": ":" + pid,
-    "var:sensorCompany": ":COMPANY_" + ID,
     "vvar:companyName": ":" + company,
     "var:sensorReading": ":SENSOR_READING_" + ID,
     "vvar:sensorReading": ":" + value,
@@ -91,7 +88,7 @@ function populateProvenanceTemplate_NRChain(type, pid, code, value, callback) {
 
   var POPULATE_START_NR_CHAIN = Date.now();
 
-  populateProvenanceTemplate(type, pid, code, value, 10000, function(body) {
+  populateProvenanceTemplate(type, pid, code, value, config.get("provenance_server.NR_CHAIN_URL_PORT"), function(body) {
 
     logger.info("Added provenance entry (NR: chain)");
     logger.experiment( "chain," + ( Date.now() - POPULATE_START_NR_CHAIN ) );
@@ -107,7 +104,7 @@ function populateProvenanceTemplate_NRBucket(type, pid, code, value, callback) {
 
   var POPULATE_START_NR_BUCKET = Date.now();
 
-  populateProvenanceTemplate(type, pid, code, value, 10001, function(body) {
+  populateProvenanceTemplate(type, pid, code, value, config.get("provenance_server.NR_BUCKET_URL_PORT"), function(body) {
 
     logger.info("Added provenance entry (NR: bucket)");
     logger.experiment( "bucket," + ( Date.now() - POPULATE_START_NR_BUCKET ) );
@@ -123,7 +120,7 @@ function populateProvenanceTemplate_NRSelinux(type, pid, code, value, callback) 
 
   var POPULATE_START_NR_SELINUX = Date.now();
 
-  populateProvenanceTemplate(type, pid, code, value, 10002, function(body) {
+  populateProvenanceTemplate(type, pid, code, value, config.get("provenance_server.NR_SELINUX_URL_PORT"), function(body) {
 
     logger.info("Added provenance entry (NR: selinux)");
     logger.experiment( "selinux," + ( Date.now() - POPULATE_START_NR_SELINUX ) );

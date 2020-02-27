@@ -18,7 +18,7 @@ module.exports = {
 
   provenance_server: {
     TRACK: true,
-    NR_MECHANISMS: "chain"
+    NR_MECHANISMS: "chain,bucket,selinux"
   },
 
   dialogue_manager: {
