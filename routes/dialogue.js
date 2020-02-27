@@ -1018,8 +1018,8 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
 
   const ID = uuidv1();
 
-  // This is the first command, so initialise full template with server, prior to creating zones.
-  if ( command.indexOf(config.get("chatbot.COMMAND")) > -1 ) {
+  // This is the first command (initiation word, or starts with slash if skipping initiation), so initialise full template with server, prior to creating zones.
+  if ( command.indexOf(config.get("chatbot.COMMAND")) > -1 || ( command.indexOf(config.get("chatbot.COMMAND")) < 0 && command.indexOf("/") > -1 ) ) {
 
     populateProvenanceTemplate_NRChain(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", "generateResult-" + ID, "Output to patient", function(initialTemplateResponse_NRChain) {
 
