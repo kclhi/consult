@@ -16,6 +16,11 @@ module.exports = {
     USERNAME: "connie",
     AVATAR: "consult.png",
     ERROR_TEXT: "Sorry, we aren't able to process a response for you right now."
+  },
+
+  provenance_server: {
+    TRACK: true,
+    NR_MECHANISMS: "chain,bucket,selinux"
   }
 
 };

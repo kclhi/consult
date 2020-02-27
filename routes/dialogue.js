@@ -28,7 +28,7 @@ function registerTemplate(port, documentId, templateId, fragmentId, fragment, ca
 
 }
 
-function populateProvenanceTemplate(port, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generatedResult, result, callback) {
+function populateProvenanceTemplate(port, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
 
   const templatePath = "provenance-templates/json/chat.json";
   const templateId = "template-chat";
@@ -44,7 +44,7 @@ function populateProvenanceTemplate(port, documentId, fragmentId, patientId, ope
     "var:selectOption": ":" + selectOption,
     "var:selectedOption": ":" + selectedOption,
     "vvar:optionValue": ":" + optionValue,
-    "var:generateResult": ":" + generatedResult,
+    "var:generateResult": ":" + generateResult,
     "var:result": ":" + result
   }
 
@@ -79,9 +79,43 @@ function populateProvenanceTemplate(port, documentId, fragmentId, patientId, ope
 
 }
 
-function populateProvenanceTemplate_NRChain(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generatedResult, result, callback) {
+// Can double as normal provenance server if no-NR backend used.
+function populateProvenanceTemplate_NRChain(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
 
-   populateProvenanceTemplate(10000, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generatedResult, result, function(response) { callback(response); });
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+
+  populateProvenanceTemplate(10000, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
+
+    logger.info("Added initial provenance entry (NR: chain)");
+    callback(response);
+
+  });
+
+}
+
+function populateProvenanceTemplate_NRBucket(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
+
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+
+  populateProvenanceTemplate(10001, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
+
+    logger.info("Added initial provenance entry (NR: bucket)");
+    callback(response);
+
+  });
+
+}
+
+function populateProvenanceTemplate_NRSelinux(documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, callback) {
+
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+
+  populateProvenanceTemplate(10002, documentId, fragmentId, patientId, openSession, dialogueSession, token, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, generateResult, result, function(response) {
+
+    logger.info("Added initial provenance entry (NR: selinux)");
+    callback(response);
+
+  });
 
 }
 
@@ -111,16 +145,49 @@ function populateProvenanceTemplateZone(port, documentId, fragmentId, zoneId, ge
 
 function populateProvenanceTemplateZone_NRChain(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
 
-  populateProvenanceTemplateZone(10000, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) { callback(response); });
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+
+  populateProvenanceTemplateZone(10000, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
+
+    logger.info("Added provenance zone (NR: chain)")
+    callback(response);
+
+  });
+
+}
+
+function populateProvenanceTemplateZone_NRBucket(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
+
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+
+  populateProvenanceTemplateZone(10001, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
+
+    logger.info("Added provenance zone (NR: bucket)")
+    callback(response);
+
+  });
+
+}
+
+function populateProvenanceTemplateZone_NRSelinux(documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, callback) {
+
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+
+  populateProvenanceTemplateZone(10002, documentId, fragmentId, zoneId, generateOptions, presentedOptions, optionSet, selectOption, selectedOption, optionValue, function(response) {
+
+    logger.info("Added provenance zone (NR: selinux)")
+    callback(response);
+
+  });
 
 }
 
 function saveProvenanceTemplate(port, documentId, fragmentId, callback) {
 
   const templateId = "template-chat";
-  provenance.genfinal(documentId, templateId, fragmentId, function(generateBody) {
+  provenance.genfinal(documentId, templateId, fragmentId, function(saveResponse) {
 
-    callback(generateBody);
+    callback(saveResponse);
 
   });
 
@@ -128,7 +195,40 @@ function saveProvenanceTemplate(port, documentId, fragmentId, callback) {
 
 function saveProvenanceTemplate_NRChain(documentId, fragmentId, callback) {
 
-  saveProvenanceTemplate(10000, documentId, fragmentId, function(response) { callback(response) });
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
+
+  saveProvenanceTemplate(10000, documentId, fragmentId, function(response) {
+
+    logger.info("Saved final provenance entry (NR: chain)");
+    callback(response)
+
+  });
+
+}
+
+function saveProvenanceTemplate_NRBucket(documentId, fragmentId, callback) {
+
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
+
+  saveProvenanceTemplate(10001, documentId, fragmentId, function(response) {
+
+    logger.info("Saved final provenance entry (NR: bucket)");
+    callback(response)
+
+  });
+
+}
+
+function saveProvenanceTemplate_NRSelinux(documentId, fragmentId, callback) {
+
+  if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
+
+  saveProvenanceTemplate(10002, documentId, fragmentId, function(response) {
+
+    logger.info("Saved final provenance entry (NR: selinux)");
+    callback(response)
+
+  });
 
 }
 
@@ -479,9 +579,19 @@ function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi,
   if ( error === 1 || ( condjmpArr.length === 1 && parseInt(condjmpArr[0].n) === 0 && !multi ) ) {
 
     chat = {} // Kai: Delete chat context, end of dialogue.
-    saveProvenanceTemplate_NRChain(documentId, fragmentId, function(savedTemplate) {
+    logger.debug("End of dialogue.");
 
-      console.log("Final provenance template saved");
+    saveProvenanceTemplate_NRChain(documentId, fragmentId, function(savedTemplate_NRChain) {
+
+      saveProvenanceTemplate_NRBucket(documentId, fragmentId, function(savedTemplate_NRBucket) {
+
+        saveProvenanceTemplate_NRSelinux(documentId, fragmentId, function(savedTemplate_NRSelinux) {
+
+          // Could log results.
+
+        });
+
+      });
 
     });
 
@@ -911,19 +1021,33 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
   // This is the first command, so initialise full template with server, prior to creating zones.
   if ( command.indexOf(config.get("chatbot.COMMAND")) > -1 ) {
 
-    populateProvenanceTemplate_NRChain(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", "generatedResult-" + ID, "Output to patient", function(initialTemplateResponse) {
+    populateProvenanceTemplate_NRChain(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", "generateResult-" + ID, "Output to patient", function(initialTemplateResponse_NRChain) {
 
-      logger.info("Added initial provenance chat substitution.");
-      callback(initialTemplateResponse);
+      populateProvenanceTemplate_NRBucket(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", "generateResult-" + ID, "Output to patient", function(initialTemplateResponse_NRBucket) {
+
+        populateProvenanceTemplate_NRSelinux(documentId, fragmentId, user, "openSession-" + ID, chatId, chatId, "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", "generateResult-" + ID, "Output to patient", function(initialTemplateResponse_NRSelinux) {
+
+          callback(initialTemplateResponse_NRChain + initialTemplateResponse_NRBucket + initialTemplateResponse_NRSelinux);
+
+        });
+
+      });
 
     });
 
   } else {
 
-    populateProvenanceTemplateZone_NRChain(documentId, fragmentId, "option", "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", function(zoneResponse) {
+    populateProvenanceTemplateZone_NRChain(documentId, fragmentId, "option", "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", function(zoneResponse_NRChain) {
 
-      logger.info("Added provenance chat zone.");
-      callback(zoneResponse);
+      populateProvenanceTemplateZone_NRBucket(documentId, fragmentId, "option", "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", function(zoneResponse_NRBucket) {
+
+        populateProvenanceTemplateZone_NRSelinux(documentId, fragmentId, "option", "generateOptions-" + ID, actions + "-presented", actions + "-set", "selectOption-" + ID, command + "-selected", command + "-value", function(zoneResponse_NRSelinux) {
+
+          callback(zoneResponse_NRChain + zoneResponse_NRBucket + zoneResponse_NRSelinux);
+
+        });
+
+      });
 
     });
 
