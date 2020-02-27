@@ -1,41 +1,71 @@
 import schemes # explanation schemes
 from explanation_manager import ExplanationManager
 
-import uuid, json
+import uuid, json, configparser, time, logging
 from jsonpath_ng import jsonpath, parse
 import lib.provenance as Provenance
 import lib.template as Template
 
+config = configparser.ConfigParser()
+config.read('config/config.ini');
+
 class ProvenanceExplanationManager(ExplanationManager):
 
     @staticmethod
-    def add(id, fragment, templatePath, port):
+    def log():
 
-        documentID = "data-" + id;
-        fragmentID = "frag-" + id;
+        # Custom log experiment level:
+        EXPERIMENT_LEVELV_NUM = 100
+        logging.addLevelName(EXPERIMENT_LEVELV_NUM, "EXPERIMENT")
+        def experiment(self, message, *args, **kws):
+            if self.isEnabledFor(EXPERIMENT_LEVELV_NUM):
+                self._log(EXPERIMENT_LEVELV_NUM, message, args, **kws)
+        logging.Logger.experiment = experiment
 
-        Provenance.new(documentID, 'http://name.space', port);
-        Provenance.namespace(documentID, 'sub', 'http://sub.name.space', port);
+        fileh = logging.FileHandler('experiment.log', 'a')
+        formatter = logging.Formatter('%(message)s')
+        fileh.setFormatter(formatter)
 
-        if ( "template-recommendation" not in Provenance.list_documents(port) ):
+        log = logging.getLogger("experiment-logger")  # named logger
+        for hdlr in log.handlers[:]:  # remove all old handlers
+            log.removeHandler(hdlr)
+        log.addHandler(fileh)      # set the new handler
+
+        return log;
+
+    @staticmethod
+    def add(documentId, fragmentId, fragment, templatePath, port):
+
+        templateId = "template-recommendation";
+
+        Provenance.new(documentId, 'https://kclhi.org.uk', port);
+        Provenance.namespace(documentId, 'snomed', 'http://snomed.info/sct', port);
+
+        if ( templateId not in Provenance.list_documents(port) ):
             with open(templatePath,'r') as templateFile:
                 template = templateFile.read()
-                Provenance.new_template("template-recommendation", template, port);
+                Provenance.new_template(templateId, template, port);
 
-        Provenance.register_template(documentID, "template-recommendation", port);
-        Provenance.generate(documentID, "template-recommendation", fragmentID, fragment, port);
-
-    @staticmethod
-    def addNRChain(id, fragment, templatePath):
-        ProvenanceExplanationManager.add(id, fragment, templatePath, 10000);
+        Provenance.register_template(documentId, templateId, port);
+        Provenance.generate(documentId, templateId, fragmentId, fragment, port);
 
     @staticmethod
-    def addNRBucket(id, fragment, templatePath):
-        ProvenanceExplanationManager.add(id, fragment, templatePath, 10001);
+    def addNRChain(documentId, fragmentId, fragment, templatePath):
+        POPULATE_START_NR_CHAIN = time.time();
+        ProvenanceExplanationManager.add(documentId, fragmentId, fragment, templatePath, config["PROVENANCE_SERVER"]["NR_CHAIN_PORT"]);
+        ProvenanceExplanationManager.log().experiment("chain," + str(time.time() - POPULATE_START_NR_CHAIN));
 
     @staticmethod
-    def addNRSelinux(id, fragment, templatePath):
-        ProvenanceExplanationManager.add(id, fragment, templatePath, 10002);
+    def addNRBucket(documentId, fragmentId, fragment, templatePath):
+        POPULATE_START_NR_BUCKET= time.time();
+        ProvenanceExplanationManager.add(documentId, fragmentId, fragment, templatePath, config["PROVENANCE_SERVER"]["NR_BUCKET_PORT"]);
+        ProvenanceExplanationManager.log().experiment("bucket," + str(time.time() - POPULATE_START_NR_BUCKET));
+
+    @staticmethod
+    def addNRSelinux(documentId, fragmentId, fragment, templatePath):
+        POPULATE_START_NR_SELINUX = time.time();
+        ProvenanceExplanationManager.add(documentId, fragmentId, fragment, templatePath, config["PROVENANCE_SERVER"]["NR_SELINUX_PORT"]);
+        ProvenanceExplanationManager.log().experiment("selinux," + str(time.time() - POPULATE_START_NR_SELINUX));
 
     @staticmethod
     def getExplanation(query_data, filter_words=None):
@@ -44,14 +74,14 @@ class ProvenanceExplanationManager(ExplanationManager):
         jsonpath_expression = parse('$.*.bindings.S')
         matches = jsonpath_expression.find(provenanceInformation)
 
-        ID = str(uuid.uuid4());
-
         patientIdMatches = [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "wasAssociatedWith"];
         symptomFindingMatches = [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "used" and len(match.context.value["T"]) > 3]; # ~MDC Hack for string. Do proper parsing.
         sensorReadingValueMatches = [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "used" and len(match.context.value["T"]) <= 3]; # ~MDC Hack for int. Do proper parsing.
         recommendationDrugMatches = [match.context.value["S"] for match in matches if match.context.value["R"] == "wasGeneratedBy" and match.context.value["T"] == "giveRecommendation"];
 
         if ( len(patientIdMatches) > 0 and len(symptomFindingMatches) > 0 and len(sensorReadingValueMatches) > 0 and len(recommendationDrugMatches) > 0 ):
+
+            ID = str(uuid.uuid4());
 
             # TODO: multiple fragments for multiple recommendations from same provenance response (or multiple associated recommendation information, such as sensor data).
             fragmentData = {
@@ -70,16 +100,18 @@ class ProvenanceExplanationManager(ExplanationManager):
             }
 
             fragment = Template.createFragmentFromTemplate("provenance-templates/json/recommendation.json", fragmentData);
-            print("Fragment: " + str(fragment));
+
+            documentId = "document-" + ID;
+            fragmentId = "fragment-" + ID;
 
             # Chain
-            ProvenanceExplanationManager.addNRChain(ID, fragment, "provenance-templates/json/recommendation.json");
+            if ( "chain" in config["PROVENANCE_SERVER"]["NR_MECHANISMS"] ): ProvenanceExplanationManager.addNRChain(documentId, fragmentId, fragment, "provenance-templates/json/recommendation.json");
 
             # Bucket
-            ProvenanceExplanationManager.addNRBucket(ID, fragment, "provenance-templates/json/recommendation.json");
+            if ( "bucket" in config["PROVENANCE_SERVER"]["NR_MECHANISMS"] ): ProvenanceExplanationManager.addNRBucket(documentId, fragmentId, fragment, "provenance-templates/json/recommendation.json");
 
             # selinux
-            ProvenanceExplanationManager.addNRSelinux(ID, fragment, "provenance-templates/json/recommendation.json");
+            if ( "selinux" in config["PROVENANCE_SERVER"]["NR_MECHANISMS"] ): ProvenanceExplanationManager.addNRSelinux(documentId, fragmentId, fragment, "provenance-templates/json/recommendation.json");
 
         else:
             print("Insufficient data to create recommendation fragment.")
