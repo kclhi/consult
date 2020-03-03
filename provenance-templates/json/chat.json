@@ -6,7 +6,7 @@
         "type": "prov:QUALIFIED_NAME"
       }
     },
-    "patient": {
+    "var:patient": {
       "prov:type": {
         "$": "snomed#Patient",
         "type": "prov:QUALIFIED_NAME"
@@ -84,7 +84,7 @@
       "prov:activity": "var:openSession"
     },
     "_:wAW1": {
-      "prov:agent": "patient",
+      "prov:agent": "var:patient",
       "prov:activity": "var:openSession"
     }
   },
