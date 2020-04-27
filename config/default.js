@@ -17,7 +17,7 @@ module.exports = {
   },
 
   provenance_server: {
-    TRACK: true,
+    TRACK: false,
     NR_MECHANISMS: "chain,bucket,selinux"
   },
 

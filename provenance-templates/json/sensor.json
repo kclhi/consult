@@ -10,16 +10,6 @@
         "type": "prov:QUALIFIED_NAME"
       }
     },
-    "patient": {
-      "prov:type": {
-        "$": "snomed#Patient",
-        "type": "xsd:string"
-      },
-      "snomed:patientIdentifier": {
-        "$": "vvar:patientID",
-        "type": "prov:QUALIFIED_NAME"
-      }
-    },
     "sensor": {
       "prov:type": {
         "$": "snomed#Device",
@@ -27,6 +17,16 @@
       },
       "snomed:Name": {
         "$": "vvar:deviceName",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    },
+    "var:patient": {
+      "prov:type": {
+        "$": "snomed#Patient",
+        "type": "xsd:string"
+      },
+      "snomed:patientIdentifier": {
+        "$": "vvar:patientID",
         "type": "prov:QUALIFIED_NAME"
       }
     }
@@ -51,8 +51,8 @@
   },
   "actedOnBehalfOf": {
     "_:aOBO1": {
-      "prov:responsible": "var:sensorCompany",
-      "prov:delegate": "var:sensor"
+      "prov:responsible": "sensorCompany",
+      "prov:delegate": "sensor"
     }
   },
   "prefix": {
@@ -67,7 +67,7 @@
   },
   "wasAssociatedWith": {
     "_:wAW2": {
-      "prov:agent": "var:sensor",
+      "prov:agent": "sensor",
       "prov:activity": "var:collectReading"
     },
     "_:wAW1": {

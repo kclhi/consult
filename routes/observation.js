@@ -42,6 +42,7 @@ function populateProvenanceTemplate(type, pid, code, value, port, callback) {
   const company = "Nokia"
 
   var fragmentData = {
+    "var:patient": ":PATIENT_" + pid,
     "vvar:deviceName": ":" + device,
     "vvar:patientID": ":" + pid,
     "vvar:companyName": ":" + company,
@@ -82,7 +83,7 @@ function populateProvenanceTemplate(type, pid, code, value, port, callback) {
 
 }
 
-function populateProvenanceTemplate_NRChain(type, pid, code, value, callback) {
+function populateProvenanceTemplate_NRChain(type, pid, code, value, session, callback) {
 
   if ( config.get("provenance_server.NR_MECHANISMS").indexOf("chain") < 0 ) { callback(); return; }
 
@@ -91,14 +92,14 @@ function populateProvenanceTemplate_NRChain(type, pid, code, value, callback) {
   populateProvenanceTemplate(type, pid, code, value, config.get("provenance_server.NR_CHAIN_URL_PORT"), function(body) {
 
     logger.info("Added provenance entry (NR: chain)");
-    logger.experiment( "chain," + ( Date.now() - POPULATE_START_NR_CHAIN ) );
+    logger.experiment( session + ": chain," + ( Date.now() - POPULATE_START_NR_CHAIN ) );
     callback(body);
 
   });
 
 }
 
-function populateProvenanceTemplate_NRBucket(type, pid, code, value, callback) {
+function populateProvenanceTemplate_NRBucket(type, pid, code, value, session, callback) {
 
   if ( config.get("provenance_server.NR_MECHANISMS").indexOf("bucket") < 0 ) { callback(); return; }
 
@@ -107,14 +108,14 @@ function populateProvenanceTemplate_NRBucket(type, pid, code, value, callback) {
   populateProvenanceTemplate(type, pid, code, value, config.get("provenance_server.NR_BUCKET_URL_PORT"), function(body) {
 
     logger.info("Added provenance entry (NR: bucket)");
-    logger.experiment( "bucket," + ( Date.now() - POPULATE_START_NR_BUCKET ) );
+    logger.experiment( session + ": bucket," + ( Date.now() - POPULATE_START_NR_BUCKET ) );
     callback(body);
 
   });
 
 }
 
-function populateProvenanceTemplate_NRSelinux(type, pid, code, value, callback) {
+function populateProvenanceTemplate_NRSelinux(type, pid, code, value, session, callback) {
 
   if ( config.get("provenance_server.NR_MECHANISMS").indexOf("selinux") < 0 ) { callback(); return; }
 
@@ -123,7 +124,7 @@ function populateProvenanceTemplate_NRSelinux(type, pid, code, value, callback) 
   populateProvenanceTemplate(type, pid, code, value, config.get("provenance_server.NR_SELINUX_URL_PORT"), function(body) {
 
     logger.info("Added provenance entry (NR: selinux)");
-    logger.experiment( "selinux," + ( Date.now() - POPULATE_START_NR_SELINUX ) );
+    logger.experiment( session + ": selinux," + ( Date.now() - POPULATE_START_NR_SELINUX ) );
     callback(body);
 
   });
@@ -246,13 +247,15 @@ function processObservation(req, res, type, callback) {
 
             if ( config.get('provenance_server.TRACK') ) {
 
-              populateProvenanceTemplate_NRChain(type, patientID, code, value, function(body) {
+              var session = uuidv1();
 
-                populateProvenanceTemplate_NRChain(type, patientID, code, value, function(body) {
+              populateProvenanceTemplate_NRChain(type, patientID, code, value, session, function(body) {
 
-                  populateProvenanceTemplate_NRSelinux(type, patientID, code, value, function(body) {
+                populateProvenanceTemplate_NRBucket(type, patientID, code, value, session, function(body) {
 
-                    next();
+                  populateProvenanceTemplate_NRSelinux(type, patientID, code, value, session, function(body) {
+
+                    next(null, null);
 
                   });
 

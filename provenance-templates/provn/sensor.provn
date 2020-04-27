@@ -8,7 +8,7 @@ document
 
     prefix snomed <http://snomed.info/sct>
 
-    agent(patient, [prov:type="snomed#Patient", snomed:patientIdentifier='vvar:patientID'])
+    agent(var:patient, [prov:type="snomed#Patient", snomed:patientIdentifier='vvar:patientID'])
     agent(sensor, [prov:type="snomed#Device", snomed:Name='vvar:deviceName'])
     agent(sensorCompany, [prov:type="snomed#Institution", snomed:Name='vvar:companyName'])
 
@@ -17,8 +17,8 @@ document
     activity(var:collectReading, [prov:type="snomed#Procedure", snomed:VitalSign='vvar:readingType'])
 
     wasAssociatedWith(var:collectReading, var:patient, -)
-    wasAssociatedWith(var:collectReading, var:sensor, -)
-    actedOnBehalfOf(var:sensor, var:sensorCompany, -)
+    wasAssociatedWith(var:collectReading, sensor, -)
+    actedOnBehalfOf(sensor, sensorCompany, -)
     wasGeneratedBy(var:sensorReading, var:collectReading, -)
 
 endDocument
