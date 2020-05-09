@@ -82,6 +82,8 @@ GARMIN_SECRET="[secret]"
 
 Where [username] and [password] are credentials to secure this service, and [key] and [secret] are your Garmin details.
 
+[Setup db encryption keys](https://mariadb.com/kb/en/file-key-management-encryption-plugin/) in `db`.
+
 ## Running
 
 Ensure you are in the root folder. Create a node virtual environment (within a python virtual environment), and activate it:
