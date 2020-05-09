@@ -32,12 +32,11 @@ function init() {
 
               if ( statusCode < 300 ) {
 
-                logger.debug("Created new observation resource with status: " + statusCode)
                 return channel.ack(message);
 
               } else {
 
-                logger.debug("Unexpected status code when trying to create observation resource: " + statusCode);log
+                logger.error("Unexpected status code when trying to create observation resource: " + statusCode);
                 return Promise.resolve(statusCode);
 
               }

@@ -2,16 +2,27 @@ version: "3.7"
 
 services:
 
+  proxy:
+    image: "kclconsult/sensor-fhir-converter_proxy"
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-converter_webapp-api_1:3002", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '3002:443'
+    depends_on:
+      - webapp-api
+
   webapp-queue:
-    image: "consult-kcl/sensor-fhir-mapper_queue"
+    image: "kclconsult/sensor-fhir-converter_queue"
     build:
       context: .
-    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_rabbit_1:15672", "--", "npm", "run", "consume"]
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-converter_rabbit_1:15672", "--", "npm", "run", "consume"]
     depends_on:
       - rabbit
     environment:
-      - FHIR_SERVER_ADDRESS=romanova:8080
-      - NODE_EXTRA_CA_CERTS=/consult.crt
+      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO}
+      NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       romanova: 172.20.0.1
 
@@ -21,23 +32,12 @@ services:
     volumes:
       - data_volume:/var/lib/rabbitmq
 
-  proxy:
-    image: "consult-kcl/sensor-fhir-mapper_proxy"
-    build:
-      context: ./proxy
-    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-mapper_webapp-api_1:3002", "--", "nginx", "-g", "daemon off;"]
-    tty: true
-    ports:
-      - '3000:443'
-    depends_on:
-      - webapp-api
-
   webapp-api:
-    image: "consult-kcl/sensor-fhir-mapper_api"
+    image: "kclconsult/sensor-fhir-converter_api"
     build:
       context: .
     environment:
-      - FHIR_SERVER_ADDRESS=172.20.0.1:8080
+      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO_API}
 
 volumes:
   data_volume:

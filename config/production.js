@@ -6,8 +6,8 @@ module.exports = {
   },
 
   message_queue: {
-    HOST: "sensor-fhir-mapper_rabbit_1",
-  	QUEUES: ["device-integration_nokia-sensor-fhir-mapper", "device-integration_garmin-sensor-fhir-mapper", "device-integration_vitalpatch-sensor-fhir-mapper"]
+    HOST: "sensor-fhir-converter_rabbit_1",
+  	QUEUES: ["device-integration_nokia-sensor-fhir-converter", "device-integration_garmin-sensor-fhir-converter", "device-integration_vitalpatch-sensor-fhir-converter"]
   }
 
 };

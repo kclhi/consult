@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('sensor-fhir-mapper:server');
+var debug = require('debug')('sensor-fhir-converter:server');
 var http = require('http');
 
 /**

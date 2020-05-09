@@ -1,4 +1,4 @@
-# Sensor-FHIR-Mapper (sensor-to-fhir)
+# Sensor-FHIR-Converter (sensor-to-fhir)
 
 Convert sensor data in a vendor format to FHIR. Part of the wearable server.
 
