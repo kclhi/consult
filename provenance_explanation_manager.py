@@ -74,6 +74,8 @@ class ProvenanceExplanationManager(ExplanationManager):
         jsonpath_expression = parse('$.*.bindings.S')
         matches = jsonpath_expression.find(provenanceInformation)
 
+        ProvenanceExplanationManager.log().experiment("-- Start of server interactions --");
+
         patientIdMatches = [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "wasAssociatedWith"];
         symptomFindingMatches = [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "used" and len(match.context.value["T"]) > 3]; # ~MDC Hack for string. Do proper parsing.
         sensorReadingValueMatches = [match.context.value["T"] for match in matches if match.context.value["S"] == "giveRecommendation" and match.context.value["R"] == "used" and len(match.context.value["T"]) <= 3]; # ~MDC Hack for int. Do proper parsing.
@@ -115,5 +117,7 @@ class ProvenanceExplanationManager(ExplanationManager):
 
         else:
             print("Insufficient data to create recommendation fragment.")
+
+        ProvenanceExplanationManager.log().experiment("-- End of server interactions --");
 
         return super(ProvenanceExplanationManager, ProvenanceExplanationManager).getExplanation(query_data, filter_words);

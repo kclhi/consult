@@ -2,6 +2,7 @@ FROM python:2
 
 RUN apt-get update && apt-get install -y \
     graphviz \
+    graphviz-dev \
     pkg-config
 
 COPY requirements.txt .
