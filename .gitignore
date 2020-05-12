@@ -105,3 +105,4 @@ rsconnect/
 # Packrat
 .Rprofile
 packrat/
+.env

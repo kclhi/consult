@@ -1,6 +1,6 @@
 FROM trestletech/plumber
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y \
     libmariadbclient-dev
 
 # Install requirements
