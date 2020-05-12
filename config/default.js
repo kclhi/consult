@@ -14,7 +14,7 @@ module.exports = {
   chatbot: {
     COMMAND: "hello",
     USERNAME: "connie",
-    AVATAR: "consult.png",
+    AVATAR: "connie.jpg",
     ERROR_TEXT: "Sorry, we aren't able to process a response for you right now."
   },
 

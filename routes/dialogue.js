@@ -5,7 +5,7 @@ const logger = require('../config/winston');
 const fs = require('fs');
 const async = require('async');
 const config = require('config');
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 
 const mattermost = require('../lib/mattermost');
 const provenance = require('../lib/provenance');
@@ -624,20 +624,24 @@ function createResponse(receivedMsg, chatContext, chat, response, msgRow, multi,
     chat = {} // Kai: Delete chat context, end of dialogue.
     logger.debug("End of dialogue.");
 
-    saveProvenanceTemplate_NRChain(documentId, fragmentId, function(savedTemplate_NRChain) {
+    if ( documentId && fragmentId ) {
 
-      saveProvenanceTemplate_NRBucket(documentId, fragmentId, function(savedTemplate_NRBucket) {
+      saveProvenanceTemplate_NRChain(documentId, fragmentId, function(savedTemplate_NRChain) {
 
-        saveProvenanceTemplate_NRSelinux(documentId, fragmentId, function(savedTemplate_NRSelinux) {
+        saveProvenanceTemplate_NRBucket(documentId, fragmentId, function(savedTemplate_NRBucket) {
 
-          // Could log results.
-          logger.experiment("-- End of server interactions --");
+          saveProvenanceTemplate_NRSelinux(documentId, fragmentId, function(savedTemplate_NRSelinux) {
+
+            // Could log results.
+            logger.experiment("-- End of server interactions --");
+
+          });
 
         });
 
       });
 
-    });
+    }
 
   } else { // Kai: Prepare next step of dialogue flow
 
@@ -1062,8 +1066,8 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
 
   const ID = uuidv1();
 
-  // This is the first command (initiation word, or starts with slash if skipping initiation), so initialise full template with server, prior to creating zones.
-  if ( command.indexOf(config.get("chatbot.COMMAND")) > -1 || ( command.indexOf(config.get("chatbot.COMMAND")) < 0 && command.indexOf("/") > -1 ) ) {
+  // This is the first command, so initialise full template with server, prior to creating zones.
+  if ( command && command.indexOf(config.get("chatbot.COMMAND")) < 0 && command.indexOf("/") > -1 ) {
 
     logger.experiment("-- Start of server interactions --");
 
@@ -1081,7 +1085,7 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
 
     });
 
-  } else {
+  } else if ( command.indexOf(config.get("chatbot.COMMAND")) < 0 ) {
 
     // We append IDs to account for a bug in NEO4J backend.
     populateProvenanceTemplateZone_NRChain(documentId, fragmentId, "option", "generateOptions-" + ID, actions + "-presented-" + ID, actions + "-set-" + ID, "selectOption-" + ID, command + "-selected-" + ID, command + "-value-" + ID, function(zoneResponse_NRChain) {
@@ -1097,6 +1101,10 @@ function chatProvenance(documentId, fragmentId, command, user, chatId, actions, 
       });
 
     });
+
+  } else {
+
+    callback("No provenance information to record.");
 
   }
 
@@ -1240,11 +1248,7 @@ router.post('/initiate', function(req, res, next) {
   chatContext.user = req.body.username;
   chatContext.dialogueParams = req.body.dialogueParams;
 
-  const ID = uuidv1();
-  const documentId = "data-" + ID;
-  const fragmentId = "frag-" + ID;
-
-  findResponse("/" + req.body.dialogueID, chatContext, (req.app.get('env') === 'development'), dcoumentId, fragmentId, function(dialogueResponse, answerButtonsArr) {
+  findResponse("/" + req.body.dialogueID, chatContext, (req.app.get('env') === 'development'), null, null, function(dialogueResponse, answerButtonsArr) {
 
     if ( dialogueResponse && dialogueResponse.Print && answerButtonsArr ) {
 
