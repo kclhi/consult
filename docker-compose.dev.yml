@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   template-server:
-    image: big-kcl/template-server:latest
+    image: kclhi/template-server:latest
     ports:
       - 8081:8080
     depends_on:
@@ -12,7 +12,7 @@ services:
   neo4j:
     image: neo4j:3.4
     environment:
-      - NEO4J_AUTH=neo4j/12345
+      NEO4J_AUTH: ${NEO4J_AUTH}
     volumes:
       - dnc_volume:/data
     ports:
@@ -25,9 +25,9 @@ services:
       - openldap
     container_name: phpldapadmin
     environment:
-      - PHPLDAPADMIN_SERVER_PATH=/users
-      - PHPLDAPADMIN_HTTPS=false
-      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+      PHPLDAPADMIN_SERVER_PATH: ${PHPLDAPADMIN_SERVER_PATH}
+      PHPLDAPADMIN_HTTPS: ${PHPLDAPADMIN_HTTPS}
+      PHPLDAPADMIN_LDAP_HOSTS: ${PHPLDAPADMIN_LDAP_HOSTS}
     ports:
       - 8082:80
       - 8083:443
@@ -35,14 +35,14 @@ services:
   openldap:
     build:
       context: ldap
-    image: consult-kcl/openldap:latest
+    image: kclconsult/openldap:latest
     command: --loglevel debug
     environment:
-      - LDAP_TLS=false
-      - LDAP_ORGANISATION=consult
-      - LDAP_DOMAIN=consult.kcl.ac.uk
-      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
-      - LDAP_ADMIN_PASSWORD=root
+      LDAP_TLS: false
+      LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
     volumes:
       - ldap_volume:/var/lib/ldap
       - ldap_volume:/etc/ldap/slapd.d

@@ -11,7 +11,7 @@ module.exports = {
 
   provenance_server: {
   	URL: "http://localhost:8081",
-    TRACK: true,
+    TRACK: false,
     NR_CHAIN_URL_PORT: 10000,
     NR_BUCKET_URL_PORT: 10001,
     NR_SELINUX_URL_PORT: 10002

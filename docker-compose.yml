@@ -44,12 +44,11 @@ services:
     depends_on:
       - template-server
     environment:
-      # Under single docker machine (i.e. single host) use allocated hostname of single proxy handling all routing (e.g. device-integration_nokia_proxy_1), otherwise use machine (host) addresses.
-      - FHIR_SERVER_ADDRESS=romanova
-      - LDAP_ADDRESS=danvers
-      - DNC_ADDRESS=danvers
-      - PROCESSING_ADDRESS=maximoff
-      - NODE_EXTRA_CA_CERTS=/consult.crt
+      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS}
+      LDAP_ADDRESS: ${LDAP_ADDRESS}
+      DNC_ADDRESS: ${DNC_ADDRESS}
+      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS}
+      NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       # If server at IP rather than known host, name on server's certificate : server IP.
       romanova: 10.0.1.196
@@ -57,7 +56,7 @@ services:
       maximoff: 10.0.1.86
 
   template-server:
-    image: big-kcl/template-server:latest
+    image: kclhi/template-server:latest
     #ports:
       #- 8080:8080
     depends_on:
@@ -67,7 +66,7 @@ services:
   neo4j:
     image: neo4j
     environment:
-      - NEO4J_AUTH=neo4j/12345
+      NEO4J_AUTH: ${NEO4J_AUTH}
       # Minimise memory requirements:
       - NEO4J_dbms_memory_pagecache_size=200M
       - NEO4J_dbms_memory_heap_initial__size=200M
@@ -81,25 +80,25 @@ services:
       - openldap
     container_name: phpldapadmin
     environment:
-      - PHPLDAPADMIN_SERVER_PATH=/users
-      - PHPLDAPADMIN_HTTPS=false
-      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+      PHPLDAPADMIN_SERVER_PATH: ${PHPLDAPADMIN_SERVER_PATH}
+      PHPLDAPADMIN_HTTPS: ${PHPLDAPADMIN_HTTPS}
+      PHPLDAPADMIN_LDAP_HOSTS: ${PHPLDAPADMIN_LDAP_HOSTS}
 
   openldap:
     build:
       context: ldap
-    image: consult-kcl/openldap:latest
+    image: kclconsult/openldap:latest
     command: --loglevel debug
     environment:
-      - LDAP_TLS_CRT_FILENAME=danvers.crt
-      - LDAP_TLS_KEY_FILENAME=danvers.key
-      - LDAP_TLS_CA_CRT_FILENAME=consult.crt
-      - LDAP_ORGANISATION=consult
-      - LDAP_DOMAIN=consult.kcl.ac.uk
-      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
-      - LDAP_ADMIN_PASSWORD=root
-      - LDAP_TLS_CIPHER_SUITE=NORMAL
-      - LDAP_TLS_VERIFY_CLIENT=allow
+      LDAP_TLS_CRT_FILENAME: ${LDAP_TLS_CRT_FILENAME}
+      LDAP_TLS_KEY_FILENAME: ${LDAP_TLS_KEY_FILENAME}
+      LDAP_TLS_CA_CRT_FILENAME: ${LDAP_TLS_CA_CRT_FILENAME}
+      LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+      LDAP_TLS_CIPHER_SUITE: ${LDAP_TLS_CIPHER_SUITE}
+      LDAP_TLS_VERIFY_CLIENT: ${LDAP_TLS_VERIFY_CLIENT}
     volumes:
       - ldap_volume:/var/lib/ldap
       - ldap_volume:/etc/ldap/slapd.d

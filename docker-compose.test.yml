@@ -16,7 +16,7 @@ services:
       - template-server
 
   template-server:
-    image: big-kcl/template-server:latest
+    image: kclhi/template-server:latest
     links:
       - neo4j
     depends_on:

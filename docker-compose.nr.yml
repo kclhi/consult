@@ -26,7 +26,7 @@ services:
   neo4j-nr-chain:
     image: neo4j:3.4
     environment:
-      - NEO4J_AUTH=neo4j/12345
+      NEO4J_AUTH: ${NEO4J_AUTH}
     volumes:
       - neo4j_nr_chain:/data
     ports:
@@ -36,9 +36,9 @@ services:
   neo4j-nr-bucket:
     image: neo4j:3.4
     environment:
-      - NEO4J_AUTH=neo4j/12345
-      - NEO4J_dbms_connector_bolt_listen__address=:7688
-      - NEO4J_dbms_connector_bolt_advertised__address=:7688
+      NEO4J_AUTH: ${NEO4J_AUTH}
+      NEO4J_dbms_connector_bolt_listen__address: :7688
+      NEO4J_dbms_connector_bolt_advertised__address: :7688
     volumes:
       - neo4j_nr_bucket:/data
     ports:
@@ -48,9 +48,9 @@ services:
   neo4j-nr-selinux:
     image: neo4j:3.4
     environment:
-      - NEO4J_AUTH=neo4j/12345
-      - NEO4J_dbms_connector_bolt_listen__address=:7689
-      - NEO4J_dbms_connector_bolt_advertised__address=:7689
+      NEO4J_AUTH: ${NEO4J_AUTH}
+      NEO4J_dbms_connector_bolt_listen__address: :7689
+      NEO4J_dbms_connector_bolt_advertised__address: :7689
     volumes:
       - neo4j_nr_selinux:/data
     ports:
@@ -63,9 +63,10 @@ services:
       - openldap
     container_name: phpldapadmin
     environment:
-      - PHPLDAPADMIN_SERVER_PATH=/users
-      - PHPLDAPADMIN_HTTPS=false
-      - "PHPLDAPADMIN_LDAP_HOSTS=#PYTHON2BASH:[{'openldap': [{'login': [{'bind_id': 'cn=admin,dc=consult,dc=kcl,dc=ac,dc=uk'}]}]}]"
+      LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
     ports:
       - 8082:80
       - 8083:443
@@ -73,14 +74,14 @@ services:
   openldap:
     build:
       context: ldap
-    image: consult-kcl/openldap:latest
+    image: kclconsult/openldap:latest
     command: --loglevel debug
     environment:
-      - LDAP_TLS=false
-      - LDAP_ORGANISATION=consult
-      - LDAP_DOMAIN=consult.kcl.ac.uk
-      - LDAP_BASE_DN=dc=consult,dc=kcl,dc=ac,dc=uk
-      - LDAP_ADMIN_PASSWORD=root
+      LDAP_TLS: false
+      LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
     volumes:
       - ldap_volume:/var/lib/ldap
       - ldap_volume:/etc/ldap/slapd.d
