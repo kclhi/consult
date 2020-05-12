@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const config = require('config');
 
-const utils = require('../lib/utils');
 const medi = require('../lib/medi');
 
 module.exports = function(messageObject) {
 
 	/**
-	 * @api {get} /simulate/incomingECG/:patientID/:practitionerID Grab simulated ECG data from vital patch API and push through system.
+	 * @api {get} /simulate/incomingECG/:patientID/:practitionerID Grab simulated ECG data from vitalpatch API and push through system.
 	 * @apiName simulateECG
 	 * @apiGroup Simulate
 	 *
@@ -16,7 +16,7 @@ module.exports = function(messageObject) {
 	 */
 	router.get('/incomingECG/:patientId/:practitionerId', function(req, res, next) {
 
-		res.sendStatus(medi.getAndForward(req.params.patientId, req.params.practitionerId, "VC2B008BF_FFD00E", messageObject));
+		res.sendStatus(medi.getAndForward(req.params.patientId, req.params.practitionerId, config.get("vitalpatch.DEFAULT_PATCH_ID"), messageObject));
 
 	});
 

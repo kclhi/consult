@@ -80,6 +80,8 @@ VITALPATCH_API_KEY="[keyB]"
 
 Where [username] and [password] are credentials to secure this service, and [keyA] and [keyB] are your Vitalpatch details.
 
+[Setup db encryption keys](https://mariadb.com/kb/en/file-key-management-encryption-plugin/) in `db`.
+
 ## Running
 
 Ensure you are in the root folder. Create a node virtual environment (within a python virtual environment), and activate it:

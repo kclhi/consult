@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const config = require('config');
 const models = require('../models');
 
 const logger = require('../config/winston');
@@ -20,25 +19,16 @@ module.exports = function(messageObject) {
 
     if ( req.params.patientId && req.params.patchId ) {
 
-      models.users.findOrCreate({
+      models.users.upsert({
 
-        where: {
-
-          patientId: req.params.patientId
-
-        },
-        defaults: {
-
-          patientId: req.params.patientId,
-          patchId: req.params.patchId
-
-        }
+        patientId: req.params.patientId,
+        patchId: req.params.patchId
 
       }).error(function(err) {
 
         logger.error(err);
 
-      }).then(function() {
+      }).then(function(result) {
 
         res.sendStatus(200);
 
