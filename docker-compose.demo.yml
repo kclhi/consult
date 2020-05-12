@@ -2,17 +2,6 @@ version: "3.7"
 
 services:
 
-  proxy:
-    image: "kclconsult/sensor-fhir-converter_proxy"
-    build:
-      context: ./proxy
-    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-converter_webapp-api_1:3002", "--", "nginx", "-g", "daemon off;"]
-    tty: true
-    ports:
-      - '3002:443'
-    depends_on:
-      - webapp-api
-
   webapp-queue:
     image: "kclconsult/sensor-fhir-converter_queue"
     build:
@@ -38,6 +27,8 @@ services:
       context: .
     environment:
       FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO_API}
+    ports:
+      - '3002:3002'
 
 volumes:
   data_volume:
