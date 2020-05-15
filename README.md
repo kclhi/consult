@@ -124,6 +124,9 @@ Tests are run via Docker:
 docker-compose -f docker-compose.test.yml build
 docker-compose -f docker-compose.test.yml up
 ```
+## Logging
+
+The arrival of sensor data is tracked using the [provenance template server]().
 
 ## Built With
 
@@ -146,7 +149,3 @@ Produced as part of the [CONSULT project](https://consult.kcl.ac.uk/).
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-
-*

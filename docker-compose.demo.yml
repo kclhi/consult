@@ -22,10 +22,10 @@ services:
     depends_on:
       - template-server
     environment:
-      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS}
-      LDAP_ADDRESS: ${LDAP_ADDRESS}
-      DNC_ADDRESS: ${DNC_ADDRESS}
-      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS}
+      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO}
+      LDAP_ADDRESS: ${LDAP_ADDRESS_DEMO}
+      DNC_ADDRESS: ${DNC_ADDRESS_DEMO}
+      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS_DEMO}
       NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       romanova: 172.20.0.1
@@ -38,7 +38,7 @@ services:
       - neo4j
 
   neo4j:
-    image: neo4j
+    image: neo4j:3.4
     environment:
       NEO4J_AUTH: ${NEO4J_AUTH}
     volumes:
@@ -57,7 +57,7 @@ services:
   openldap:
     build:
       context: ldap
-    image: consult-kcl/openldap:latest
+    image: kclconsult/openldap:latest
     command: --loglevel debug
     environment:
       LDAP_TLS_CRT_FILENAME: ${LDAP_TLS_CRT_FILENAME}

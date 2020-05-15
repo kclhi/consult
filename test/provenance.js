@@ -5,7 +5,7 @@ let expect = chai.expect;
 const config = require('../lib/config');
 const provenance = require('../lib/provenance');
 const fs = require('fs');
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 
 chai.use(require('chai-http'));
 

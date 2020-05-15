@@ -2,10 +2,6 @@
 set -eu
 org=consult-ca
 
-sudo trust anchor --remove consult.crt || true
-
-openssl genpkey -algorithm RSA -out consult.key
+openssl genpkey -algorithm RSA -out consult.key -pkeyopt rsa_keygen_bits:4096
 openssl req -x509 -key consult.key -days 365 -out consult.crt \
     -subj "/CN=$org/O=$org"
-
-sudo trust anchor consult.crt

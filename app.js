@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const logger = require('./config/winston');
 const ldap = require('ldapjs');
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 
 // Environment variables
 require('dotenv').config();

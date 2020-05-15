@@ -3,7 +3,7 @@ const router = express.Router();
 const request = require('request');
 const async = require('async');
 const fs = require('fs');
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 const config = require('config');
 const logger = require('../config/winston');
 

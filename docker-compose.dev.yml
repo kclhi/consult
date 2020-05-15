@@ -15,9 +15,6 @@ services:
       NEO4J_AUTH: ${NEO4J_AUTH}
     volumes:
       - dnc_volume:/data
-    ports:
-      - 7474:7474
-      - 7687:7687
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest
@@ -38,7 +35,7 @@ services:
     image: kclconsult/openldap:latest
     command: --loglevel debug
     environment:
-      LDAP_TLS: false
+      LDAP_TLS: "false"
       LDAP_ORGANISATION: ${LDAP_ORGANISATION}
       LDAP_DOMAIN: ${LDAP_DOMAIN}
       LDAP_BASE_DN: ${LDAP_BASE_DN}

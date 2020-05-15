@@ -25,7 +25,7 @@ services:
       - 8080:8080
 
   neo4j:
-    image: neo4j
+    image: neo4j:3.4
     environment:
       - NEO4J_AUTH=none
     volumes:
