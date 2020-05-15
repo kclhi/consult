@@ -16,9 +16,9 @@ services:
     build:
       context: .
     environment:
-      - DNC_ADDRESS=danvers:3005
-      - UI_ADDRESS=carter:8000
-      - NODE_EXTRA_CA_CERTS=/consult.crt
+      DNC_ADDRESS: ${DNC_ADDRESS_DEMO}
+      UI_ADDRESS: ${UI_ADDRESS_DEMO}
+      NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       danvers: 172.21.0.1
       carter: 172.23.0.1

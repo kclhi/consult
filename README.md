@@ -124,9 +124,9 @@ Different docker-compose files exist to accomodate different service configurati
 
 To use custom certificates for communication with this service's proxy, reference them in the proxy's [Dockerfile](proxy/Dockerfile). The [gen-domain-cert](proxy/certs/gen-domain-cert.sh) script can be used to generate custom certs (e.g. 'danvers.crt') using a CA root cert (e.g. 'consult.crt') and accompanying keys. If distributing an image outside of an organisation, edit [Dockerfile](proxy/Dockerfile) and [docker-compose](docker-compose.yml) to mount a volume on the host containing the certs instead, so that images are not transferred with the certs inside then.
 
-## Running the tests
+## Logging
 
---
+The progression of dialogues is tracked using the [provenance template server]().
 
 ## Built With
 
@@ -149,7 +149,3 @@ Produced as part of the [CONSULT project](https://consult.kcl.ac.uk/).
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-
-*
