@@ -27,8 +27,6 @@ services:
       context: .
     environment:
       FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO_API}
-    ports:
-      - '3002:3002'
 
 volumes:
   data_volume:
