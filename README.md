@@ -81,6 +81,10 @@ docker-compose up --scale proxy=0
 
 Different docker-compose files exist to accomodate different service configurations.
 
+## Logging
+
+The operation of the reasoner is tracked using the [provenance template server]().
+
 ## Built With
 
 * [Flask](http://flask.pocoo.org/)
