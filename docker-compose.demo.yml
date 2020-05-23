@@ -18,11 +18,12 @@ services:
     environment:
       DNC_ADDRESS: ${DNC_ADDRESS_DEMO}
       UI_ADDRESS: ${UI_ADDRESS_DEMO}
+      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS_DEMO}
       NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       danvers: 172.21.0.1
       carter: 172.23.0.1
-      maximoff: 172.0.0.0
+      maximoff: 172.22.0.1
 
 volumes:
   dnc_volume:

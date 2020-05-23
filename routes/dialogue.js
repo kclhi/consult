@@ -367,6 +367,14 @@ function logDialogue(id, dialogueId) {
 
 }
 
+function replaceEnvironment(URL) {
+
+  // ~MDC Support environment variables elsewhere too
+  if ( URL.indexOf("$") ) return URL.replace(URL.match(/\$(.*)\$/)[0], process.env[URL.match(/\$(.*)\$/)[1]]);
+  return URL;
+
+}
+
 function findResponse(receivedMsg, chatContext, dev, documentId, fragmentId, callback) {
 
   var newDialNo // Kai: Triggered by upstream node if new dialogue
@@ -833,6 +841,8 @@ function externalResponse(external, chatContext, substitutionText, dev, callback
 
         }
 
+        URL = replaceEnvironment(URL);
+
         // Do we need to add anything to the URL of this nested external call, required to populate the body.
         if ( item.Value.Path ) {
 
@@ -982,6 +992,8 @@ function externalURLResponse(external, substitutionText, externalCallBody, dev, 
     var URL = external.URL;
 
   }
+
+  URL = replaceEnvironment(URL);
 
   // Main external call.
   request({

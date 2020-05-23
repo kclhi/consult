@@ -26,7 +26,7 @@
 		"Comment": "",
 		"External": {
 			"devURL": "http://localhost:5000/argengine/chatbot",
-			"URL": "https://maximoff/argengine/chatbot",
+			"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
 			"Method": "POST",
 			"Body": [
 				{
@@ -62,7 +62,7 @@
 					"Value": {
 						"Type": "external",
 						"devURL": "http://localhost:3006/mine/get/bp",
-						"URL": "http://maximoff/mine/get/bp",
+						"URL": "http://$PROCESSING_ADDRESS$/mine/get/bp",
 						"Method": "POST",
 						"Body": [
 							{

@@ -19,6 +19,7 @@ services:
     environment:
       DNC_ADDRESS: ${DNC_ADDRESS}
       UI_ADDRESS: ${UI_ADDRESS}
+      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS}
       NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       # If servers at IP rather than known host, name on server's certificate : server IP.
