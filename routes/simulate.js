@@ -8,20 +8,13 @@ const parse = require('csv-parse');
 const fs = require('fs');
 
 const config = require('config');
-
 const utils = require('../lib/utils');
+
+const PRACTITIONER_ID = "da6da8b0-56e5-11e9-8d7b-95e10210fac3";
 
 module.exports = function(messageObject) {
 
-	/**
-	 * @api {get} /simulate/incomingHR Simulate a set of incoming (separate from BP) heart rate values.
-	 * @apiName simulateHR
-	 * @apiGroup Simulate
-	 *
-	 * @apiParam {String} patientID Patient unique ID.
-	 * @apiParam {String} practitionerID Practitioner unique ID.
-	 */
-	router.get('/incomingHR/:patientID/:practitionerID', function(req, res, next) {
+	function sendHRData(patientID, practitionerID, callback) {
 
 		const parser = parse({delimiter: ' '}, function (err, data) {
 
@@ -37,40 +30,88 @@ module.exports = function(messageObject) {
 
 				headers = dataArray.shift();
 
+				if ( config.get('simulate.TIME_SHIFT') ) {
+
+					dataArray = dataArray.slice(0, 365);
+					var simulatedReadingDate = new Date();
+					simulatedReadingDate.setDate(simulatedReadingDate.getDate() - dataArray.length);
+
+				}
+
 				async.eachSeries(dataArray, function (row, next){
 
 					var jsonRow = {};
 
 					jsonRow.reading = "HR";
 					jsonRow.id = uuidv1();
-					jsonRow.subjectReference = req.params.patientID;
-					jsonRow.practitionerReference = req.params.practitionerID;
+					jsonRow.subjectReference = patientID;
+					jsonRow.practitionerReference = practitionerID;
 
 					row.forEach(function(entry) {
 
-						jsonRow[headers[row.indexOf(entry)]] = entry;
+						if ( config.get('simulate.TIME_SHIFT') && headers[row.indexOf(entry)] == "effectiveDateTime" ) {
+
+							jsonRow["effectiveDateTime"] = simulatedReadingDate;
+
+						} else {
+
+							jsonRow[headers[row.indexOf(entry)]] = entry;
+
+						}
 
 					});
 
+					if ( config.get('simulate.TIME_SHIFT') ) simulatedReadingDate.setDate(simulatedReadingDate.getDate() + 1);
 					messageObject.send(config.get('sensor_to_fhir.URL') + "/create/hr", jsonRow).then(() => next());
 
 				}, function(error) {
 
 					if (error) logger.error(error);
-					res.sendStatus(200);
+					callback(200);
 
 				});
 
 			} else {
 
 				logger.error("Data not supplied in suitable format");
-				res.sendStatus(304);
+				callback(304);
 
 			}
 
 		});
 
 		fs.createReadStream("routes/sample-data/hr.csv").pipe(parser);
+
+	}
+	/**
+	 * @api {get} /simulate/incomingHR Simulate a set of incoming (separate from BP) heart rate values.
+	 * @apiName simulateHR
+	 * @apiGroup Simulate
+	 *
+	 * @apiParam {String} patientID Patient unique ID.
+	 * @apiParam {String} practitionerID Practitioner unique ID.
+	 */
+	router.get('/incomingHR/:patientID/:practitionerID', function(req, res, next) {
+
+		sendHRData(req.params.patientID, req.params.practitionerID, function(status) {
+			res.sendStatus(status);
+		});
+
+	});
+
+	router.get('/incomingHR/:patientID', function(req, res, next) {
+
+		sendHRData(req.params.patientID, PRACTITIONER_ID, function(status) {
+			res.sendStatus(status);
+		});
+
+	});
+
+	router.post('/incomingHR/:patientID', function(req, res, next) {
+
+		sendHRData(req.params.patientID, PRACTITIONER_ID, function(status) {
+			res.sendStatus(status);
+		});
 
 	});
 

@@ -1,5 +1,9 @@
 module.exports = {
 
+  simulate: {
+    TIME_SHIFT: true
+  },
+  
   credentials: {
     USERNAME: process.env.USERNAME,
     PASSWORD: process.env.PASSWORD
