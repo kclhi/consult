@@ -21,7 +21,7 @@ module.exports = {
   vitalpatch: {
     LICENSE_KEY: process.env.PRODUCTION_VITALPATCH_LICENSE_KEY,
     API_KEY: process.env.PRODUCTION_VITALPATCH_API_KEY,
-    URL: "https://us-central1-mbshealthstreamkcl.cloudfunctions.net/getEcgFilesByPatchId",
+    URL: process.env.PRODUCTION_VITALPATCH_URL,
     POLL_INTERVAL: 5
   },
 
