@@ -1,3 +1,36 @@
+"use strict";
+
+const got = require('got');
+
+// Send message via http
+class HTTPMessage {
+
+  send(url, body) {
+
+    return new Promise((resolve, reject) => {
+
+        got.post(url, { json: body }, function(error, response, data) {
+
+          if (!error && response.statusCode == 200) {
+
+            console.log(JSON.stringify(response.body));
+            resolve(response.body);
+
+          } else {
+
+            console.log("Error sending message to HTTP endpoint: " + url + ". Response body: " + JSON.stringify(response.body) + ". Error: " + error + ". Sent body: " + JSON.stringify(body) + ".");
+            resolve(error);
+
+          }
+
+       });
+
+    });
+
+  }
+
+}
+
 // Send message via message queue
 class QueueMessage {
 
@@ -44,4 +77,4 @@ class QueueMessage {
 
 }
 
-module.exports = QueueMessage;
+module.exports = { HTTPMessage, QueueMessage };
