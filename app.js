@@ -61,8 +61,7 @@ const ping = require('./routes/ping');
 const simulate = require('./routes/simulate');
 
 const amqp = require('amqplib');
-const QueueMessage = require('./lib/messages/queueMessage');
-const HTTPMessage = require('./lib/messages/httpMessage');
+const messages = require('messages');
 
 // Route setup involving async
 function init() {
@@ -72,8 +71,8 @@ function init() {
     amqp.connect('amqp://' + config.get('message_queue.HOST')).then(function(connection) {
 
       logger.info("Connected to " + config.get('message_queue.HOST'));
-      router.use('/simulate', simulate(new QueueMessage(connection, config.get('message_queue.NAME'))));
-      router.use('/', ping(new QueueMessage(connection, config.get('message_queue.NAME'))));
+      router.use('/simulate', simulate(new messages.QueueMessage(connection, config.get('message_queue.NAME'))));
+      router.use('/', ping(new messages.QueueMessage(connection, config.get('message_queue.NAME'))));
       start();
 
     }).catch(function(error) {
@@ -86,8 +85,8 @@ function init() {
 
   } else {
 
-    router.use('/simulate', simulate(new HTTPMessage()));
-    router.use('/', ping(new HTTPMessage()));
+    router.use('/simulate', simulate(new messages.HTTPMessage()));
+    router.use('/', ping(new messages.HTTPMessage()));
     start();
 
   }
