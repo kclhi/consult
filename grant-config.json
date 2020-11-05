@@ -1,7 +1,7 @@
 {
   "server": {
     "protocol": "https",
-    "host": "device.consultproject.co.uk/garmin"
+    "host": "device.consultsystem.co.uk/garmin"
   },
   "garmin": {
    "request_url": "https://connectapi.garmin.com/oauth-service/oauth/request_token",
