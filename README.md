@@ -33,16 +33,16 @@ virtualenv env
 . env/bin/activate
 ```
 
-Install Python dependencies:
-
-```
-pip install -r requirements.txt
-```
-
 Install OS dependencies:
 
 ```
 sudo apt-get install python-dev graphviz libgraphviz-dev pkg-config
+```
+
+Install Python dependencies:
+
+```
+pip install -r requirements.txt
 ```
 
 ## Usage
