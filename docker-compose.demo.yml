@@ -14,12 +14,14 @@ services:
       NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
     extra_hosts:
       romanova: 172.20.0.1
+    restart: unless-stopped
 
   rabbit:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
     volumes:
       - data_volume:/var/lib/rabbitmq
+    restart: unless-stopped
 
   webapp-api:
     image: "kclconsult/sensor-fhir-converter_api"
@@ -27,6 +29,7 @@ services:
       context: .
     environment:
       FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO_API}
+    restart: unless-stopped
 
 volumes:
   data_volume:
