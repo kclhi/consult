@@ -11,6 +11,7 @@ services:
       - webapp
     ports:
       - '3007:443'
+    restart: unless-stopped
 
   webapp:
     build:
@@ -25,6 +26,7 @@ services:
       danvers: 172.21.0.1
       carter: 172.23.0.1
       maximoff: 172.22.0.1
+    restart: unless-stopped
 
 volumes:
   dnc_volume:
