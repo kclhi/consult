@@ -414,7 +414,7 @@
 		"Comment": "",
 		"External": {
 			"devURL": "http://localhost:3005/QuestionnaireResponse/add",
-			"URL": "http://$DNC_ADDRESS$/QuestionnaireResponse/add",
+			"URL": "https://$DNC_ADDRESS$/QuestionnaireResponse/add",
 			"Method": "POST",
 			"Body": [
 				{
