@@ -1,7 +1,7 @@
-FROM trestletech/plumber
+FROM kclhi/plumber:latest
 
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y \
-    libmariadbclient-dev
+RUN apt-get update
+RUN apt-get install -y libmariadb-dev-compat
 
 # Install requirements
 RUN R -e "install.packages('RSQLite')"
