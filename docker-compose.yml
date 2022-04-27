@@ -5,7 +5,7 @@ services:
   proxy:
     build:
       context: ./proxy
-    command: ["./wait-for-it.sh", "--timeout=0", "data-miner_webapp_1:3006", "--", "nginx", "-g", "daemon off;"]
+    command: ["./wait-for-it.sh", "--timeout=0", "dialogue_manager_webapp_1:3007", "--", "nginx", "-g", "daemon off;"]
     tty: true
     depends_on:
       - webapp
