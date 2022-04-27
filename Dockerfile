@@ -2,13 +2,12 @@ FROM node:11
 ENV user node
 # Replace with root cert.
 COPY ./proxy/certs/consult.crt consult.crt
-COPY package.json /home/$user/
-COPY . /home/$user/
-WORKDIR /home/$user
-RUN chown $user --recursive .
 USER $user
+WORKDIR /home/$user
+COPY --chown=$user:$user package.json .
 RUN npm install --only=production
-COPY bin/wait-for-it.sh wait-for-it.sh
+COPY --chown=$user:$user . .
+COPY --chown=$user:$user bin/wait-for-it.sh wait-for-it.sh
 ENV NODE_ENV production
 EXPOSE 3005
 CMD ["npm", "start"]

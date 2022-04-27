@@ -68,9 +68,9 @@ services:
     environment:
       NEO4J_AUTH: ${NEO4J_AUTH}
       # Minimise memory requirements:
-      - NEO4J_dbms_memory_pagecache_size=200M
-      - NEO4J_dbms_memory_heap_initial__size=200M
-      - NEO4J_dbms_memory_heap_max__size=200M
+      NEO4J_dbms_memory_pagecache_size: 200M
+      NEO4J_dbms_memory_heap_initial__size: 200M
+      NEO4J_dbms_memory_heap_max__size: 200M
     volumes:
       - dnc_volume:/data
 
