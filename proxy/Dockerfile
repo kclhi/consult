@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx::1.21.4
 
 RUN mkdir /etc/nginx/ssl
 
