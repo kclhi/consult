@@ -7,9 +7,10 @@ RUN apt-get update
 RUN apt-get install -y libmariadb-dev-compat
 
 # Install requirements
+RUN R -e "require('remotes'); install_version('DBI', version='1.1.1', upgrade='never', repos='http://cran.us.r-project.org')"
+RUN R -e "require('remotes'); install_version('ggplot2', version='3.3.6', upgrade='never', repos='http://cran.us.r-project.org')"
+RUN R -e "require('remotes'); install_version('RMySQL', version='0.10.23', upgrade='never', repos='http://cran.us.r-project.org')"
 RUN R -e "install.packages('RSQLite')"
-RUN R -e "install.packages('RMySQL')"
-RUN R -e "install.packages('ggplot2')"
 
 COPY . .
 RUN touch data.sqlite
