@@ -4,8 +4,8 @@
 
 library(ggplot2)
 library(DBI)
-library(RSQLite)
 library(RMySQL)
+if ( Sys.getenv("R_ENV") != "production" ) library(RSQLite)
 
 patient.sample<-function(pid) {
 
