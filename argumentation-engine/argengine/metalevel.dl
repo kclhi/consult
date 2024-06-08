@@ -1,0 +1,53 @@
+% meta-level argumentation semantics
+% A1
+arg(justified(X)) :- a(X).
+% A2
+arg(rejected(X)) :- a(X).
+% A3
+arg(defeat(X,Y)) :- r(a(X),a(Y)).
+% D1
+att(defeat(X,Y),justified(Y)) :- arg(defeat(X,Y)),arg(justified(Y)).
+% D2
+att(rejected(X),defeat(X,Y)) :- arg(rejected(X)),arg(defeat(X,Y)).
+% D3
+att(justified(X),rejected(X)) :- arg(justified(X)),arg(rejected(X)).
+
+% adding preferences in metalevel -- general
+% D5
+att(preferred(X,Y),preferred(Y,X)) :- arg(preferred(X,Y)),arg(preferred(Y,X)).
+
+% adding preferences -- PAFs
+% A4 for arguments
+arg(preferred(X,Y)) :- p(a(X),a(Y)).
+% D4 for arguments/values
+att(preferred(X,Y),defeat(Y,X)) :- arg(preferred(X,Y)),arg(defeat(Y,X)).
+
+% adding value-based preferences -- VAFs
+arg(preferred(V1,V2)) :- p(value(V1),value(V2)).
+att(preferred(V1,V2),defeat(Y,X)) :- arg(preferred(V1,V2)), val(a(X),value(V1)), val(a(Y),value(V2)), arg(defeat(Y,X)).
+
+% all audiences together -- aVAFs
+% A4 for values
+arg(preferred(V1,V2)) :- paud(agent(A),p(value(V1),value(V2))).
+% A5 for agents
+arg(agent(A)) :- paud(agent(A),p(value(V1),value(V2))).
+% D6
+att(agent(A),preferred(V2,V1)) :- paud(agent(A),p(value(V1),value(V2))), arg(preferred(V2,V1)).
+% D7
+att(agent(A1),agent(A2)) :- paud(agent(A1),p(value(V1),value(V2))), paud(agent(A2),p(value(V2),value(V1))).
+
+% adding attacks on attacks -- EAFs
+% A4 for meta-attack arguments
+arg(ddefeat(Z,X,Y)) :- d(a(Z),a(X),a(Y)).
+% De
+att(ddefeat(Z,X,Y),defeat(X,Y)) :- arg(defeat(X,Y)),arg(ddefeat(Z,X,Y)).
+% Dd
+att(rejected(Z),ddefeat(Z,X,Y)) :- arg(rejected(Z)),arg(ddefeat(Z,X,Y)).
+
+% transitivity -- uncomment if wanted
+%arg(preferred(X,Y)) :- arg(preferred(X,Z)), arg(preferred(Z,Y)).
+
+% use this (instead of the three lines above)
+% if you don't want to see ddefeat metaarguments in the graph
+% the justified arguments will be the same.
+%att(justified(Z), defeat(X,Y)) :- d(a(Z),a(X),a(Y)).

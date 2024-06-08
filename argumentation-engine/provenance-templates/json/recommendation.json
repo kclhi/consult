@@ -1,0 +1,112 @@
+{
+  "agent": {
+    "var:argumentation": {
+      "prov:type": {
+        "$": "snomed#Software",
+        "type": "xsd:string"
+      }
+    },
+    "var:patient": {
+      "prov:type": {
+        "$": "snomed#Patient",
+        "type": "xsd:string"
+      },
+      "snomed:patientIdentifier": {
+        "$": "vvar:patientID",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    }
+  },
+  "wasGeneratedBy": {
+    "_:wGB1": {
+      "prov:entity": "var:recommendation",
+      "prov:activity": "var:giveRecommendation"
+    }
+  },
+  "activity": {
+    "var:giveRecommendation": {
+      "prov:type": {
+        "$": "snomed#RecommendationTo",
+        "type": "xsd:string"
+      }
+    }
+  },
+  "prefix": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "var": "http://pgt.inf.kcl.ac.uk/var/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "zone": "http://pgt.inf.kcl.ac.uk/zone/",
+    "pgt": "http://pgt.inf.kcl.ac.uk/pgt/",
+    "vvar": "http://pgt.inf.kcl.ac.uk/vvar/",
+    "snomed": "http://snomed.info/sct",
+    "default": "http://pgt.inf.kcl.ac.uk/"
+  },
+  "wasAssociatedWith": {
+    "_:wAW1": {
+      "prov:agent": "var:argumentation",
+      "prov:activity": "var:giveRecommendation"
+    }
+  },
+  "used": {
+    "_:u2": {
+      "prov:entity": "var:guideline",
+      "prov:activity": "var:giveRecommendation"
+    },
+    "_:u3": {
+      "prov:entity": "var:symptom",
+      "prov:activity": "var:giveRecommendation"
+    },
+    "_:u1": {
+      "prov:entity": "var:sensorReading",
+      "prov:activity": "var:giveRecommendation"
+    }
+  },
+  "wasAttributedTo": {
+    "_:wAT1": {
+      "prov:entity": "var:symptom",
+      "prov:agent": "var:patient"
+    }
+  },
+  "entity": {
+    "var:symptom": {
+      "snomed:finding": {
+        "$": "vvar:symptomFinding",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "prov:type": {
+        "$": "snomed#ObservableEntity",
+        "type": "xsd:string"
+      }
+    },
+    "var:sensorReading": {
+      "snomed:finding": {
+        "$": "vvar:sensorReadingValue",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "prov:type": {
+        "$": "snomed#ObservableEntity",
+        "type": "xsd:string"
+      }
+    },
+    "var:recommendation": {
+      "snomed:drug": {
+        "$": "vvar:recommendationDrug",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "prov:type": {
+        "$": "snomed#MedicationRecommendation",
+        "type": "xsd:string"
+      }
+    },
+    "var:guideline": {
+      "prov:type": {
+        "$": "snomed#Knowledge",
+        "type": "xsd:string"
+      },
+      "snomed:guideline": {
+        "$": "vvar:guidelineDescription",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    }
+  }
+}

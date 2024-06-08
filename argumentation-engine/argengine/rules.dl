@@ -1,0 +1,99 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% static information
+
+% ASPT argument scheme -- goal is reduce pain, facts do not change the outcome.
+a(aspt([goal(G), action(A), promotes(A,G)],action(A))) :- goal(G), action(A), promotes(A,G).
+
+% nhs painkillers guideline
+goal(rp) :- suffers_from(Patient,backpain).
+goal(rhp) :- suffers_from(Patient,headache).
+goal(rs) :- suffers_from(Patient,swollen_ankle). % goal: reduce swelling
+
+% NHS recommendations
+% source: https://www.nhs.uk/conditions/nsaids/
+
+% we only keep the specific ones for backpain
+action(ibuprofen) :- patient(Patient), goal(rp), not not_recommend(Patient,ibuprofen).
+action(naproxen) :- patient(Patient), goal(rp), not not_recommend(Patient,naproxen).
+%action(diclofenac) :- goal(rp).
+%action(celecoxib) :- goal(rp).
+%action(mefenamic_acid) :- goal(rp).
+%action(etoricoxib) :- goal(rp).
+%action(indomethacin) :- goal(rp).
+%action(highdose_aspirin) :- goal(rp).
+
+% we only keep the specific ones for headache
+action(paracetamol) :- patient(Patient), goal(rhp), not not_recommend(Patient,paracetamol).
+action(ibuprofen) :- patient(Patient), goal(rhp), not not_recommend(Patient,ibuprofen).
+
+% swollen ankle case
+action(amlodipine) :- patient(Patient), goal(rs).
+action(clevidipine) :- patient(Patient), goal(rs).
+action(diltiazem_hydrochloride) :- patient(Patient), goal(rs).
+action(felodipine) :- patient(Patient), goal(rs).
+action(lacidipine) :- patient(Patient), goal(rs).
+action(lercanidipine_hydrochloride) :- patient(Patient), goal(rs).
+action(nicardipine_hydrochloride) :- patient(Patient), goal(rs).
+action(nifedipine) :- patient(Patient), goal(rs).
+action(nimodipine) :- patient(Patient), goal(rs).
+action(ramipril_with_felodipine) :- patient(Patient), goal(rs).
+action(verapamil_hydrochloride) :- patient(Patient), goal(rs).
+
+% goal definition backpain
+promotes(ibuprofen,rp).
+promotes(naproxen,rp).
+%promotes(diclofenac,rp).
+%promotes(celecoxib,rp).
+%promotes(mefenamic_acid,rp).
+%promotes(etoricoxib,rp).
+%promotes(indomethacin,rp).
+%promotes(highdose_aspirin,rp).
+
+% goal definition headache
+promotes(paracetamol,rhp).
+promotes(ibuprofen,rhp).
+
+% goal definition swollen ankle
+promotes(amlodipine,rs).
+promotes(clevidipine,rs).
+promotes(diltiazem_hydrochloride,rs).
+promotes(felodipine,rs).
+promotes(lacidipine,rs).
+promotes(lercanidipine_hydrochloride,rs).
+promotes(nicardipine_hydrochloride,rs).
+promotes(nifedipine,rs).
+promotes(nimodipine,rs).
+promotes(ramipril_with_felodipine,rs).
+promotes(verapamil_hydrochloride,rs).
+
+% question semantics
+arg(Q) :- ask(Q,X).
+att(Q,justified(X)) :- ask(Q,X).
+
+% when there is a side-effect, and an action A may cause this side-effect, ask q1
+ask(q1([side_effect(S), action(A), may_cause(A,S)]), aspt([goal(G), action(A), promotes(A,G)],action(A))) :- side_effect(S), arg(justified(aspt([goal(G), action(A), promotes(A,G)],action(A)))), may_cause(A,S).
+
+% look for alternatives if q1 is asked.
+a(aspt([goal(G), action(A2), promotes(A2,G)],action(A2))) :- ask(q1([side_effect(S), action(A1), may_cause(A,S)]), aspt([goal(G), action(A1), promotes(A1,G)],action(A1))), alternative(A1,A2).
+
+% preference input effect on the metalevel
+att(preferred(A2,A1), defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)), aspt([goal(G), action(A2), promotes(A2,G)],action(A2))))
+:- arg(preferred(A2,A1)),
+   arg(defeat(aspt([goal(G), action(A1), promotes(A1,G)],action(A1)),
+              aspt([goal(G), action(A2), promotes(A2,G)],action(A2))
+             )
+      ).
+
+
+% alert schemes
+
+% amber alert scheme
+a(amber([systolic(P,S),"<150", ">134"],flag(amber))) :- systolic(P,S), S<150, S>134.
+a(amber([diastolic(P,D),"<95", ">84"],flag(amber))) :- diastolic(P,D), D<95, D>84.
+
+% red alert scheme
+a(red([systolic(P,S), "<180", ">149"],flag(red))) :- systolic(P,S), S<180, S>149.
+a(red([diastolic(P,D), "<110", ">94"],flag(red))) :- diastolic(P,D), D<110, D>94.
+
+% double red alert scheme
+a(dred([systolic(P,S), ">179"],flag(doublered))) :- systolic(P,S), S>179.
+a(dred([diastolic(P,D), ">109"],flag(doublered))) :- diastolic(P,D), D>109.
