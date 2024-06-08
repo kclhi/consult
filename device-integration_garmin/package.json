@@ -1,0 +1,50 @@
+{
+  "name": "device-integration_garmin",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "migrate": "sequelize db:migrate",
+    "test": "mocha --exit"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.6",
+    "async": "^3.2.0",
+    "basic-auth": "^2.0.1",
+    "body-parser": "^1.19.0",
+    "config": "^3.3.1",
+    "cookie-parser": "^1.4.5",
+    "csv-parse": "^4.9.1",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "fs": "0.0.1-security",
+    "grant-express": "^5.0.1",
+    "http-errors": "^1.7.3",
+    "json-find": "^2.0.7",
+    "messages": "file:lib/messages",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.1.0",
+    "oauth-signature": "^1.5.0",
+    "pug": "^2.0.4",
+    "querystring": "^0.2.0",
+    "request": "^2.88.2",
+    "sequelize": "^5.21.9",
+    "sequelize-cli": "^5.5.1",
+    "serve-favicon": "^2.5.0",
+    "sqlite3": "^4.2.0",
+    "uuid": "^8.0.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^7.1.2",
+    "mocha-eslint": "^6.0.0",
+    "nodemon": "^2.0.4",
+    "eslint": "^7.0.0",
+    "sequelize-auto-migrations": "^1.0.3",
+    "apidoc": ""
+  }
+}
