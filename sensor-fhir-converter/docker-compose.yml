@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+
+  webapp-queue:
+    image: "kclconsult/sensor-fhir-converter_queue"
+    build:
+      context: .
+    command: ["./wait-for-it.sh", "--timeout=0", "sensor-fhir-converter_rabbit_1:15672", "--", "npm", "run", "consume"]
+    depends_on:
+      - rabbit
+    environment:
+      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS}
+      NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
+    extra_hosts:
+      # If fhir server at IP rather than known host, name on fhir server's certificate : fhir server IP.
+      romanova: 10.0.1.196
+
+  rabbit:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit"
+    volumes:
+      - data_volume:/var/lib/rabbitmq
+
+volumes:
+  data_volume:
+
+networks:
+  default:
+    name: device_network

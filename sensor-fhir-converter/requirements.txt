@@ -1,0 +1,13 @@
+express
+http-errors
+cookie-parser
+morgan
+request
+debug
+pug
+dotenv
+async
+apidoc
+amqplib
+config
+winston

@@ -1,0 +1,123 @@
+{
+  "resourceType": "Observation",
+  "id": "[id]",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/vitalsigns"
+    ]
+  },
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:uuid:187e0c12-8dd2-67e2-99b2-bf273c878281"
+    }
+  ],
+  "basedOn": [
+    {
+      "identifier": {
+        "system": "https://acme.org/identifiers",
+        "value": "1234"
+      }
+    }
+  ],
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "8867-4",
+        "display": "Heart rate"
+      }
+    ],
+    "text": "Heart rate"
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "Vital Signs"
+        }
+      ],
+      "text": "Vital Signs"
+    }
+  ],
+  "subject": {
+    "reference": "Patient/[subjectReference]"
+  },
+  "effectiveDateTime": "[effectiveDateTime]",
+  "performer": [
+    {
+      "reference": "Practitioner/[practitionerReference]"
+    }
+  ],
+  "component": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "40443-4",
+            "display": "Heart rate --resting"
+          }
+        ],
+        "text": "Heart rate --resting"
+      },
+      "valueQuantity": {
+        "value": "[c40443h4]",
+        "unit": "beats/minute",
+        "system": "http://unitsofmeasure.org",
+        "code": "/min"
+      }
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8867-4",
+            "display": "Heart rate"
+          }
+        ],
+        "text": "Heart rate"
+      },
+      "valueQuantity": {
+        "value": "[c8867h4]",
+        "unit": "beats/minute",
+        "system": "http://unitsofmeasure.org",
+        "code": "/min"
+      }
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "82290-8",
+            "display": "Frequency of moderate to vigorous aerobic physical activity"
+          }
+        ],
+        "text": ""
+      },
+      "valueQuantity": {
+        "value": "[c82290h8]",
+        "unit": "second",
+        "system": "http://unitsofmeasure.org",
+        "code": "second"
+      }
+    }
+  ],
+  "interpretation": [
+    {
+      "coding": [
+        {
+          "system": "",
+          "code": "",
+          "display": ""
+        }
+      ],
+      "text": ""
+    }
+  ]
+}
