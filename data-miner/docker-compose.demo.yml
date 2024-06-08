@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "data-miner_webapp_1:3006", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    depends_on:
+      - webapp
+    ports:
+      - '3006:443'
+    restart: unless-stopped
+
+  webapp:
+    build:
+      context: .
+    environment:
+      R_ENV: production
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_HOST: ${MYSQL_HOST}
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
+  mariadb:
+    build: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - processing_data_volume:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  processing_data_volume:
+
+networks:
+  default:
+    #external:
+      name: processing_network
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.22.0.0/16
