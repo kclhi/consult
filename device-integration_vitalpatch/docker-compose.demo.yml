@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_vitalpatch_webapp_1:3003", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '3003:443'
+    restart: unless-stopped
+
+  webapp:
+    build:
+      context: .
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
+  migration:
+    image: device-integration_vitalpatch_webapp:latest
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_vitalpatch_mariadb_1:3306", "--", "npm", "run", "migrate"]
+    links:
+      - webapp
+      - mariadb
+
+  mariadb:
+    build: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - sensor_data_volume:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  sensor_data_volume:
+
+networks:
+  default:
+    external:
+      name: device_network

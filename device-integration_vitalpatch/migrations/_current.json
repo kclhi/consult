@@ -1,0 +1,30 @@
+{
+    "tables": {
+        "users": {
+            "tableName": "users",
+            "schema": {
+                "patientId": {
+                    "primaryKey": true,
+                    "field": "patientId",
+                    "seqType": "Sequelize.STRING"
+                },
+                "patchId": {
+                    "field": "patchId",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "revision": 1
+}
