@@ -1,0 +1,76 @@
+{
+  "resourceType": "Observation",
+  "id": "[id]",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/vitalsigns"
+    ]
+  },
+  "basedOn": [
+    {
+      "identifier": {
+        "system": "https://acme.org/identifiers",
+        "value": "1234"
+      }
+    }
+  ],
+  "status": "final",
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "106126000",
+          "display": "Emotional state finding"
+        }
+      ],
+      "text": "Emotional state finding"
+    }
+  ],
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "106131003",
+        "display": "Mood finding"
+      }
+    ],
+    "text": "Mood finding"
+  },
+  "subject": {
+    "reference": "Patient/[subjectReference]"
+  },
+  "effectiveDateTime": "[effectiveDateTime]",
+  "performer": [
+    {
+      "reference": "Patient/[subjectReference]"
+    }
+  ],
+  "component": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "285854004",
+            "display": "Emotion"
+          }
+        ],
+        "text": ""
+      },
+      "valueString": "[285854004]"
+    }
+  ],
+  "interpretation": [
+    {
+      "coding": [
+        {
+          "system": "",
+          "code": "",
+          "display": ""
+        }
+      ],
+      "text": ""
+    }
+  ]
+}

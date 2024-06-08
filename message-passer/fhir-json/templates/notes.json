@@ -1,0 +1,10 @@
+{
+  "resourceType": "ClinicalImpression",
+  "id": "[id]",
+  "status": "completed",
+  "description": "[note]",
+  "subject": {
+    "reference": "Patient/[subjectReference]"
+  },
+  "date": "[effectiveDateTime]"
+}

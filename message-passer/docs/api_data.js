@@ -1,0 +1,635 @@
+define({ "api": [
+  {
+    "type": "post",
+    "url": "/AuditEvent/add",
+    "title": "Add new AuditEvent (e.g. dashboard event).",
+    "name": "Add",
+    "group": "AuditEvents",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Resource ID (optional)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "eventType",
+            "description": "<p>Type of event</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "eventData",
+            "description": "<p>Data associated with event</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(optional) Timestamp of event</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Confirmation",
+            "description": "<p>Resource added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/audit-event.js",
+    "groupTitle": "AuditEvents"
+  },
+  {
+    "type": "get",
+    "url": "/AuditEvent/:patientID/:start/:end",
+    "title": "Request event (AuditEvent) information",
+    "name": "GetAuditEvent",
+    "group": "AuditEvents",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The start time of the range of events to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The end time of the range of events to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "response",
+            "description": "<p>A list of event data as an R-formatted table.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/audit-event.js",
+    "groupTitle": "AuditEvents"
+  },
+  {
+    "type": "post",
+    "url": "/ClinicalImpression/add",
+    "title": "Add new ClinicalImpression (e.g. GP notes).",
+    "name": "Add",
+    "group": "ClinicalImpressions",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Resource ID (optional)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "note",
+            "description": "<p>Impression details</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(optional) Timestamp of impression</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Confirmation",
+            "description": "<p>Resource added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/clinical-impression.js",
+    "groupTitle": "ClinicalImpressions"
+  },
+  {
+    "type": "get",
+    "url": "/ClinicalImpression/:patientID/:start/:end",
+    "title": "Request GP note (ClinicalImpression) information",
+    "name": "GetClinicalImpression",
+    "group": "ClinicalImpressions",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The start time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The end time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "response",
+            "description": "<p>A list of clinical impression data as an R-formatted table.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/clinical-impression.js",
+    "groupTitle": "ClinicalImpressions"
+  },
+  {
+    "type": "post",
+    "url": "/Observation/add",
+    "title": "Add new Observation resource (e.g. patient mood).",
+    "name": "Add",
+    "group": "Observations",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Resource ID (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(Optional) Timestamp of (mood) observation.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "285854004",
+            "description": "<p>Recorded emotion.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Resource",
+            "description": "<p>added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/observation.js",
+    "groupTitle": "Observations"
+  },
+  {
+    "type": "get",
+    "url": "/Observation/:patientID/:code/:start/:end",
+    "title": "Request patient vitals (Observation) information",
+    "name": "GetObservations",
+    "group": "Observations",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>The code of the observation being requested (e.g. Blood pressure: 85354-9).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The start time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The end time of the range of observations to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "response",
+            "description": "<p>A list of observation data as an R-formatted table.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/observation.js",
+    "groupTitle": "Observations"
+  },
+  {
+    "type": "get",
+    "url": "/Patient/:patientID",
+    "title": "Request patient information",
+    "name": "GetPatient",
+    "group": "Patient",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "List",
+            "optional": false,
+            "field": "Patient",
+            "description": "<p>data: ID, DOB, age, ethnicity, subscribed medication and conditions.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/patient.js",
+    "groupTitle": "Patient"
+  },
+  {
+    "type": "post",
+    "url": "/QuestionnaireResponse/add",
+    "title": "Add new QuestionnaireResponse resource (e.g. PHQ9 depression screening responses).",
+    "name": "Add",
+    "group": "QuestionnaireResponses",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>(Optional) Resource ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subjectReference",
+            "description": "<p>Patient ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "effectiveDateTime",
+            "description": "<p>(Optional) Timestamp of response</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "LittleInterestInitial",
+            "description": "<p>(Optional, if PHQ9) PHQ2 yes/no for LittleInterest</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingDownInitial",
+            "description": "<p>(Optional, if PHQ9) PHQ2 yes/no for FeelingDown</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "LittleInterest",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for LittleInterest</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingDown",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for FeelingDown</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TroubleSleeping",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for TroubleSleeping</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingTired",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for FeelingTired</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "BadAppetite",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for BadAppetite</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "FeelingBadAboutSelf",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for FeelingBadAboutSelf</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TroubleConcentrating",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for TroubleConcentrating</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MovingSpeaking",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for MovingSpeaking</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ThoughtsHurting",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for ThoughtsHurting</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Difficulty",
+            "description": "<p>(Optional, if PHQ2) PHQ9 score for Difficulty</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TotalScore",
+            "description": "<p>(Optional, if PHQ2) Total PHQ9 score</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Confirmation",
+            "description": "<p>Resource added.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/questionnaire-response.js",
+    "groupTitle": "QuestionnaireResponses"
+  },
+  {
+    "type": "get",
+    "url": "/QuestionnaireResponse/:patientID/:start/:end",
+    "title": "Request questionnaire response (QuestionnaireResponse) information",
+    "name": "GetQuestionnaireResponse",
+    "group": "QuestionnaireResponses",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "patientID",
+            "description": "<p>Users unique ID.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The start time of the range of QuestionnaireResponses to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The end time of the range of QuestionnaireResponses to look for, as full timestamp (e.g. 2019-02-26T00:00:00Z).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "response",
+            "description": "<p>A list of questionnaire response data as an R-formatted table.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/questionnaire-response.js",
+    "groupTitle": "QuestionnaireResponses"
+  },
+  {
+    "type": "get",
+    "url": "/Patient/register/:id/:token",
+    "title": "Exchange a (second) temporary token acquired along with a system ID (post record collection based upon NHS number) for a full password and thus access to the UI and chat. Patient signup protocol step 3.",
+    "name": "GetPassword",
+    "group": "Register",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>System ID supplied in exachange for first token supplied upon provision of NHS number.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>Token supplied upon issue of system ID.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Confirmation",
+            "description": "<p>of ID and newly generated password.</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./routes/patient.js",
+    "groupTitle": "Register"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./docs/main.js",
+    "group": "_home_martin_Dropbox_University_Postdoctoral_Associate_2018_19_Research_CONSULT_Architecture_dev_message_passer_docs_main_js",
+    "groupTitle": "_home_martin_Dropbox_University_Postdoctoral_Associate_2018_19_Research_CONSULT_Architecture_dev_message_passer_docs_main_js",
+    "name": ""
+  }
+] });

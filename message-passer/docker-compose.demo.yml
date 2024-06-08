@@ -1,0 +1,89 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    depends_on:
+      - webapp
+      - openldap
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '3005:443'
+      - '389:389'
+      - '636:636'
+    restart: unless-stopped
+
+  webapp:
+    build:
+      context: .
+    command: ["./wait-for-it.sh", "--timeout=0", "message-passer_template-server_1:8080", "--", "./wait-for-it.sh", "--timeout=0", "message-passer_openldap_1:636", "--", "npm", "start"]
+    depends_on:
+      - template-server
+    environment:
+      FHIR_SERVER_ADDRESS: ${FHIR_SERVER_ADDRESS_DEMO}
+      LDAP_ADDRESS: ${LDAP_ADDRESS_DEMO}
+      DNC_ADDRESS: ${DNC_ADDRESS_DEMO}
+      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS_DEMO}
+      NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
+    extra_hosts:
+      romanova: 172.20.0.1
+      danvers: 172.21.0.1
+      maximoff: 172.22.0.1
+    restart: unless-stopped
+
+  template-server:
+    image: kclhi/template-server:latest
+    depends_on:
+      - neo4j
+    restart: unless-stopped
+
+  neo4j:
+    image: neo4j:3.4
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH}
+    volumes:
+      - dnc_volume:/data
+    restart: unless-stopped
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    depends_on:
+      - openldap
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_SERVER_PATH: ${PHPLDAPADMIN_SERVER_PATH}
+      PHPLDAPADMIN_HTTPS: ${PHPLDAPADMIN_HTTPS}
+      PHPLDAPADMIN_LDAP_HOSTS: ${PHPLDAPADMIN_LDAP_HOSTS}
+    restart: unless-stopped
+
+  openldap:
+    build:
+      context: ldap
+    image: kclconsult/openldap:latest
+    command: --loglevel debug
+    environment:
+      LDAP_TLS_CRT_FILENAME: ${LDAP_TLS_CRT_FILENAME}
+      LDAP_TLS_KEY_FILENAME: ${LDAP_TLS_KEY_FILENAME}
+      LDAP_TLS_CA_CRT_FILENAME: ${LDAP_TLS_CA_CRT_FILENAME}
+      LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+      LDAP_TLS_CIPHER_SUITE: ${LDAP_TLS_CIPHER_SUITE}
+      LDAP_TLS_VERIFY_CLIENT: ${LDAP_TLS_VERIFY_CLIENT}
+    volumes:
+      - ldap_volume:/var/lib/ldap
+      - ldap_volume:/etc/ldap/slapd.d
+    restart: unless-stopped
+
+volumes:
+  dnc_volume:
+  ldap_volume:
+
+networks:
+  default:
+    external:
+      name: dnc_network

@@ -1,0 +1,90 @@
+{
+  "agent": {
+    "sensorCompany": {
+      "prov:type": {
+        "$": "snomed#Institution",
+        "type": "xsd:string"
+      },
+      "snomed:Name": {
+        "$": "vvar:companyName",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    },
+    "sensor": {
+      "prov:type": {
+        "$": "snomed#Device",
+        "type": "xsd:string"
+      },
+      "snomed:Name": {
+        "$": "vvar:deviceName",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    },
+    "var:patient": {
+      "prov:type": {
+        "$": "snomed#Patient",
+        "type": "xsd:string"
+      },
+      "snomed:patientIdentifier": {
+        "$": "vvar:patientID",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    }
+  },
+  "wasGeneratedBy": {
+    "_:wGB1": {
+      "prov:entity": "var:sensorReading",
+      "prov:activity": "var:collectReading"
+    }
+  },
+  "activity": {
+    "var:collectReading": {
+      "prov:type": {
+        "$": "snomed#Procedure",
+        "type": "xsd:string"
+      },
+      "snomed:VitalSign": {
+        "$": "vvar:readingType",
+        "type": "prov:QUALIFIED_NAME"
+      }
+    }
+  },
+  "actedOnBehalfOf": {
+    "_:aOBO1": {
+      "prov:responsible": "sensorCompany",
+      "prov:delegate": "sensor"
+    }
+  },
+  "prefix": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "var": "http://pgt.inf.kcl.ac.uk/var/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "zone": "http://pgt.inf.kcl.ac.uk/zone/",
+    "pgt": "http://pgt.inf.kcl.ac.uk/pgt/",
+    "vvar": "http://pgt.inf.kcl.ac.uk/vvar/",
+    "snomed": "http://snomed.info/sct",
+    "default": "http://pgt.inf.kcl.ac.uk/"
+  },
+  "wasAssociatedWith": {
+    "_:wAW2": {
+      "prov:agent": "sensor",
+      "prov:activity": "var:collectReading"
+    },
+    "_:wAW1": {
+      "prov:agent": "var:patient",
+      "prov:activity": "var:collectReading"
+    }
+  },
+  "entity": {
+    "var:sensorReading": {
+      "snomed:finding": {
+        "$": "vvar:sensorReading",
+        "type": "prov:QUALIFIED_NAME"
+      },
+      "prov:type": {
+        "$": "snomed#ObservableEntity",
+        "type": "xsd:string"
+      }
+    }
+  }
+}

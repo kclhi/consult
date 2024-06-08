@@ -1,0 +1,24 @@
+document
+
+    default <http://pgt.inf.kcl.ac.uk/>
+    prefix pgt <http://pgt.inf.kcl.ac.uk/pgt/>
+    prefix var <http://pgt.inf.kcl.ac.uk/var/>
+    prefix vvar <http://pgt.inf.kcl.ac.uk/vvar/>
+    prefix zone <http://pgt.inf.kcl.ac.uk/zone/>
+
+    prefix snomed <http://snomed.info/sct>
+
+    agent(var:patient, [prov:type="snomed#Patient", snomed:patientIdentifier='vvar:patientID'])
+    agent(sensor, [prov:type="snomed#Device", snomed:Name='vvar:deviceName'])
+    agent(sensorCompany, [prov:type="snomed#Institution", snomed:Name='vvar:companyName'])
+
+    entity(var:sensorReading, [prov:type="snomed#ObservableEntity", snomed:finding='vvar:sensorReading'])
+
+    activity(var:collectReading, [prov:type="snomed#Procedure", snomed:VitalSign='vvar:readingType'])
+
+    wasAssociatedWith(var:collectReading, var:patient, -)
+    wasAssociatedWith(var:collectReading, sensor, -)
+    actedOnBehalfOf(sensor, sensorCompany, -)
+    wasGeneratedBy(var:sensorReading, var:collectReading, -)
+
+endDocument
