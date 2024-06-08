@@ -1,0 +1,366 @@
+[
+	{
+		"Dialogue": "1",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "What symptom can I help you with?",
+		"CondJmp": [
+			{
+				"msg": "Backpain",
+				"n": "101"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "101",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Ok, I will check the NHS Choices guidelines, your medical history and any possible counter-indications and provide you some recommendations. Speak to your pharmacist about this.",
+		"CondJmp": [
+			{
+				"msg": "Ok",
+				"n": "201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "201",
+		"BranchLevel": "3",
+		"Comment": "if 'backpain', then",
+		"Print": "It is recommended that you take: ibuprofen, would you like more details?",
+		"CondJmp": [
+			{
+				"msg": "Accept",
+				"n": "1201"
+			},
+			{
+				"msg": "Why",
+				"n": "2201"
+			},
+			{
+				"msg": "Disagree",
+				"n": "3201"
+			},
+			{
+				"msg": "Propose alternative",
+				"n": "4201"
+			},
+			{
+				"msg": "Reject",
+				"n": "5201"
+			},
+			{
+				"msg": "Yes, but tell me more",
+				"n": "6201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "1201",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Don't forget to check this with your pharmacist.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "2201",
+		"BranchLevel": "",
+		"Comment": "patient asks for an explanation",
+		"Print": "Treatment B should be considered as it promotes the goal G, which will help with symptom s1. Do you want more information?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "12201"
+			},
+			{
+				"msg": "No",
+				"n": "22201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "12201",
+		"BranchLevel": "",
+		"Comment": "reasons to support this recommendation are listed - these include applicable cqs in order",
+		"Print": "Your medical record does not contain any counter-indications to b. Your medical record does not contain any adverse reaction to b",
+		"CondJmp": [
+			{
+				"msg": "Ok",
+				"n": "112201"
+			},
+			{
+				"msg": "Need more explanation",
+				"n": "212201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "112201",
+		"BranchLevel": "",
+		"Comment": "patient accepts the recommendation, dialogue log is saved",
+		"Print": "Don't forget to check this with your pharmacist.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "212201",
+		"BranchLevel": "",
+		"Comment": "refer to GP or pharmacist",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "3201",
+		"BranchLevel": "",
+		"Comment": "patient disagrees with recommendation and proposes neg b, so reasons to support b are listed one by one",
+		"Print": "Your medical record does not contain any counter-indications to b. Do you agree??",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "13201"
+			},
+			{
+				"msg": "No",
+				"n": "23201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "13201",
+		"BranchLevel": "",
+		"Comment": "if there are more reasons",
+		"Print": "Your medical record does not contain any adverse reaction to b. Do you agree?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "113201"
+			},
+			{
+				"msg": "No",
+				"n": "213201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "113201",
+		"BranchLevel": "",
+		"Comment": "patient accepts the recommendation, dialogue log is saved",
+		"Print": "Don't forget to check this with your pharmacist.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "23201",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "213201",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "4201",
+		"BranchLevel": "",
+		"Comment": "patient has suggested an alternative action c",
+		"Print": "You suggest action c, let me check this",
+		"CondJmp": [
+			{
+				"msg": "Ok",
+				"n": "4201"
+			}
+		],
+		"Media": "",
+		"Actions": "agent checks if c is in the MAF? A. if c is in MAF explains attacks on it B. if c is not in MAF then refers to GP",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "14201A",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Action c was considered, but it is not recommended as there is a counter- indication  (or relevant CQ text).  b is the recommended treatment, are you ok with it now?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "114201A"
+			},
+			{
+				"msg": "No",
+				"n": "214201A"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "114201A",
+		"BranchLevel": "",
+		"Comment": "patient now accepts the recommendation, dialogue log is saved",
+		"Print": "Don't forget to check this with your pharmacist",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "214201A",
+		"BranchLevel": "",
+		"Comment": "patient still not convinced",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "14201B",
+		"BranchLevel": "",
+		"Comment": "Patients suggestion is not  aligned with goal",
+		"Print": "Action c is not used to achieve your goal. It is not a treatment for XX. b is the recommended treatment, are you ok with it now?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "114201B"
+			},
+			{
+				"msg": "No",
+				"n": "214201B"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "114201B",
+		"BranchLevel": "",
+		"Comment": "patient now accepts the recommendation, dialogue log is saved",
+		"Print": "Don't forget to check this with your pharmacist.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "1",
+		"Step": "214201B",
+		"BranchLevel": "",
+		"Comment": "patient still not convinced",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

@@ -1,0 +1,192 @@
+[
+	{
+		"Dialogue": "2-1-initiate",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "This is triggered by an amber value for BP",
+		"Print": "Hi, it looks like your latest blood pressure reading is a bit higher than expected. Do you think this could be because you are under pressure or stressed?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "101"
+			},
+			{
+				"msg": "No",
+				"n": "102"
+			},
+			{
+				"msg": "I am not sure",
+				"n": "103"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1-initiate",
+		"Step": "101",
+		"BranchLevel": "1",
+		"Comment": "Triggered by app",
+		"Print": "This could explain the latest reading. If you think that stress is making your blood pressure readings a bit higher than expected have you considered some stress reduction tactics or techniques? (point to NHS Choices for stress reduction http://stress-anxiety-depression/understanding-stress/). Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1-initiate",
+		"Step": "102",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "The most helpful way to respond to a slightly high blood pressure is to repeat the readings over one or more weeks. If the slightly high readings persist please contact 111, head to your pharmacy or discuss with your GP. Decisions about changing treatments are usually based on readings taken over several weeks. Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1-initiate",
+		"Step": "103",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "The most helpful way to respond to a slightly high blood pressure is to repeat the readings over one or more weeks. If the slightly high readings persist please contact 111, head to your pharmacy or discuss with your GP. Decisions about changing treatments are usually based on readings taken over several weeks. Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1-initiate",
+		"Step": "1011",
+		"BranchLevel": "2",
+		"Comment": "",
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "backpain"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "amber,red,dred"
+					}
+				}
+			]
+		},
+		"Print": "[ext0.winning.*.expl]",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1-initiate",
+		"Step": "1012",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Ok, if you have any concerns contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

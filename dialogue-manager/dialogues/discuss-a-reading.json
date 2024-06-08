@@ -1,0 +1,94 @@
+[
+	{
+		"Dialogue": "discuss-a-reading",
+		"Step": "1",
+		"BranchLevel": "",
+		"Comment": "Triggered by the user asking about a chart",
+		"Print": "What value do you want to discuss?",
+		"CondJmp": [
+			{
+				"msg": "SBP",
+				"n": "110"
+			},
+			{
+				"msg": "DBP",
+				"n": "120"
+			},
+			{
+				"msg": "HR",
+				"n": "130"
+			},
+			{
+				"msg": "ECG",
+				"n": "140"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-reading",
+		"Step": "110",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/common-health-questions/lifestyle/what-is-blood-pressure/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-reading",
+		"Step": "120",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/common-health-questions/lifestyle/what-is-blood-pressure/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-reading",
+		"Step": "130",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-check-my-pulse/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-reading",
+		"Step": "140",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "Follow this link and get all the information you need: https://www.nhs.uk/conditions/electrocardiogram/",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

@@ -1,0 +1,118 @@
+[
+	{
+		"Dialogue": "2-1",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "This is triggered by an amber value for BP",
+		"Print": "Hi, it looks like your latest blood pressure reading is a bit higher than expected. Do you think this could be because you are under pressure or stressed?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "101"
+			},
+			{
+				"msg": "No",
+				"n": "102"
+			},
+			{
+				"msg": "I am not sure",
+				"n": "103"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1",
+		"Step": "101",
+		"BranchLevel": "1",
+		"Comment": "Triggered by app",
+		"Print": "This could explain the latest reading. If you think that stress is making your blood pressure readings a bit higher than expected have you considered some stress reduction tactics or techniques? (point to NHS Choices for stress reduction https://stress-anxiety-depression/understanding-stress/). Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1",
+		"Step": "102",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "The most helpful way to respond to a slightly high blood pressure is to repeat the readings over one or more weeks. If the slightly high readings persist please contact 111, head to your pharmacy or discuss with your GP. Decisions about changing treatments are usually based on readings taken over several weeks. Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1",
+		"Step": "103",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "The most helpful way to respond to a slightly high blood pressure is to repeat the readings over one or more weeks. If the slightly high readings persist please contact 111, head to your pharmacy or discuss with your GP. Decisions about changing treatments are usually based on readings taken over several weeks. Would you like to know more about this alert?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1011"
+			},
+			{
+				"msg": "No",
+				"n": "1012"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1",
+		"Step": "1011",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "The diastolic measurement of the patient {} is {}. This value is less than 110 and more than 94; therefore, a red flag is raised.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "2-1",
+		"Step": "1012",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Ok, if you have any concerns contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

@@ -1,0 +1,14 @@
+cookie-parser
+express
+http-errors
+morgan
+npm
+pug
+request
+dotenv
+debug
+express-session
+config
+winston
+async
+uuid

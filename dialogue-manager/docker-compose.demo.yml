@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      context: ./proxy
+    command: ["./wait-for-it.sh", "--timeout=0", "dialogue_manager_webapp_1:3007", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    depends_on:
+      - webapp
+    ports:
+      - '3007:443'
+    restart: unless-stopped
+
+  webapp:
+    build:
+      context: .
+    environment:
+      DNC_ADDRESS: ${DNC_ADDRESS_DEMO}
+      UI_INTERNAL_ADDRESS: ${UI_INTERNAL_ADDRESS_DEMO}
+      UI_ADDRESS: ${UI_ADDRESS_DEMO}
+      PROCESSING_ADDRESS: ${PROCESSING_ADDRESS_DEMO}
+      NODE_EXTRA_CA_CERTS: ${NODE_EXTRA_CA_CERTS}
+    extra_hosts:
+      danvers: 172.21.0.1
+      carter: 172.23.0.1
+      maximoff: 172.22.0.1
+    restart: unless-stopped
+
+volumes:
+  dnc_volume:
+
+networks:
+  default:
+    name: dnc_network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/16

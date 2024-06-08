@@ -1,0 +1,463 @@
+[
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "During the last month, have you often been bothered by feeling down, depressed or hopeless?",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "LittleInterestInitial",
+				"msg": "Yes",
+				"n": "301"
+			},
+			{
+				"store": "true",
+				"id": "LittleInterestInitial",
+				"msg": "No",
+				"n": "2"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "2",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "During the last month, have you often been bothered by having little interest or pleasure in doing things?",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "FeelingDownInitial",
+				"msg": "Yes",
+				"n": "301"
+			},
+			{
+				"store": "true",
+				"id": "FeelingDownInitial",
+				"msg": "No",
+				"n": "4"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "301",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Little interest or pleasure in doing things?",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "LittleInterest",
+				"msg": "Not at all",
+				"n": "302"
+			},
+			{
+				"store": "true",
+				"id": "LittleInterest",
+				"msg": "Several days",
+				"n": "302"
+			},
+			{
+				"store": "true",
+				"id": "LittleInterest",
+				"msg": "More than half the days",
+				"n": "302"
+			},
+			{
+				"store": "true",
+				"id": "LittleInterest",
+				"msg": "Nearly every day",
+				"n": "302"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "302",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Feeling down, depressed, or hopeless?",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "FeelingDown",
+				"msg": "Not at all",
+				"n": "303"
+			},
+			{
+				"store": "true",
+				"id": "FeelingDown",
+				"msg": "Several days",
+				"n": "303"
+			},
+			{
+				"store": "true",
+				"id": "FeelingDown",
+				"msg": "More than half the days",
+				"n": "303"
+			},
+			{
+				"store": "true",
+				"id": "FeelingDown",
+				"msg": "Nearly every day",
+				"n": "303"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "303",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Trouble falling or staying aleep, or sleeping too much",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "TroubleSleeping",
+				"msg": "Not at all",
+				"n": "304"
+			},
+			{
+				"store": "true",
+				"id": "TroubleSleeping",
+				"msg": "Several days",
+				"n": "304"
+			},
+			{
+				"store": "true",
+				"id": "TroubleSleeping",
+				"msg": "More than half the days",
+				"n": "304"
+			},
+			{
+				"store": "true",
+				"id": "TroubleSleeping",
+				"msg": "Nearly every day",
+				"n": "304"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "304",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Feeling tired or having little energy",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "FeelingTired",
+				"msg": "Not at all",
+				"n": "305"
+			},
+			{
+				"store": "true",
+				"id": "FeelingTired",
+				"msg": "Several days",
+				"n": "305"
+			},
+			{
+				"store": "true",
+				"id": "FeelingTired",
+				"msg": "More than half the days",
+				"n": "305"
+			},
+			{
+				"store": "true",
+				"id": "FeelingTired",
+				"msg": "Nearly every day",
+				"n": "305"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "305",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Poor appetite or overeating",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "BadAppetite",
+				"msg": "Not at all",
+				"n": "306"
+			},
+			{
+				"store": "true",
+				"id": "BadAppetite",
+				"msg": "Several days",
+				"n": "306"
+			},
+			{
+				"store": "true",
+				"id": "BadAppetite",
+				"msg": "More than half the days",
+				"n": "306"
+			},
+			{
+				"store": "true",
+				"id": "BadAppetite",
+				"msg": "Nearly every day",
+				"n": "306"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "306",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Feeling bad about yourself - or that you are a failure or have let yourself or your family down",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "FeelingBadAboutSelf",
+				"msg": "Not at all",
+				"n": "307"
+			},
+			{
+				"store": "true",
+				"id": "FeelingBadAboutSelf",
+				"msg": "Several days",
+				"n": "307"
+			},
+			{
+				"store": "true",
+				"id": "FeelingBadAboutSelf",
+				"msg": "More than half the days",
+				"n": "307"
+			},
+			{
+				"store": "true",
+				"id": "FeelingBadAboutSelf",
+				"msg": "Nearly every day",
+				"n": "307"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "307",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Trouble concentrating on things, such as reading the newspaper or watching television",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "TroubleConcentrating",
+				"msg": "Not at all",
+				"n": "308"
+			},
+			{
+				"store": "true",
+				"id": "TroubleConcentrating",
+				"msg": "Several days",
+				"n": "308"
+			},
+			{
+				"store": "true",
+				"id": "TroubleConcentrating",
+				"msg": "More than half the days",
+				"n": "308"
+			},
+			{
+				"store": "true",
+				"id": "TroubleConcentrating",
+				"msg": "Nearly every day",
+				"n": "308"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "308",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Moving or speaking so slowly that other peope could have noticed. Or the opposite - being so figety or restless that you have been moving around a lot more than usual",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "MovingSpeaking",
+				"msg": "Not at all",
+				"n": "309"
+			},
+			{
+				"store": "true",
+				"id": "MovingSpeaking",
+				"msg": "Several days",
+				"n": "309"
+			},
+			{
+				"store": "true",
+				"id": "MovingSpeaking",
+				"msg": "More than half the days",
+				"n": "309"
+			},
+			{
+				"store": "true",
+				"id": "MovingSpeaking",
+				"msg": "Nearly every day",
+				"n": "309"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "309",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "Thoughts that you would be better off dead, or of hurting yourself",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "ThoughtsHurting",
+				"msg": "Not at all",
+				"n": "310"
+			},
+			{
+				"store": "true",
+				"id": "ThoughtsHurting",
+				"msg": "Several days",
+				"n": "310"
+			},
+			{
+				"store": "true",
+				"id": "ThoughtsHurting",
+				"msg": "More than half the days",
+				"n": "310"
+			},
+			{
+				"store": "true",
+				"id": "ThoughtsHurting",
+				"msg": "Nearly every day",
+				"n": "310"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "310",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people",
+		"CondJmp": [
+			{
+				"store": "true",
+				"id": "Difficulty",
+				"msg": "Not at all",
+				"n": "311"
+			},
+			{
+				"store": "true",
+				"id": "Difficulty",
+				"msg": "Several days",
+				"n": "311"
+			},
+			{
+				"store": "true",
+				"id": "Difficulty",
+				"msg": "More than half the days",
+				"n": "311"
+			},
+			{
+				"store": "true",
+				"id": "Difficulty",
+				"msg": "Nearly every day",
+				"n": "311"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "311",
+		"BranchLevel": "2",
+		"Comment": "",
+		"External": {
+			"devURL": "http://localhost:3005/QuestionnaireResponse/add",
+			"URL": "https://$DNC_ADDRESS$/QuestionnaireResponse/add",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "subjectReference",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "",
+					"Value": {
+						"Type": "context",
+						"Key": "dialogueParams.responses"
+					}
+				}
+			]
+		},
+		"Print": "Thank you for your responses.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "report-my-mood",
+		"Step": "4",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "You are not required to complete an assessment at this time.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]

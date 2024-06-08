@@ -1,0 +1,696 @@
+[
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "1",
+		"BranchLevel": "1",
+		"Comment": "",
+		"Print": "What symptom can I help you with?",
+		"CondJmp": [
+			{
+				"msg": "Backpain",
+				"n": "101"
+			},
+			{
+				"msg": "Headache",
+				"n": "102"
+			},
+			{
+				"msg": "Swollen ankle",
+				"n": "103"
+			},
+			{
+				"msg": "Something else",
+				"n": "104"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "101",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "OK. I will check the NHS Choices guidelines, and provide you the relevant information. A useful source of help is your local pharmacist. All UK pharmacists are trained to provide help and give advice for common symptoms.",
+		"CondJmp": [
+			{
+				"msg": "Ok",
+				"n": "201"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "201",
+		"BranchLevel": "2",
+		"Comment": "",
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "backpain"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			]
+		},
+		"Print": "Looking at the guidelines we have found the following information: 'Non-steroidal anti-inflammatory drug (NSAID) tablets, such as [ext0.winning.*.bindings.A], can help relieve back pain'. Do you know if you are allergic to or have had side effects from taking any of these?",
+		"CondJmp": [
+			{
+				"multi": "true",
+				"n": "1201",
+				"substitution": "[ext0.winning.*.bindings.A]",
+				"External": {
+					"devURL": "http://localhost:5000/argengine/chatbot",
+					"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+					"Method": "POST",
+					"Body": [
+						{
+							"Key": "pid",
+							"Value": {
+								"Type": "context",
+								"Key": "user"
+							}
+						},
+						{
+							"Key": "sid",
+							"Value": {
+								"Type": "context",
+								"Key": "chatId"
+							}
+						},
+						{
+							"Key": "keyname",
+							"Value": {
+								"Type": "literal",
+								"Value": "symptom"
+							}
+						},
+						{
+							"Key": "value",
+							"Value": {
+								"Type": "literal",
+								"Value": "backpain"
+							}
+						},
+						{
+							"Key": "pdata",
+							"Value": {
+								"Type": "external",
+								"devURL": "http://localhost:3006/mine/get/bp",
+								"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+								"Method": "POST",
+								"Body": [
+									{
+										"Key": "pid",
+										"Value": {
+											"Type": "context",
+											"Key": "user"
+										}
+									},
+									{
+										"Key": "nn",
+										"Value": {
+											"Type": "literal",
+											"Value": 7
+										}
+									}
+								]
+							}
+						},
+						{
+							"Key": "expl",
+							"Value": {
+								"Type": "literal",
+								"Value": "1"
+							}
+						},
+						{
+							"Key": "filter",
+							"Value": {
+								"Type": "literal",
+								"Value": "aspt"
+							}
+						}
+					]
+				}
+			},
+			{
+				"msg": "None of them",
+				"n": "1201"
+			},
+			{
+				"msg": "Don't know",
+				"n": "2203"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "1201",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "You told us you had side effects from, or an allergy to, [responses]. Your remaining treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "notrecommend"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "context",
+						"Key": "dialogueParams.responses.all",
+						"Default": "none"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			],
+			"NoReplacement": "You told us you do not have any allergies to the drugs listed. Speak to a pharmacist if you're not sure."
+		},
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "102",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "OK. I will check the NHS Choices guidelines, and provide you the relevant information. A useful source of help is your local pharmacist. All UK pharmacists are trained to provide help and give advice for common symptoms.",
+		"CondJmp": [
+			{
+				"msg": "Ok",
+				"n": "202"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "202",
+		"BranchLevel": "2",
+		"Comment": "",
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "symptom"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "literal",
+						"Value": "headache"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			]
+		},
+		"Print": "Looking at the guidelines we have found the following information: 'Take: [ext0.winning.*.bindings.A]'. Do you know if you are allergic to or have had side effects from taking any of these?",
+		"CondJmp": [
+			{
+				"multi": "true",
+				"n": "1202",
+				"substitution": "[ext0.winning.*.bindings.A]",
+				"External": {
+					"devURL": "http://localhost:5000/argengine/chatbot",
+					"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+					"Method": "POST",
+					"Body": [
+						{
+							"Key": "pid",
+							"Value": {
+								"Type": "context",
+								"Key": "user"
+							}
+						},
+						{
+							"Key": "sid",
+							"Value": {
+								"Type": "context",
+								"Key": "chatId"
+							}
+						},
+						{
+							"Key": "keyname",
+							"Value": {
+								"Type": "literal",
+								"Value": "symptom"
+							}
+						},
+						{
+							"Key": "value",
+							"Value": {
+								"Type": "literal",
+								"Value": "headache"
+							}
+						},
+						{
+							"Key": "pdata",
+							"Value": {
+								"Type": "external",
+								"devURL": "http://localhost:3006/mine/get/bp",
+								"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+								"Method": "POST",
+								"Body": [
+									{
+										"Key": "pid",
+										"Value": {
+											"Type": "context",
+											"Key": "user"
+										}
+									},
+									{
+										"Key": "nn",
+										"Value": {
+											"Type": "literal",
+											"Value": 7
+										}
+									}
+								]
+							}
+						},
+						{
+							"Key": "expl",
+							"Value": {
+								"Type": "literal",
+								"Value": "1"
+							}
+						},
+						{
+							"Key": "filter",
+							"Value": {
+								"Type": "literal",
+								"Value": "aspt"
+							}
+						}
+					]
+				}
+			},
+			{
+				"msg": "None of them",
+				"n": "1202"
+			},
+			{
+				"msg": "Don't know",
+				"n": "2203"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "1202",
+		"BranchLevel": "",
+		"Comment": "",
+		"Print": "You told us you had side effects from, or an allergy to, [responses]. Your remaining treatments are: [ext0.winning.*.bindings.A]. Speak to a pharmacist if you're not sure.",
+		"CondJmp": [
+			{
+				"msg": "END",
+				"n": "0"
+			}
+		],
+		"External": {
+			"devURL": "http://localhost:5000/argengine/chatbot",
+			"URL": "https://$PROCESSING_ADDRESS$/argengine/chatbot",
+			"Method": "POST",
+			"Body": [
+				{
+					"Key": "pid",
+					"Value": {
+						"Type": "context",
+						"Key": "user"
+					}
+				},
+				{
+					"Key": "sid",
+					"Value": {
+						"Type": "context",
+						"Key": "chatId"
+					}
+				},
+				{
+					"Key": "keyname",
+					"Value": {
+						"Type": "literal",
+						"Value": "notrecommend"
+					}
+				},
+				{
+					"Key": "value",
+					"Value": {
+						"Type": "context",
+						"Key": "dialogueParams.responses.all",
+						"Default": "none"
+					}
+				},
+				{
+					"Key": "pdata",
+					"Value": {
+						"Type": "external",
+						"devURL": "http://localhost:3006/mine/get/bp",
+						"URL": "https://$PROCESSING_ADDRESS$/mine/get/bp",
+						"Method": "POST",
+						"Body": [
+							{
+								"Key": "pid",
+								"Value": {
+									"Type": "context",
+									"Key": "user"
+								}
+							},
+							{
+								"Key": "nn",
+								"Value": {
+									"Type": "literal",
+									"Value": 7
+								}
+							}
+						]
+					}
+				},
+				{
+					"Key": "expl",
+					"Value": {
+						"Type": "literal",
+						"Value": "1"
+					}
+				},
+				{
+					"Key": "filter",
+					"Value": {
+						"Type": "literal",
+						"Value": "aspt"
+					}
+				}
+			],
+			"NoReplacement": "Based on your answers, we have now provided you with all the information we can. Speak to a pharmacist if you're not sure."
+		},
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "103",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Are both of your ankles swollen?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "203"
+			},
+			{
+				"msg": "No",
+				"n": "204"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "203",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Have you recently started a new medication from this list: AMLODIPINE, CLEVIDIPINE, DILTIAZEM HYDROCHLORIDE, FELODIPINE, LACIDIPINE, LERCANIDIPINE HYDROCHLORIDE, NICARDIPINE HYDROCHLORIDE, NIFEDIPINE, NIMODIPINE, RAMIPRIL, VERAPAMIL?",
+		"CondJmp": [
+			{
+				"msg": "Yes",
+				"n": "1203"
+			},
+			{
+				"msg": "No",
+				"n": "2203"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "204",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "1203",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Swollen ankles (both ankles) is a common side effect of the medications of this type. Please contact 111, head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "2203",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "Please head to your pharmacy or discuss with your GP.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	},
+	{
+		"Dialogue": "discuss-a-symptom",
+		"Step": "104",
+		"BranchLevel": "2",
+		"Comment": "",
+		"Print": "A useful source of help is your local pharmacist. All UK pharmacists are trained to provide help and give advice for common symptoms. You may also seek advice from your GP practice.",
+		"CondJmp": [
+			{
+				"msg": "End",
+				"n": "0"
+			}
+		],
+		"Media": "",
+		"Actions": "",
+		"Var": ""
+	}
+]
