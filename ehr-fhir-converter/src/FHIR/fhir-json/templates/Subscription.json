@@ -1,0 +1,23 @@
+{
+  "resourceType": "Subscription",
+  "id": "[id]",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">abc</div>"
+  },
+  "status": "active",
+  "contact": [
+    {
+      "system": "phone",
+      "value": "ext 4123"
+    }
+  ],
+  "end": "2021-01-01T00:00:00Z",
+  "reason": "reason",
+  "criteria": "[criteria]",
+  "channel": {
+    "type": "rest-hook",
+    "endpoint": "[URL]",
+    "payload": "application/json"
+  }
+}
