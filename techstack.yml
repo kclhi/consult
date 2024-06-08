@@ -1,0 +1,1620 @@
+repo_name: kclhi/consult
+report_id: 368d42e2576fcf079155613b17a3754a
+version: 0.1
+repo_type: Public
+timestamp: '2024-06-08T23:21:15+00:00'
+requested_by: martinchapman
+provider: github
+branch: master
+detected_tools_count: 101
+tools:
+- name: CSS 3
+  description: The latest evolution of the Cascading Style Sheets language
+  website_url: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS3
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/6727/css.png
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: JSON
+  description: A lightweight data-interchange format
+  website_url: http://www.json.org/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/2880/1024px-JSON_vector_logo.svg.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/message-passer/package.json
+  detection_source: message-passer/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-02-05 15:49:49.000000000 Z
+- name: JavaScript
+  description: Lightweight, interpreted, object-oriented language with first-class
+    functions
+  website_url: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: Jinja
+  description: Full featured template engine for Python
+  website_url: https://palletsprojects.com/p/jinja/
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Templating Languages & Extensions
+  image_url: https://img.stackshare.io/service/2303/New_Project__20_.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: Pug
+  description: Robust, elegant, feature rich template engine for nodejs
+  website_url: https://pugjs.org
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Templating Languages & Extensions
+  image_url: https://img.stackshare.io/service/1175/pug.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2017-06-28 17:32:33.000000000 Z
+- name: Python
+  description: A clear and powerful object-oriented programming language, comparable
+    to Perl, Ruby, Scheme, or Java.
+  website_url: https://www.python.org
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/993/pUBY5pVj.png
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: R Language
+  description: A language and environment for statistical computing and graphics
+  website_url: http://www.r-project.org/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1213/r-logo.png
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: SQL
+  description: It is a domain-specific language used in programming
+  website_url: https://en.wikipedia.org/wiki/SQL
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/2271/default_068d33483bba6b81ee13fbd4dc7aab9780896a54.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/data-miner/db/init.sql
+  detection_source: data-miner/db/init.sql
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-05-29 17:53:39.000000000 Z
+- name: ceph
+  description: A free-software storage platform
+  website_url: http://ceph.com/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: File Storage
+  image_url: https://img.stackshare.io/service/1818/cephglyph_copy_400x400.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/docker-compose.yml
+  detection_source: argumentation-engine/docker-compose.yml
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-04-13 21:20:08.000000000 Z
+- name: ExpressJS
+  description: Sinatra inspired web development framework for node.js -- insanely
+    fast, flexible, and simple
+  website_url: http://expressjs.com/
+  version: 4.17.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Microframeworks (Backend)
+  image_url: https://img.stackshare.io/service/1163/hashtag.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: Node.js
+  description: A platform built on Chrome's JavaScript runtime for easily building
+    fast, scalable network applications
+  website_url: http://nodejs.org/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/Dockerfile
+  detection_source: device-integration_garmin/Dockerfile
+  last_updated_by: Martin Chapman
+  last_updated_on: 2022-04-24 20:28:25.000000000 Z
+- name: ggplot2
+  description: A data visualization package for the statistical programming language
+    R
+  website_url: https://ggplot2.tidyverse.org/
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Charting Libraries
+  image_url: https://img.stackshare.io/service/6560/New_Project__90_.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/data-miner/requirements.txt
+  detection_source: data-miner/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-02-07 03:04:09.000000000 Z
+- name: MySQL
+  description: The world's most popular open source database
+  website_url: http://www.mysql.com
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Databases
+  image_url: https://img.stackshare.io/service/1025/logo-mysql-170x170.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/data-miner/docker-compose.yml
+  detection_source: data-miner/docker-compose.yml
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-03-20 23:27:11.000000000 Z
+- name: Neo4j
+  description: The world’s leading Graph Database
+  website_url: http://www.neo4j.com/
+  license: GPL-3.0
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Graph Databases
+  image_url: https://img.stackshare.io/service/1482/FbkjM42a.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/message-passer/docker-compose.yml
+  detection_source: message-passer/docker-compose.yml
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:42:27.000000000 Z
+- name: RabbitMQ
+  description: Open source multiprotocol messaging broker
+  website_url: http://www.rabbitmq.com/
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Message Queue
+  image_url: https://img.stackshare.io/service/1061/default_df93e9a30d27519161b39d8c1d5c223c1642d187.jpg
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/docker-compose.yml
+  detection_source: ehr-fhir-converter/docker-compose.yml
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-11 16:57:35.000000000 Z
+- name: SQLite
+  description: A software library that implements a self-contained, serverless, zero-configuration,
+    transactional SQL database engine
+  website_url: http://www.sqlite.org/
+  open_source: false
+  hosted_saas: true
+  category: Data Stores
+  sub_category: Databases
+  image_url: https://img.stackshare.io/service/1071/sqlite.jpg
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2017-06-28 17:32:33.000000000 Z
+- name: Sequelize
+  description: Easy-to-use multi SQL dialect ORM for Node.js
+  website_url: https://sequelize.org/
+  version: 5.21.9
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Object Relational Mapper (ORM)
+  image_url: https://img.stackshare.io/service/3211/3591786.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: Chai
+  description: A BDD / TDD assertion library
+  website_url: http://chaijs.com/
+  version: 4.2.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Javascript Testing Framework
+  image_url: https://img.stackshare.io/service/1725/chai.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2017-06-28 17:32:33.000000000 Z
+- name: Docker
+  description: Enterprise Container Platform for High-Velocity Innovation.
+  website_url: https://www.docker.com/
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Virtual Machine Platforms & Containers
+  image_url: https://img.stackshare.io/service/586/n4u37v9t_400x400.png
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: Dotenv
+  description: Loads environment variables from .env for Nodejs projects
+  website_url: https://github.com/motdotla/dotenv
+  license: BSD-2-Clause
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Server Configuration and Automation
+  image_url: https://img.stackshare.io/service/8067/default_90dcb1286af7685c68df319c764b80704df1155b.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-12 20:18:28.000000000 Z
+- name: ESLint
+  description: The fully pluggable JavaScript code quality tool
+  website_url: http://eslint.org/
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Code Review
+  image_url: https://img.stackshare.io/service/3337/Q4L7Jncy.jpg
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2017-06-28 17:32:33.000000000 Z
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: Mocha
+  description: Simple, flexible, fun javascript test framework for node.js &amp; the
+    browser
+  website_url: http://mochajs.org/
+  version: 7.1.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Javascript Testing Framework
+  image_url: https://img.stackshare.io/service/832/mocha.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-12 20:18:28.000000000 Z
+- name: NGINX
+  description: A high performance free open source web server powering busiest sites
+    on the Internet.
+  website_url: http://nginx.org
+  open_source: false
+  hosted_saas: false
+  category: Application Hosting
+  sub_category: Web Servers
+  image_url: https://img.stackshare.io/service/1052/YMxUfyWf.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/docker-compose.yml
+  detection_source: argumentation-engine/docker-compose.yml
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-04-13 21:20:08.000000000 Z
+- name: PyPI
+  description: A repository of software for the Python programming language
+  website_url: https://pypi.org/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Hosted Package Repository
+  image_url: https://img.stackshare.io/service/12572/-RIWgodF_400x400.jpg
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-04-20 16:20:21.000000000 Z
+- name: Travis CI
+  description: A hosted continuous integration service for open source and private
+    projects
+  website_url: http://travis-ci.com/
+  open_source: false
+  hosted_saas: true
+  category: Build, Test, Deploy
+  sub_category: Continuous Integration
+  image_url: https://img.stackshare.io/service/460/Lu6cGu0z_400x400.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/.travis.yml
+  detection_source: device-integration_garmin/.travis.yml
+  last_updated_by: Martin Chapman
+  last_updated_on: 2018-02-09 13:21:18.000000000 Z
+- name: nodemon
+  description: A simple monitor script for use during development of a node.js app
+  website_url: http://nodemon.io/
+  version: 2.0.4
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Monitoring
+  sub_category: node.js Application Monitoring
+  image_url: https://img.stackshare.io/service/5577/preview.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: npm
+  description: The package manager for JavaScript.
+  website_url: https://www.npmjs.com/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Front End Package Manager
+  image_url: https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/dialogue-manager/package.json
+  detection_source: dialogue-manager/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-02-02 16:48:19.000000000 Z
+- name: pytest
+  description: A full-featured Python testing tool to help you write better programs
+  website_url: http://pytest.org/latest/
+  version: 4.6.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Testing Frameworks
+  image_url: https://img.stackshare.io/service/4586/Lu99Qe0Z_400x400.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: uWSGI
+  description: uWSGI application server container
+  website_url: https://github.com/unbit/uwsgi
+  version: 2.0.18
+  open_source: true
+  hosted_saas: false
+  category: Application Hosting
+  sub_category: Web Server Interface
+  image_url: https://img.stackshare.io/service/1838/uwsgi.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: Pandoc
+  description: A universal document converter
+  website_url: https://pandoc.org/
+  open_source: true
+  hosted_saas: false
+  category: Assets and Media
+  sub_category: File Conversion
+  image_url: https://img.stackshare.io/service/2330/no-img-open-source.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: NumPy
+  description: Fundamental package for scientific computing with Python
+  website_url: http://www.numpy.org/
+  version: 1.14.3
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Data Science Tools
+  image_url: https://img.stackshare.io/service/2179/default_332f874a2edb2686f578aa6389313efcea1eec41.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-04-20 16:20:21.000000000 Z
+- name: Shell
+  description: A shell is a text-based terminal, used for manipulating programs and
+    files. Shell scripts typically manage program execution.
+  website_url: https://en.wikipedia.org/wiki/Shell_script
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png
+  detection_source_url: https://github.com/kclhi/consult
+  detection_source: Repo Metadata
+- name: Winston
+  description: a multi-transport async logging library for node.js
+  website_url: https://github.com/winstonjs/winston
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/6668/9682013.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: Werkzeug
+  description: The comprehensive WSGI web application library
+  package_url: https://pypi.org/project/Werkzeug
+  version: 0.15.2
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19890/default_87fc2af3f2409064833512bb6fc5b04443a2e6aa.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+  vulnerabilities:
+  - name: Werkzeug debugger vulnerable to remote execution when interacting with attacker
+      controlled domain
+    cve_id: CVE-2024-34069
+    cve_url: https://github.com/advisories/GHSA-2g68-c3qc-8985
+    detected_date: May 7
+    severity: high
+    first_patched: 3.0.3
+  - name: High resource usage when parsing multipart form data with many fields
+    cve_id: CVE-2023-25577
+    cve_url: https://github.com/advisories/GHSA-xg9f-g7g7-2323
+    detected_date: Feb 16
+    severity: high
+    first_patched: 2.2.3
+  - name: Incorrect parsing of nameless cookies leads to __Host- cookies bypass
+    cve_id: CVE-2023-23934
+    cve_url: https://github.com/advisories/GHSA-px8h-6qxv-m22q
+    detected_date: Feb 16
+    severity: low
+    first_patched: 2.2.3
+- name: certifi
+  description: Python package for providing Mozilla's CA Bundle
+  package_url: https://pypi.org/project/certifi
+  version: 2019.3.9
+  license: MPL-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19849/default_75c38a39b9f0062814489e2ec2cbfca0ca15d9ba.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+  vulnerabilities:
+  - name: Removal of e-Tugra root certificate
+    cve_id: CVE-2023-37920
+    cve_url: https://github.com/advisories/GHSA-xqr8-7jwr-rhp7
+    detected_date: Jul 26
+    severity: high
+    first_patched: 2023.7.22
+  - name: Certifi removing TrustCor root certificate
+    cve_id: CVE-2022-23491
+    cve_url: https://github.com/advisories/GHSA-43fp-rhv2-5gv8
+    detected_date: Dec 8
+    severity: moderate
+    first_patched: 2022.12.07
+- name: future
+  description: Clean single-source support for Python 3 and 2
+  package_url: https://pypi.org/project/future
+  version: 0.17.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19839/default_85689b353a3a9409328e253ea28d859d29151e0c.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+  vulnerabilities:
+  - name: Python Charmers Future denial of service vulnerability
+    cve_id: CVE-2022-40899
+    cve_url: https://github.com/advisories/GHSA-v3c5-jqr6-7qm8
+    detected_date: Jan 5
+    severity: high
+    first_patched: 0.18.3
+- name: nltk
+  description: Natural Language Toolkit
+  package_url: https://pypi.org/project/nltk
+  version: 3.2.5
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20023/default_b0d1a54f127d7017fce41c15f5e85568fb7019ed.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+  vulnerabilities:
+  - name: Inefficient Regular Expression Complexity in nltk (word_tokenize, sent_tokenize)
+    cve_id: CVE-2021-43854
+    cve_url: https://github.com/advisories/GHSA-f8m6-h2c7-8h9x
+    detected_date: Jan 7
+    severity: high
+    first_patched: 3.6.6
+  - name: NLTK Vulnerable to REDoS
+    cve_id: CVE-2021-3842
+    cve_url: https://github.com/advisories/GHSA-rqjh-jp2r-59cj
+    detected_date: Jan 7
+    severity: high
+    first_patched: 3.6.6
+  - name: NLTK Vulnerable to REDoS
+    cve_id: CVE-2021-3828
+    cve_url: https://github.com/advisories/GHSA-2ww3-fxvq-293j
+    detected_date: Sep 30
+    severity: high
+    first_patched: 3.6.4
+  - name: NLTK Vulnerable To Path Traversal
+    cve_id: CVE-2019-14751
+    cve_url: https://github.com/advisories/GHSA-mr7p-25v2-35wr
+    detected_date: Aug 22
+    severity: high
+    first_patched: 3.4.5
+- name: py
+  description: Library with cross-python path
+  package_url: https://pypi.org/project/py
+  version: 1.8.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19962/default_61e35171bd9c0e5c5b88b2e4221ca242576ad8c0.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+  vulnerabilities:
+  - name: 'ReDoS in py library when used with subversion '
+    cve_id: CVE-2022-42969
+    cve_url: https://github.com/advisories/GHSA-w596-4wvx-j9j6
+    detected_date: Oct 18
+    severity: high
+    first_patched:
+  - name: py vulnerable to Regular Expression Denial of Service
+    cve_id: CVE-2020-29651
+    cve_url: https://github.com/advisories/GHSA-hj5v-574p-mj7c
+    detected_date: Aug 22
+    severity: high
+    first_patched: 1.10.0
+- name: starlette
+  description: The little ASGI library that shines
+  package_url: https://pypi.org/project/starlette
+  version: 0.11.3
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20295/default_640b00772a7025571fa2ac02de971e76f9662aa9.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+  vulnerabilities:
+  - name: python-multipart vulnerable to Content-Type Header ReDoS
+    cve_id: CVE-2024-24762
+    cve_url: https://github.com/advisories/GHSA-2jv5-9r88-3w3p
+    detected_date: Feb 17
+    severity: high
+    first_patched: 0.36.2
+  - name: 'Duplicate Advisory: Starlette Content-Type Header ReDoS'
+    cve_id:
+    cve_url: https://github.com/advisories/GHSA-93gm-qmq6-w238
+    detected_date: Feb 6
+    severity: high
+    first_patched: 0.36.2
+  - name: Starlette allows an unauthenticated and remote attacker to specify any number
+      of form fields or files
+    cve_id: CVE-2023-30798
+    cve_url: https://github.com/advisories/GHSA-3qj8-93xh-pwh2
+    detected_date: Apr 22
+    severity: high
+    first_patched: 0.25.0
+  - name: MultipartParser denial of service with too many fields or files
+    cve_id:
+    cve_url: https://github.com/advisories/GHSA-74m5-2c7w-9w3x
+    detected_date: Feb 15
+    severity: moderate
+    first_patched: 0.25.0
+- name: urllib3
+  description: HTTP library with thread-safe connection pooling
+  package_url: https://pypi.org/project/urllib3
+  version: 1.24.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19842/default_4604ff5dcb7f4d9c7b3833591c2142493951b19c.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+  vulnerabilities:
+  - name: Improper Certificate Validation in urllib3
+    cve_id: CVE-2019-11324
+    cve_url: https://github.com/advisories/GHSA-mh33-7rrq-662w
+    detected_date: Aug 22
+    severity: high
+    first_patched: 1.24.2
+  - name: Improper Neutralization of CRLF Sequences in urllib3 library for Python
+    cve_id: CVE-2019-11236
+    cve_url: https://github.com/advisories/GHSA-r64q-w8jr-g9qp
+    detected_date: Jun 29
+    severity: moderate
+    first_patched: 1.24.3
+  - name: urllib3's request body not stripped after redirect from 303 status changes
+      request method to GET
+    cve_id: CVE-2023-45803
+    cve_url: https://github.com/advisories/GHSA-g4mx-q9vg-27p4
+    detected_date: Oct 18
+    severity: moderate
+    first_patched: 1.26.18
+  - name: Authorization Header forwarded on redirect
+    cve_id: CVE-2018-25091
+    cve_url: https://github.com/advisories/GHSA-gwvm-45gx-3cf8
+    detected_date: Oct 18
+    severity: moderate
+    first_patched: 1.24.2
+  - name: "`Cookie` HTTP header isn't stripped on cross-origin redirects"
+    cve_id: CVE-2023-43804
+    cve_url: https://github.com/advisories/GHSA-v845-jxx5-vc9f
+    detected_date: Oct 3
+    severity: moderate
+    first_patched: 1.26.17
+  - name: CRLF injection in urllib3
+    cve_id: CVE-2020-26137
+    cve_url: https://github.com/advisories/GHSA-wqvq-5m8c-6g24
+    detected_date: Aug 22
+    severity: moderate
+    first_patched: 1.25.9
+- name: uvicorn
+  description: The lightning-fast ASGI server
+  package_url: https://pypi.org/project/uvicorn
+  version: 0.5.2
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20431/default_f824837db22536768ec317b67275fa384fad7d47.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+  vulnerabilities:
+  - name: HTTP response splitting in uvicorn
+    cve_id: CVE-2020-7695
+    cve_url: https://github.com/advisories/GHSA-f97h-2pfx-f59f
+    detected_date: Aug 22
+    severity: high
+    first_patched: 0.11.7
+  - name: Log injection in uvicorn
+    cve_id: CVE-2020-7694
+    cve_url: https://github.com/advisories/GHSA-33c7-2mpw-hg34
+    detected_date: Aug 22
+    severity: high
+    first_patched: 0.11.7
+- name: idna
+  description: Internationalized Domain Names in Applications
+  package_url: https://pypi.org/project/idna
+  version: '2.8'
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19863/default_f24e00e4cb7620e436f9d06e0305070e1335922a.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+  vulnerabilities:
+  - name: Internationalized Domain Names in Applications (IDNA) vulnerable to denial
+      of service from specially crafted inputs to idna.encode
+    cve_id: CVE-2024-3651
+    cve_url: https://github.com/advisories/GHSA-jjg7-2v4v-x38h
+    detected_date: Apr 12
+    severity: moderate
+    first_patched: '3.7'
+- name: requests
+  description: Python HTTP for Humans
+  package_url: https://pypi.org/project/requests
+  version: 2.21.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19826/default_d7c684bf2673f008a9f02ac93901229297a22d7e.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+  vulnerabilities:
+  - name: Requests `Session` object does not verify requests after making first request
+      with verify=False
+    cve_id: CVE-2024-35195
+    cve_url: https://github.com/advisories/GHSA-9wx4-h78v-vm56
+    detected_date: May 21
+    severity: moderate
+    first_patched: 2.32.0
+  - name: Unintended leak of Proxy-Authorization header in requests
+    cve_id: CVE-2023-32681
+    cve_url: https://github.com/advisories/GHSA-j8r2-6x86-q33q
+    detected_date: May 23
+    severity: moderate
+    first_patched: 2.31.0
+- name: Flask
+  description: A simple framework for building complex web applications
+  package_url: https://pypi.org/project/Flask
+  version: 1.0.2
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19834/default_58dbe7b4d7ec447b62773209af0f9a31bbabf5bd.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: Flask-RESTful
+  description: Simple framework for creating REST APIs
+  package_url: https://pypi.org/project/Flask-RESTful
+  version: 0.3.7
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20034/default_a3692729f5b4ca7eb94218522ed4260bba4a5c15.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: MarkupSafe
+  description: Safely add untrusted strings to HTML/XML markup
+  package_url: https://pypi.org/project/MarkupSafe
+  version: 1.1.1
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19945/default_0b0a94e1bdf3e64deeccb23892ca2335bdc30e4f.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: aniso8601
+  description: A library for parsing ISO 8601 strings
+  package_url: https://pypi.org/project/aniso8601
+  version: 6.0.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20255/default_49d350d2ae446ec5a00ebd45eeeaa0c300409a71.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: atomicwrites
+  description: Atomic file writes
+  package_url: https://pypi.org/project/atomicwrites
+  version: 1.3.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20169/default_61c5587692a15177a925ec9469e353b56dcc7b6a.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: attrs
+  description: Classes Without Boilerplate
+  package_url: https://pypi.org/project/attrs
+  version: 19.1.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19857/default_4a8a8fdc10130068bf295812b98e9b72fb42fe70.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: configparser
+  description: Updated configparser from Python 3.7 for Python 2.6+
+  package_url: https://pypi.org/project/configparser
+  version: 3.7.4
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19879/default_2270bfab784e3d2c2d999d26b11ee478a9dad238.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: contextlib2
+  description: Backports and enhancements for the contextlib module
+  package_url: https://pypi.org/project/contextlib2
+  version: 0.5.5
+  license: psfrag
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20070/default_bb49fb0188726b8922387d8bb6e9b2cd0c3c0ea9.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: decorator
+  description: Decorators for Humans
+  package_url: https://pypi.org/project/decorator
+  version: 4.4.0
+  license: BSD-2-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19911/default_bc82f0b22ca8fd942e21c317967f4ab61f43eb2c.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: funcsigs
+  description: Python function signatures from PEP362 for Python 2.6
+  package_url: https://pypi.org/project/funcsigs
+  version: 1.0.2
+  license: Other
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20177/default_b59452f5365a0e677c38da18021b9d6569ac0da7.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: fuzzywuzzy
+  description: Fuzzy string matching in python
+  package_url: https://pypi.org/project/fuzzywuzzy
+  version: 0.16.0
+  license: GPL-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20071/default_bb49fb0188726b8922387d8bb6e9b2cd0c3c0ea9.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: importlib-metadata
+  description: Read metadata from Python packages
+  package_url: https://pypi.org/project/importlib-metadata
+  version: '0.18'
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20000/default_7c419d5d5f0cfad7886b95266eae7ba305cedacf.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: isodate
+  description: An ISO 8601 date/time/duration parser and formatter
+  package_url: https://pypi.org/project/isodate
+  version: 0.6.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20076/default_1b6ee2407cdedc6ad8878ee707164428880e399a.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: itsdangerous
+  description: Various helpers to pass data to untrusted environments and back
+  package_url: https://pypi.org/project/itsdangerous
+  version: 1.1.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19989/default_b1f1fc9c4c59a78443018e01395203ba8c61dcde.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: mockito
+  description: Spying framework
+  package_url: https://pypi.org/project/mockito
+  version: 1.1.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: more-itertools
+  description: More routines for operating on iterables, beyond itertools
+  package_url: https://pypi.org/project/more-itertools
+  version: 5.0.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19947/default_0b0a94e1bdf3e64deeccb23892ca2335bdc30e4f.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: networkx
+  description: Python package for creating and manipulating graphs and networks
+  package_url: https://pypi.org/project/networkx
+  version: '2.2'
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19877/default_8902c10687fbcd6273bdbe119fff40fa1180763f.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: packaging
+  description: Core utilities for Python packages
+  package_url: https://pypi.org/project/packaging
+  version: '19.0'
+  license: BSD-3-Clause,Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19894/default_f716e4bc541a9eb6e3f5b7a20d7c35355075b0b4.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: pathlib2
+  description: Object-oriented filesystem paths
+  package_url: https://pypi.org/project/pathlib2
+  version: 2.3.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19954/default_1965f66bb5a4d2eb7b31193d7be6d8a9041d02b9.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: pika
+  description: Pika Python AMQP Client Library
+  package_url: https://pypi.org/project/pika
+  version: 0.13.1
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19997/default_1ae269f6aa26d7008f18ed620309f6ae89bbfa12.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: pluggy
+  description: Plugin and hook calling mechanisms for python
+  package_url: https://pypi.org/project/pluggy
+  version: 0.12.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20041/default_77eeab9aff24a2723c1f19fed32966a15b17d874.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: ply
+  description: Python Lex &amp; Yacc
+  package_url: https://pypi.org/project/ply
+  version: '3.11'
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20290/default_bae4ec34e549383af798a405820088989f617ff0.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: pypandoc
+  description: Thin wrapper for pandoc
+  package_url: https://pypi.org/project/pypandoc
+  version: 1.3.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20206/default_f49d415fc34d42446135e0f46315fb237c002e80.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: pyparsing
+  description: Python parsing module
+  package_url: https://pypi.org/project/pyparsing
+  version: 2.4.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19881/default_2270bfab784e3d2c2d999d26b11ee478a9dad238.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: python-Levenshtein
+  description: Python extension for computing string edit distances and similarities
+  package_url: https://pypi.org/project/python-Levenshtein
+  version: 0.12.0
+  license: GPL-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20140/default_927321425328d95d5d3f0c8b9fe47f1a2cffb5bf.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: pytz
+  description: World timezone definitions, modern and historical
+  package_url: https://pypi.org/project/pytz
+  version: '2019.1'
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19841/default_bb711fa267b2329ed689711a5adb7d9e74610b20.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: scandir
+  description: Scandir, a better directory iterator and faster os.walk
+  package_url: https://pypi.org/project/scandir
+  version: 1.10.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20172/default_61c5587692a15177a925ec9469e353b56dcc7b6a.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: six
+  description: Python 2 and 3 compatibility utilities
+  package_url: https://pypi.org/project/six
+  version: 1.12.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19827/default_74a61b43bdb9fc0cba2978316b9976f43545029b.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: tblib
+  description: Traceback serialization library
+  package_url: https://pypi.org/project/tblib
+  version: 1.3.2
+  license: BSD-2-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20533/default_dade38abdfe446f4188d4c4755440d2748167b86.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: unittest-xml-reporting
+  description: Unittest-based test runner with Ant/JUnit like XML reporting
+  package_url: https://pypi.org/project/unittest-xml-reporting
+  version: 2.2.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/ehr-fhir-converter/requirements.txt
+  detection_source: ehr-fhir-converter/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-06-29 18:20:26.000000000 Z
+- name: zipp
+  description: Backport of pathlib-compatible object wrapper for zip files
+  package_url: https://pypi.org/project/zipp
+  version: 0.5.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20247/default_47b8ee8db82e43d9eef35923435bd8cc855f3a1b.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/argumentation-engine/requirements.txt
+  detection_source: argumentation-engine/requirements.txt
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-02-27 20:00:50.000000000 Z
+- name: mysql2
+  description: Fast mysql driver
+  package_url: https://www.npmjs.com/mysql2
+  version: 2.1.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16671/default_4b738bf1758d38dddd276589bbea47fca5a990df.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-12 20:18:28.000000000 Z
+  vulnerabilities:
+  - name: MySQL2 for Node Arbitrary Code Injection
+    cve_id: CVE-2024-21511
+    cve_url: https://github.com/advisories/GHSA-4rch-2fh8-94vw
+    detected_date: Apr 24
+    severity: critical
+    first_patched: 3.9.7
+  - name: mysql2 Remote Code Execution (RCE) via the readCodeFor function
+    cve_id: CVE-2024-21508
+    cve_url: https://github.com/advisories/GHSA-fpw7-j2hg-69v5
+    detected_date: Apr 13
+    severity: critical
+    first_patched: 3.9.4
+  - name: mysql2 vulnerable to Prototype Pollution
+    cve_id: CVE-2024-21512
+    cve_url: https://github.com/advisories/GHSA-pmh2-wpjm-fj45
+    detected_date: May 31
+    severity: high
+    first_patched: 3.9.8
+  - name: mysql2 cache poisoning vulnerability
+    cve_id: CVE-2024-21507
+    cve_url: https://github.com/advisories/GHSA-mqr2-w7wj-jjgr
+    detected_date: Apr 13
+    severity: moderate
+    first_patched: 3.9.3
+  - name: mysql2 vulnerable to Prototype Poisoning
+    cve_id: CVE-2024-21509
+    cve_url: https://github.com/advisories/GHSA-49j4-86m8-q2jw
+    detected_date: Apr 13
+    severity: moderate
+    first_patched: 3.9.4
+- name: async
+  description: Higher-order functions and common patterns for asynchronous code
+  package_url: https://www.npmjs.com/async
+  version: 3.2.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15851/default_a2f722724df977d0f7752839e5d8845ab41f69d5.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+  vulnerabilities:
+  - name: Prototype Pollution in async
+    cve_id: CVE-2021-43138
+    cve_url: https://github.com/advisories/GHSA-fwr7-v2mv-hh25
+    detected_date: Apr 13
+    severity: high
+    first_patched: 3.2.2
+- name: express
+  description: Fast, unopinionated, minimalist web framework
+  package_url: https://www.npmjs.com/express
+  version: 4.17.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15818/default_db4a7791d2f1174547374b9b587bc10fec088a5a.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+  vulnerabilities:
+  - name: qs vulnerable to Prototype Pollution
+    cve_id: CVE-2022-24999
+    cve_url: https://github.com/advisories/GHSA-hrpp-h998-j3pp
+    detected_date: Dec 7
+    severity: high
+    first_patched: 4.17.3
+  - name: Express.js Open Redirect in malformed URLs
+    cve_id: CVE-2024-29041
+    cve_url: https://github.com/advisories/GHSA-rv95-896h-c2vc
+    detected_date: Mar 26
+    severity: moderate
+    first_patched: 4.19.2
+- name: got
+  description: Human-friendly and powerful HTTP request library for Node.js
+  package_url: https://www.npmjs.com/got
+  version: 9.6.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16258/default_ab17554b7e80af3d234b14168ed61e75d43f8eee.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: messages/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-06-17 12:23:32.000000000 Z
+  vulnerabilities:
+  - name: Got allows a redirect to a UNIX socket
+    cve_id: CVE-2022-33987
+    cve_url: https://github.com/advisories/GHSA-pfrx-2q88-qq97
+    detected_date: Jun 22
+    severity: moderate
+    first_patched: 11.8.5
+- name: npm
+  description: A package manager for JavaScript
+  package_url: https://www.npmjs.com/npm
+  version: 6.14.5
+  license: Artistic-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16105/default_5a461d436012a0c4024534aaba303dcdb0297d24.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/dialogue-manager/package-lock.json
+  detection_source: dialogue-manager/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2019-02-02 16:48:19.000000000 Z
+  vulnerabilities:
+  - name: npm CLI exposing sensitive information through logs
+    cve_id: CVE-2020-15095
+    cve_url: https://github.com/advisories/GHSA-93f3-23rq-pjfp
+    detected_date: Aug 22
+    severity: moderate
+    first_patched: 6.14.6
+- name: request
+  description: Simplified HTTP request client
+  package_url: https://www.npmjs.com/request
+  version: 2.88.2
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15823/default_5e5e8ac63beda29f31f1844df64d4b8247570a66.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+  vulnerabilities:
+  - name: Server-Side Request Forgery in Request
+    cve_id: CVE-2023-28155
+    cve_url: https://github.com/advisories/GHSA-p8p7-x288-28g6
+    detected_date: Mar 17
+    severity: moderate
+    first_patched:
+- name: amqplib
+  description: An AMQP 0-9-1
+  package_url: https://www.npmjs.com/amqplib
+  version: 0.5.6
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16639/default_5a21421012fa20e57fe0aeab31228f42e7118abc.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: basic-auth
+  description: Node.js basic auth parser
+  package_url: https://www.npmjs.com/basic-auth
+  version: 2.0.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17338/default_b39374c3a74b433364bfdbff07be26214bf186fd.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: body-parser
+  description: Node.js body parsing middleware
+  package_url: https://www.npmjs.com/body-parser
+  version: 1.19.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15906/default_7c39a83d4acd952df89b1ebfdb94c8646324fbf1.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: chai-http
+  description: Extend Chai Assertion library with tests for http apis
+  package_url: https://www.npmjs.com/chai-http
+  version: 4.3.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16767/default_aa2369d4412b5a2c6812de3c666299e0ccd25ea2.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: config
+  description: Configuration control for production node deployments
+  package_url: https://www.npmjs.com/config
+  version: 3.3.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16353/default_b5c8f3c8e46d368f74a982d06d7f13291fe651ea.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: cookie-parser
+  description: Parse HTTP request cookies
+  package_url: https://www.npmjs.com/cookie-parser
+  version: 1.4.5
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16136/default_def3edb85d7fbd20200a5cd7d0a1679e31bc8b3d.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: csv-parse
+  description: CSV parsing implementing the Node.js `stream.Transform` API
+  package_url: https://www.npmjs.com/csv-parse
+  version: 4.9.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17054/default_d17bbf7e4f3b102e29ff09c01b8165e7ba600319.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: debug
+  description: Small debugging utility
+  package_url: https://www.npmjs.com/debug
+  version: 2.6.9
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15852/default_a2f722724df977d0f7752839e5d8845ab41f69d5.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-12 20:18:28.000000000 Z
+- name: express-session
+  description: Simple session middleware for Express
+  package_url: https://www.npmjs.com/express-session
+  version: 1.17.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16239/default_180418c6fa6cdb8f7a3500f84a8fedb884fcb3fa.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: fs
+  description: This package name is not currently in use, but was formerly occupied
+    by another package
+  package_url: https://www.npmjs.com/fs
+  version: 0.0.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16098/default_63a34654baee757196ddff2457bd1c9a0dfb7287.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2017-06-28 17:32:33.000000000 Z
+- name: http-errors
+  description: Create HTTP error objects
+  package_url: https://www.npmjs.com/http-errors
+  version: 1.7.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16925/default_7b9968788548874538c601457e8dcd9c74bd2051.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: mocha-eslint
+  description: Run ESLint as mocha tests
+  package_url: https://www.npmjs.com/mocha-eslint
+  version: 6.0.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17832/default_78858facb60c08d15198eb69a6c7f48463f2c09f.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-12 20:18:28.000000000 Z
+- name: morgan
+  description: HTTP request logger middleware for node.js
+  package_url: https://www.npmjs.com/morgan
+  version: 1.10.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16097/default_c7b204838197013798409fa2b4dafce450edc7fb.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-12 20:18:28.000000000 Z
+- name: node-schedule
+  description: A cron-like and not-cron-like job scheduler for Node
+  package_url: https://www.npmjs.com/node-schedule
+  version: 1.3.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17126/default_0ffbf6d9ee2940fe94be8424fd9afff068fff458.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_vitalpatch/package-lock.json
+  detection_source: device-integration_vitalpatch/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:23.000000000 Z
+- name: querystring
+  description: Node's querystring module for all engines
+  package_url: https://www.npmjs.com/querystring
+  version: 0.2.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16418/default_d73092129e1cde5ea9f47f22e2d7c3db7bd6da8d.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2018-06-24 19:50:47.000000000 Z
+- name: sequelize-cli
+  description: The Sequelize CLI
+  package_url: https://www.npmjs.com/sequelize-cli
+  version: 5.5.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/18714/default_5921235b47b1f6f3bd5aba9257245016601078bf.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: serve-favicon
+  description: Favicon serving middleware with caching
+  package_url: https://www.npmjs.com/serve-favicon
+  version: 2.5.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16361/default_92302d1bbf4c0f67b862869662b4f69002c94aad.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2018-06-19 17:21:13.000000000 Z
+- name: sqlite3
+  description: Asynchronous, non-blocking SQLite3 bindings
+  package_url: https://www.npmjs.com/sqlite3
+  version: 4.2.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16285/default_3b7197abc4df3d7fa7c5292f17b2e6fb0cd1c8d4.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: uuid
+  description: RFC4122
+  package_url: https://www.npmjs.com/uuid
+  version: 3.4.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15916/default_e0a4fb1126d7400f419f0931cf1669947a5bc552.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
+- name: winston
+  description: A logger for just about everything
+  package_url: https://www.npmjs.com/winston
+  version: 3.2.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16003/default_261820f5687b4c88a3e8f95c71b5e8dccd34c1d7.png
+  detection_source_url: https://github.com/kclhi/consult/blob/master/device-integration_garmin/package-lock.json
+  detection_source: device-integration_garmin/package.json
+  last_updated_by: Martin Chapman
+  last_updated_on: 2020-05-15 13:40:09.000000000 Z
