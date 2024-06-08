@@ -1,0 +1,55 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    build:
+      dockerfile: Dockerfile.demo
+      context: ./proxy
+    image: device-integration_nokia_proxy:latest
+    container_name: device-integration_nokia_proxy_1
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_nokia_webapp_1:3000", "--", "nginx", "-g", "daemon off;"]
+    tty: true
+    ports:
+      - '3000:443'
+    depends_on:
+      - webapp
+    restart: unless-stopped
+
+  webapp:
+    build:
+      context: .
+    image: device-integration_nokia_webapp:latest
+    container_name: device-integration_nokia_webapp_1
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
+  migration:
+    image: device-integration_nokia_webapp:latest
+    command: ["./wait-for-it.sh", "--timeout=0", "device-integration_nokia_mariadb_1:3306", "--", "npm", "run", "migrate"]
+    depends_on:
+      - webapp
+      - mariadb
+
+  mariadb:
+    build: db
+    image: device-integration_nokia_mariadb:latest
+    container_name: device-integration_nokia_mariadb_1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - sensor_data_volume:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  sensor_data_volume:
+    name: device-integration_nokia_sensor_data_volume
+
+networks:
+  default:
+    external:
+      name: device_network

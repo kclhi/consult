@@ -1,0 +1,45 @@
+{
+  "name": "device-integration_nokia",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "migrate": "sequelize db:migrate",
+    "test": "mocha --exit"
+  },
+  "dependencies": {
+    "amqplib": "^0.8.0",
+    "async": "^3.2.2",
+    "basic-auth": "^2.0.1",
+    "body-parser": "^1.19.0",
+    "config": "^3.3.6",
+    "cookie-parser": "^1.4.6",
+    "csv-parse": "^5.0.3",
+    "debug": "^4.3.2",
+    "dotenv": "^10.0.0",
+    "eslint": "^8.3.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "http-errors": "^1.8.1",
+    "json-find": "^2.0.8",
+    "messages": "file:lib/messages",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
+    "pug": "^3.0.2",
+    "querystring": "^0.2.0",
+    "request": "^2.88.2",
+    "sequelize": "^6.11.0",
+    "sequelize-cli": "^6.3.0",
+    "serve-favicon": "^2.5.0",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.1.3",
+    "mocha-eslint": "^7.0.0",
+    "nodemon": "^2.0.15",
+    "sqlite3": "github:mapbox/node-sqlite3#593c9d"
+  }
+}

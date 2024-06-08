@@ -1,0 +1,3 @@
+[submodule "lib/messages"]
+	path = lib/messages
+	url = https://github.com/kclconsult/messages.git
