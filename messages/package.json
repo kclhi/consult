@@ -1,0 +1,22 @@
+{
+  "name": "messages",
+  "version": "1.0.0",
+  "description": "simple messages library",
+  "main": "messages.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kclconsult/messages.git"
+  },
+  "author": "martin chapman (martinchapman.co.uk)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kclconsult/messages/issues"
+  },
+  "homepage": "https://github.com/kclconsult/messages#readme",
+  "dependencies": {
+    "got": "^11.3.0"
+  }
+}
