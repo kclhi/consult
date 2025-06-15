@@ -2,7 +2,7 @@
 
 Modular decision-support system for chronic condition self-management.
 
-[Demo](https://kclhi.org/consult/demo/?a=UGU2YmFxRUQ6dWtlN2JQRXk=) | [Docs](https://www.overleaf.com/read/scvyqpzvtycj#31ae61)
+[Demo](https://youtu.be/U4eIhQJ7ZjQ) | [Docs](https://www.overleaf.com/read/scvyqpzvtycj#31ae61)
 
 Cite as _[Computational Argumentation-based Clinical Decision Support](https://dl.acm.org/doi/10.5555/3306127.3332107). Chapman, Martin et al. Autonomous Agents and Multiagent Systems (AAMAS). 2019._
 
